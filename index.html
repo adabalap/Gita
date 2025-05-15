@@ -20,14 +20,14 @@
     <style>
         body {
             font-family: 'Mandali', sans-serif; /* Apply Telugu font */
-            background-color: #eef2ff; /* Lighter blue background */
+            background-color: #eef2ff; /* Lighter blue fallback background */
             color: #374151; /* Darker gray text */
             line-height: 1.6;
             min-height: 100vh; /* Ensure body takes at least full viewport height */
             display: flex;
             flex-direction: column;
-            /* Classic Bhagavad Gita Background - REPLACE THIS URL if you want a different main background */
-            background-image: url('https://placehold.co/1200x800/e0d8c5/333?text=Bhagavad+Gita+Background'); /* Replace with your classic background image URL for the main content background */
+            /* Divine Background for Main Content - REPLACE THIS URL if you want a different main background */
+            background-image: url('/images/divine-background.jpeg'); /* Replace with your divine background image URL */
             background-size: cover;
             background-position: center;
             background-attachment: fixed; /* Keep background fixed while scrolling */
@@ -52,8 +52,8 @@
             width: 100%;
             height: 100%;
             background-color: #6b46c1; /* Purple fallback */
-             /* Custom Splash Screen Image - Using the specified image path */
-            background-image: url('/images/splash-image.jpeg'); /* Using the specified image path */
+             /* Classic Bhagavad Gita Image for Splash Screen (Krishna and Arjuna) - Using the specified image path relative to the PWA root */
+            background-image: url('/images/splash-image.jpeg'); /* Ensure this file exists in your /images folder */
             background-size: cover;
             background-position: center;
             color: white;
@@ -111,7 +111,7 @@
             line-height: 1.6;
         }
         .card {
-            background-color: #ffffff; /* White card background */
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white card background for readability over background image */
             border-radius: 1rem; /* More rounded corners */
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* More prominent shadow */
             padding: 2rem; /* Increased padding */
@@ -230,7 +230,9 @@
         <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">శ్రీమద్భగవద్గీత</h1>
 
         <div class="controls mb-8 p-6 bg-white rounded-lg shadow-md border border-gray-200">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700 text-center">ఒక శ్లోకం పొందండి</h2>
+            //
+            // <h2 class="text-xl font-semibold mb-4 text-gray-700 text-center">ఒక శ్లోకం పొందండి</h2>
+            //
             <div class="input-group">
                 <select id="chapterSelect" class="focus:ring-blue-500 focus:border-blue-500">
                     <option value="">అధ్యాయం ఎంచుకోండి</option>
@@ -273,6 +275,7 @@
         const messageArea = document.getElementById('messageArea');
 
         // Base URL for your Flask API
+        // Ensure this is HTTPS if your PWA is on HTTPS (like GitHub Pages)
         const API_BASE_URL = 'https://gita.adabala.com';
 
         // Simple local cache using localStorage
@@ -322,6 +325,7 @@
             // 2. If not in cache, fetch from API
             showMessage('శ్లోకం పొందుతోంది...'); // Getting verse...
             try {
+                console.log(`Attempting to fetch from API: ${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`); // Log the fetch URL
                 const response = await fetch(`${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
 
                 if (!response.ok) {
@@ -347,6 +351,7 @@
                 verseCache[cacheKey] = data;
                 localStorage.setItem('bhagavathGitaCache', JSON.stringify(verseCache));
                 console.log(`Fetched Chapter ${chapter}, Verse ${verse} from API and cached.`);
+                console.log('Fetched data:', data); // Log the fetched data
 
                 displayVerse(data);
 
