@@ -6,8 +6,8 @@
     <title>శ్రీమద్భగవద్గీత</title>
 
     <meta name="theme-color" content="#4f46e5"/>
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/Gita/icons/icon-192x192.png">
+    <link rel="manifest" href="/Gita/manifest.json">
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -26,8 +26,8 @@
             min-height: 100vh; /* Ensure body takes at least full viewport height */
             display: flex;
             flex-direction: column;
-            /* Divine Background for Main Content - REPLACE THIS URL if you want a different main background */
-            background-image: url('/images/divine-background.jpeg'); /* Replace with your divine background image URL */
+            /* Divine Background for Main Content - Updated path */
+            background-image: url('/Gita/images/divine-background.jpeg'); /* Replace with your divine background image URL */
             background-size: cover;
             background-position: center;
             background-attachment: fixed; /* Keep background fixed while scrolling */
@@ -52,8 +52,8 @@
             width: 100%;
             height: 100%;
             background-color: #6b46c1; /* Purple fallback */
-             /* Classic Bhagavad Gita Image for Splash Screen (Krishna and Arjuna) - Using the specified image path relative to the PWA root */
-            background-image: url('/images/splash-image.jpeg'); /* Ensure this file exists in your /images folder */
+             /* Classic Bhagavad Gita Image for Splash Screen (Krishna and Arjuna) - Updated path */
+            background-image: url('/Gita/images/splash-image.jpeg'); /* Ensure this file exists in your /images folder */
             background-size: cover;
             background-position: center;
             color: white;
@@ -217,6 +217,49 @@
             padding-top: 2rem; /* Add padding to prevent content from being hidden by a fixed header if one were added */
         }
 
+        /* Confetti/Flower Effect Styling */
+         .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allow interaction with elements below */
+            overflow: hidden; /* Prevent confetti from overflowing */
+            z-index: 99; /* Below splash screen */
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ff0; /* Default color (yellow) */
+            border-radius: 50%;
+            animation: fall linear infinite;
+            opacity: 0; /* Start hidden */
+        }
+
+        /* Define different colors for confetti */
+        .confetti:nth-child(3n+1) { background-color: #f00; } /* Red */
+        .confetti:nth-child(3n+2) { background-color: #0f0; } /* Green */
+        .confetti:nth-child(3n+3) { background-color: #00f; } /* Blue */
+        .confetti:nth-child(5n+1) { background-color: #ff00ff; } /* Magenta */
+        .confetti:nth-child(5n+2) { background-color: #00ffff; } /* Cyan */
+        .confetti:nth-child(5n+3) { background-color: #ffa500; } /* Orange */
+
+
+        /* Animation for falling confetti */
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -230,7 +273,6 @@
         <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">శ్రీమద్భగవద్గీత</h1>
 
         <div class="controls mb-8 p-6 bg-white rounded-lg shadow-md border border-gray-200">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700 text-center">ఒక శ్లోకం పొందండి</h2>
             <div class="input-group">
                 <select id="chapterSelect" class="focus:ring-blue-500 focus:border-blue-500">
                     <option value="">అధ్యాయం ఎంచుకోండి</option>
@@ -258,6 +300,9 @@
 
     </div>
 
+    <div class="confetti-container" id="confettiContainer"></div>
+
+
     <script>
         const splashScreen = document.getElementById('splashScreen');
         const mainContent = document.getElementById('mainContent');
@@ -271,6 +316,8 @@
         const fetchSpecificVerseBtn = document.getElementById('fetchSpecificVerseBtn');
         const fetchRandomVerseBtn = document.getElementById('fetchRandomVerseBtn');
         const messageArea = document.getElementById('messageArea');
+        const confettiContainer = document.getElementById('confettiContainer');
+
 
         // Base URL for your Flask API
         // Ensure this is HTTPS if your PWA is on HTTPS (like GitHub Pages)
@@ -298,6 +345,44 @@
             messageArea.classList.add('hidden');
         }
 
+        // Function to trigger confetti/flower effect
+        function triggerConfetti() {
+            const numConfetti = 50; // Number of confetti pieces
+            const colors = ['#ff0', '#f00', '#0f0', '#00f', '#ff00ff', '#00ffff', '#ffa500']; // Confetti colors
+            const emojis = ['🌸', '🌼', '🌺', '🌻', '🌹', '🌷']; // Flower emojis (optional)
+
+            for (let i = 0; i < numConfetti; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+
+                // Randomly choose between a colored circle or an emoji
+                if (Math.random() > 0.5 && emojis.length > 0) {
+                     confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                     confetti.style.backgroundColor = 'transparent'; // No background for emoji
+                     confetti.style.fontSize = `${Math.random() * 20 + 10}px`; // Random size for emoji
+                     confetti.style.width = 'auto'; // Adjust width for emoji
+                     confetti.style.height = 'auto'; // Adjust height for emoji
+                } else {
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                }
+
+
+                confetti.style.left = `${Math.random() * 100}vw`; // Random horizontal position
+                confetti.style.animationDuration = `${Math.random() * 2 + 3}s`; // Random duration
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`; // Random delay
+                 confetti.style.opacity = 1; // Make visible when animation starts
+
+
+                confettiContainer.appendChild(confetti);
+
+                // Remove confetti after animation finishes
+                confetti.addEventListener('animationend', () => {
+                    confetti.remove();
+                });
+            }
+        }
+
+
         // Function to display a verse
         function displayVerse(verseData) {
             hideMessage();
@@ -307,6 +392,9 @@
             teluguMeaning.textContent = verseData.polished_telugu_meaning || verseData.telugu_meaning; // Use polished if available
             teluguDescription.textContent = verseData.telugu_description || ''; // Display description if available
             verseDisplay.classList.remove('hidden');
+
+            // Trigger confetti effect after displaying the verse
+            triggerConfetti();
         }
 
         // Function to fetch a verse from API or cache
@@ -442,13 +530,40 @@
         // --- PWA Service Worker Registration ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
+                // Service Worker script path and scope for GitHub Pages subfolder
+                // Assuming your PWA is hosted at https://adabalap.github.io/Gita/
+                const swScriptPath = '/Gita/service-worker.js';
+                const swScope = '/Gita/'; // This should be the path relative to the origin
+
+                // Construct the full absolute URL for the Service Worker script
+                const fullSwScriptUrl = `${window.location.origin}${swScriptPath}`;
+
+                console.log(`Attempting to register Service Worker:`);
+                console.log(`  window.location.origin = ${window.location.origin}`);
+                console.log(`  swScriptPath = ${swScriptPath}`);
+                console.log(`  swScope (relative) = ${swScope}`);
+                console.log(`  Full Script URL = ${fullSwScriptUrl}`);
+
+
+                // Pass the full script URL and the relative scope path
+                // The scope option should be a URL path relative to the origin of the document.
+                navigator.serviceWorker.register(fullSwScriptUrl, { scope: swScope })
                     .then(registration => {
                         console.log('Service Worker registered:', registration);
                     })
                     .catch(error => {
                         console.error('Service Worker registration failed:', error);
-                        console.error(error);
+                        // Added more specific logging for common Service Worker issues
+                        if (error instanceof TypeError && error.message.includes('bad HTTP response code')) {
+                             console.error('Reason: Service Worker script not found (404) or other network issue during fetch.');
+                             console.error(`Ensure service-worker.js is located at the root of your PWA subfolder (${swScriptPath}) and is accessible.`);
+                        } else if (error instanceof DOMException && error.name === 'SecurityError') {
+                             console.error('Reason: SecurityError - Service Worker scope is not allowed for this origin.');
+                             console.error('Ensure your PWA is served over HTTPS and the scope is within the allowed path.');
+                        }
+                        else {
+                             console.error('Reason:', error.message || error); // Explicitly log error.message or the error object
+                        }
                     });
             });
         }
