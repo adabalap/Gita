@@ -13,13 +13,13 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mandali&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mandali&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
         body {
-            font-family: 'Mandali', sans-serif; /* Apply Telugu font */
+            font-family: 'Mandali', sans-serif; /* Apply Mandali for main text */
             background-color: #eef2ff; /* Lighter blue fallback background */
             color: #374151; /* Darker gray text */
             line-height: 1.6;
@@ -31,6 +31,11 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed; /* Keep background fixed while scrolling */
+        }
+
+        /* Apply Roboto to headings and UI elements */
+        h1, h2, h3, button, select, input, .font-roboto {
+            font-family: 'Roboto', sans-serif;
         }
 
         /* Overlay for background image to improve text readability */
@@ -90,7 +95,7 @@
 
         .verse-text {
             color: #059669; /* Green color for verse */
-            font-size: 1.6rem; /* Slightly larger verse font */
+            font-size: 1.4rem; /* Slightly smaller verse font */
             margin-bottom: 1rem;
             font-weight: bold;
             line-height: 1.8; /* Improved line spacing */
@@ -236,7 +241,6 @@
             height: 10px;
             background-color: #ff0; /* Default color (yellow) */
             border-radius: 50%;
-            /* Removed 'infinite' from animation */
             animation: fall linear;
             opacity: 0; /* Start hidden */
         }
@@ -262,6 +266,100 @@
             }
         }
 
+        /* Social Share Styling */
+        .share-container {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #d1d5db;
+            text-align: center;
+        }
+
+        .share-container p {
+            font-size: 1.1rem;
+            color: #4b5563;
+            margin-bottom: 1rem;
+        }
+
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem; /* Reduced gap between icons */
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+             /* Align icons to the top of the container */
+            align-items: flex-start;
+        }
+
+        .share-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center; /* Center icon within the button */
+            width: 40px; /* Fixed width for a small circle */
+            height: 40px; /* Fixed height for a small circle */
+            padding: 0; /* Remove padding */
+            border-radius: 50%; /* Make it round */
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+            font-size: 1.2rem; /* Icon size */
+            color: white; /* Icon color */
+        }
+
+        .share-button i {
+            margin-right: 0; /* Remove margin next to icon */
+        }
+
+        .share-button.whatsapp {
+            background-color: #25d366; /* WhatsApp Green */
+        }
+        .share-button.whatsapp:hover {
+            background-color: #128c7e;
+        }
+
+        .share-button.facebook {
+            background-color: #1877f2; /* Facebook Blue */
+        }
+        .share-button.facebook:hover {
+            background-color: #0b65c2;
+        }
+
+        .share-button.twitter {
+            background-color: #1da1f2; /* Twitter Blue */
+        }
+        .share-button.twitter:hover {
+            background-color: #0c85d0;
+        }
+
+        /* Instagram sharing is typically done via Web Share API or deep linking,
+           direct web share buttons are less common/reliable. We'll rely on Web Share API
+           or a generic copy-to-clipboard for Instagram. */
+        .share-button.generic {
+             background-color: #6b7280; /* Gray */
+        }
+         .share-button.generic:hover {
+             background-color: #4b5563;
+         }
+
+
+        /* Footer Styling */
+        footer {
+            margin-top: auto; /* Push footer to the bottom */
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6b7280; /* Gray text */
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+            border-top: 1px solid #d1d5db;
+        }
+
+        footer a {
+            color: #4f46e5; /* Indigo link color */
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
     </style>
 </head>
 <body>
@@ -271,31 +369,49 @@
         <p>తెలుగులో</p>
     </div>
 
-    <div class="main-content container mx-auto p-4" id="mainContent">
-        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">శ్రీమద్భగవద్గీత</h1>
+    <div class="main-content container mx-auto p-4 md:p-8" id="mainContent">
+        <h1 class="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-800 font-roboto">శ్రీమద్భగవద్గీత</h1>
 
         <div class="controls mb-8 p-6 bg-white rounded-lg shadow-md border border-gray-200">
             <div class="input-group">
-                <select id="chapterSelect" class="focus:ring-blue-500 focus:border-blue-500">
+                <select id="chapterSelect" class="focus:ring-blue-500 focus:border-blue-500 font-roboto">
                     <option value="">అధ్యాయం ఎంచుకోండి</option>
                 </select>
-                <select id="verseSelect" class="focus:ring-blue-500 focus:border-blue-500" disabled>
+                <select id="verseSelect" class="focus:ring-blue-500 focus:border-blue-500 font-roboto" disabled>
                     <option value="">శ్లోకం ఎంచుకోండి</option>
                 </select>
             </div>
-            <button class="btn btn-primary w-full mb-3" id="fetchSpecificVerseBtn">
+            <button class="btn btn-primary w-full mb-3 font-roboto" id="fetchSpecificVerseBtn">
                  <i class="ph ph-book-open"></i> నిర్దిష్ట శ్లోకం పొందండి
             </button>
-            <button class="btn btn-secondary w-full" id="fetchRandomVerseBtn">
+            <button class="btn btn-secondary w-full font-roboto" id="fetchRandomVerseBtn">
                  <i class="ph ph-shuffle"></i> యాదృచ్ఛిక శ్లోకం పొందండి
             </button>
         </div>
 
         <div id="verseDisplay" class="card hidden">
-            <div id="verseInfo" class="text-lg font-semibold mb-2"></div>
+            <div id="verseInfo" class="text-lg font-semibold mb-4 text-gray-600 text-center"></div>
             <div id="teluguVerse" class="verse-text"></div>
             <div id="teluguMeaning" class="meaning-text"></div>
             <div id="teluguDescription" class="description-text"></div>
+
+            <div class="share-container">
+                <p class="font-roboto">ఈ శ్లోకాన్ని పంచుకోండి:</p>
+                <div class="share-buttons">
+                    <button class="share-button whatsapp" data-platform="whatsapp" title="Share on WhatsApp">
+                        <i class="ph ph-whatsapp-logo"></i>
+                    </button>
+                    <button class="share-button facebook" data-platform="facebook" title="Share on Facebook">
+                         <i class="ph ph-facebook-logo"></i>
+                    </button>
+                     <button class="share-button twitter" data-platform="twitter" title="Share on Twitter">
+                         <i class="ph ph-twitter-logo"></i>
+                    </button>
+                     <button class="share-button generic" data-platform="generic" title="Share or Copy">
+                         <i class="ph ph-share-network"></i>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div id="messageArea" class="message hidden"></div>
@@ -304,6 +420,9 @@
 
     <div class="confetti-container" id="confettiContainer"></div>
 
+    <footer>
+        &copy; 2025 <a href="https://adabala.com" target="_blank">adabala.com</a>. All rights reserved.
+    </footer>
 
     <script>
         const splashScreen = document.getElementById('splashScreen');
@@ -319,6 +438,7 @@
         const fetchRandomVerseBtn = document.getElementById('fetchRandomVerseBtn');
         const messageArea = document.getElementById('messageArea');
         const confettiContainer = document.getElementById('confettiContainer');
+        const shareButtons = document.querySelectorAll('.share-button');
 
 
         // Base URL for your Flask API
@@ -394,7 +514,7 @@
         function displayVerse(verseData) {
             hideMessage();
 
-            // --- Data Cleaning and Formatting ---
+            // --- Data Cleaning and Formatting (Kept for now as backend cleanup is skipped) ---
 
             // 1. Clean up asterisks and parenthetical notes
             let cleanedVerse = (verseData.polished_telugu_verse || verseData.telugu_verse || '')
@@ -560,6 +680,111 @@
             // Use a combination of load event and a timeout as a fallback
             setTimeout(hideSplashScreen, 2000); // Hide after 2 seconds
         });
+
+
+        // --- Social Share Logic ---
+        shareButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const platform = button.dataset.platform;
+                // Get the text content from the displayed elements
+                const verseText = teluguVerse.textContent;
+                const meaningText = teluguMeaning.textContent;
+                const verseInfoText = verseInfo.textContent;
+                // Construct the share text including verse info, verse, meaning, copyright, and URL
+                const shareText = `${verseInfoText}\n\n${verseText}\n\nఅర్థం: ${meaningText}\n\nశ్రీమద్భగవద్గీత తెలుగులో - adabala.com\nhttps://adabalap.github.io/Gita/`; // Construct share text
+
+                if (navigator.share) {
+                    // Use Web Share API if available (for generic sharing)
+                    if (platform === 'generic') {
+                        navigator.share({
+                            title: 'శ్రీమద్భగవద్గీత శ్లోకం', // Title for the share dialog
+                            text: shareText, // The text content to share
+                            url: 'https://adabalap.github.io/Gita/' // The URL to share
+                        }).then(() => {
+                            console.log('Successfully shared via Web Share API');
+                        }).catch((error) => {
+                            console.error('Error sharing via Web Share API:', error);
+                            // Fallback for generic share if Web Share API fails
+                            copyToClipboard(shareText);
+                            showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'info'); // Verse copied! You can now share it anywhere.
+                        });
+                    } else {
+                         // For specific platforms, try Web Share API first, then fallback
+                         navigator.share({
+                            title: 'శ్రీమద్భగవద్గీత శ్లోకం',
+                            text: shareText,
+                            url: 'https://adabalap.github.io/Gita/'
+                         }).then(() => {
+                             console.log(`Successfully shared to ${platform} via Web Share API`);
+                         }).catch((error) => {
+                             console.error(`Error sharing to ${platform} via Web Share API:`, error);
+                              // Fallback for specific platforms if Web Share API fails
+                              handleSpecificPlatformShare(platform, shareText);
+                         });
+                    }
+                } else {
+                    // Fallback for browsers that don't support Web Share API
+                    handleSpecificPlatformShare(platform, shareText);
+                }
+            });
+        });
+
+        // Fallback function for specific platform sharing (opens new tab)
+        function handleSpecificPlatformShare(platform, text) {
+             const url = encodeURIComponent(text);
+             let shareUrl = '';
+
+             switch (platform) {
+                 case 'whatsapp':
+                     // WhatsApp Web Share URL
+                     shareUrl = `https://wa.me/?text=${url}`;
+                     // Alternative: whatsapp://send?text=${url} (might work better on some mobile devices)
+                     break;
+                 case 'facebook':
+                     // Facebook sharing is complex, often requires their SDK or a share dialog.
+                     // A simple text share link is not officially supported or reliable.
+                     // We'll use a generic web intent that might open their share dialog.
+                     shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://adabalap.github.io/Gita/')}&quote=${url}`;
+                     break;
+                 case 'twitter':
+                     // Twitter Web Intent URL
+                     shareUrl = `https://twitter.com/intent/tweet?text=${url}`;
+                     break;
+                 case 'generic':
+                     // Fallback for generic share - copy to clipboard
+                     copyToClipboard(text);
+                     showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'info'); // Verse copied! You can now share it anywhere.
+                     return; // Don't open a new window for copy
+             }
+
+             if (shareUrl) {
+                 window.open(shareUrl, '_blank');
+             } else if (platform !== 'generic') {
+                 // If a specific platform link wasn't generated, suggest copying
+                 copyToClipboard(text);
+                 showMessage('ఈ ప్లాట్‌ఫారమ్‌కు నేరుగా భాగస్వామ్యం చేయడం సాధ్యం కాలేదు. శ్లోకం కాపీ చేయబడింది!', 'info'); // Direct sharing to this platform failed. Verse copied!
+             }
+        }
+
+        // Function to copy text to clipboard
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            // Styling to make the textarea invisible but selectable
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '0';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.error('Unable to copy to clipboard', err);
+            }
+            document.body.removeChild(textarea);
+        }
+
 
         // --- PWA Service Worker Registration ---
         if ('serviceWorker' in navigator) {
