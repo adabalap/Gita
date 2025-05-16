@@ -235,7 +235,8 @@
             height: 10px;
             background-color: #ff0; /* Default color (yellow) */
             border-radius: 50%;
-            animation: fall linear infinite;
+            /* Removed 'infinite' from animation */
+            animation: fall linear;
             opacity: 0; /* Start hidden */
         }
 
@@ -350,6 +351,10 @@
             const numConfetti = 50; // Number of confetti pieces
             const colors = ['#ff0', '#f00', '#0f0', '#00f', '#ff00ff', '#00ffff', '#ffa500']; // Confetti colors
             const emojis = ['🌸', '🌼', '🌺', '🌻', '🌹', '🌷']; // Flower emojis (optional)
+            const animationDuration = '3s'; // Duration for one fall animation
+
+            // Clear any existing confetti
+            confettiContainer.innerHTML = '';
 
             for (let i = 0; i < numConfetti; i++) {
                 const confetti = document.createElement('div');
@@ -368,9 +373,10 @@
 
 
                 confetti.style.left = `${Math.random() * 100}vw`; // Random horizontal position
-                confetti.style.animationDuration = `${Math.random() * 2 + 3}s`; // Random duration
-                confetti.style.animationDelay = `${Math.random() * 0.5}s`; // Random delay
-                 confetti.style.opacity = 1; // Make visible when animation starts
+                // Set animation duration and delay
+                confetti.style.animationDuration = animationDuration;
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`; // Random delay for staggered effect
+                confetti.style.opacity = 1; // Make visible when animation starts
 
 
                 confettiContainer.appendChild(confetti);
