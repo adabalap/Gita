@@ -94,6 +94,7 @@
             margin-bottom: 1rem;
             font-weight: bold;
             line-height: 1.8; /* Improved line spacing */
+            white-space: pre-wrap; /* Preserve whitespace and allow wrapping */
         }
         .meaning-text {
             color: #d97706; /* Orange color for meaning */
@@ -349,7 +350,7 @@
         // Function to trigger confetti/flower effect
         function triggerConfetti() {
             const numConfetti = 50; // Number of confetti pieces
-            const colors = ['#ff0', '#f00', '#0f0', '#00f', '#ff00ff', '#00ffff', '#ffa500']; // Confetti colors
+            const colors = ['#ff0', '#f00', '#0f0', '#0f0', '#ff00ff', '#00ffff', '#ffa500']; // Confetti colors (added more green)
             const emojis = ['🌸', '🌼', '🌺', '🌻', '🌹', '🌷']; // Flower emojis (optional)
             const animationDuration = '3s'; // Duration for one fall animation
 
@@ -361,7 +362,7 @@
                 confetti.classList.add('confetti');
 
                 // Randomly choose between a colored circle or an emoji
-                if (Math.random() > 0.5 && emojis.length > 0) {
+                if (Math.random() > 0.4 && emojis.length > 0) { // Slightly increased chance of emoji
                      confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
                      confetti.style.backgroundColor = 'transparent'; // No background for emoji
                      confetti.style.fontSize = `${Math.random() * 20 + 10}px`; // Random size for emoji
@@ -392,11 +393,38 @@
         // Function to display a verse
         function displayVerse(verseData) {
             hideMessage();
+
+            // --- Data Cleaning and Formatting ---
+
+            // 1. Clean up asterisks and parenthetical notes
+            let cleanedVerse = (verseData.polished_telugu_verse || verseData.telugu_verse || '')
+                                .replace(/\*\*/g, '') // Remove double asterisks
+                                .replace(/\s*\([^)]*\)\s*/g, ''); // Remove text within parentheses and surrounding whitespace
+
+            let cleanedMeaning = (verseData.polished_telugu_meaning || verseData.telugu_meaning || '')
+                                 .replace(/\*\*/g, '') // Remove double asterisks
+                                 .replace(/\s*\([^)]*\)\s*/g, ''); // Remove text within parentheses and surrounding whitespace
+
+            let cleanedDescription = (verseData.telugu_description || '')
+                                     .replace(/\*\*/g, '') // Remove double asterisks
+                                     .replace(/\s*\([^)]*\)\s*/g, ''); // Remove text within parentheses and surrounding whitespace
+
+
+            // 2. Format the Sanskrit verse with line breaks
+            // Replace '|' with '| <br>' and add a <br> at the end if needed
+            let formattedVerse = cleanedVerse.split('|').join('| <br>');
+            if (!formattedVerse.endsWith('<br>')) {
+                 formattedVerse += '<br>';
+            }
+
+
+            // --- Displaying the cleaned and formatted data ---
+
             // Improved display of chapter and verse numbers
             verseInfo.innerHTML = `<span class="text-gray-600">భగవద్గీత</span> <span class="font-bold text-gray-800">[${verseData.chapter}]</span>, <span class="font-bold text-gray-800">[${verseData.verse}]</span>`;
-            teluguVerse.textContent = verseData.polished_telugu_verse || verseData.telugu_verse; // Use polished if available
-            teluguMeaning.textContent = verseData.polished_telugu_meaning || verseData.telugu_meaning; // Use polished if available
-            teluguDescription.textContent = verseData.telugu_description || ''; // Display description if available
+            teluguVerse.innerHTML = formattedVerse; // Use innerHTML for line breaks
+            teluguMeaning.textContent = cleanedMeaning;
+            teluguDescription.textContent = cleanedDescription;
             verseDisplay.classList.remove('hidden');
 
             // Trigger confetti effect after displaying the verse
