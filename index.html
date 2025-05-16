@@ -690,8 +690,8 @@
                 const verseText = teluguVerse.textContent;
                 const meaningText = teluguMeaning.textContent;
                 const verseInfoText = verseInfo.textContent;
-                // Construct the share text including verse info, verse, meaning, copyright, and URL
-                const shareText = `${verseInfoText}\n\n${verseText}\n\nఅర్థం: ${meaningText}\n\nశ్రీమద్భగవద్గీత తెలుగులో - adabala.com\nhttps://adabalap.github.io/Gita/`; // Construct share text
+                // Construct the share text including verse info, verse, meaning, and a concise source/link
+                const shareText = `${verseInfoText}\n\n${verseText}\n\nఅర్థం: ${meaningText}\n\nSource: adabala.com - https://adabalap.github.io/Gita/`; // Concise share text
 
                 if (navigator.share) {
                     // Use Web Share API if available (for generic sharing)
@@ -710,6 +710,7 @@
                         });
                     } else {
                          // For specific platforms, try Web Share API first, then fallback
+                         // Web Share API is the preferred method as it leverages native sharing.
                          navigator.share({
                             title: 'శ్రీమద్భగవద్గీత శ్లోకం',
                             text: shareText,
@@ -718,8 +719,8 @@
                              console.log(`Successfully shared to ${platform} via Web Share API`);
                          }).catch((error) => {
                              console.error(`Error sharing to ${platform} via Web Share API:`, error);
-                              // Fallback for specific platforms if Web Share API fails
-                              handleSpecificPlatformShare(platform, shareText);
+                             // Fallback to specific platform web intents if Web Share API fails
+                             handleSpecificPlatformShare(platform, shareText);
                          });
                     }
                 } else {
@@ -730,6 +731,8 @@
         });
 
         // Fallback function for specific platform sharing (opens new tab)
+        // Note: Web Share API is generally more reliable for opening native apps
+        // compared to these web intents, which might open the web version or fail.
         function handleSpecificPlatformShare(platform, text) {
              const url = encodeURIComponent(text);
              let shareUrl = '';
@@ -738,12 +741,12 @@
                  case 'whatsapp':
                      // WhatsApp Web Share URL
                      shareUrl = `https://wa.me/?text=${url}`;
-                     // Alternative: whatsapp://send?text=${url} (might work better on some mobile devices)
+                     // Alternative: whatsapp://send?text=${url} (might work better on some mobile devices, but less universally supported)
                      break;
                  case 'facebook':
                      // Facebook sharing is complex, often requires their SDK or a share dialog.
-                     // A simple text share link is not officially supported or reliable.
-                     // We'll use a generic web intent that might open their share dialog.
+                     // A simple text share link is not officially supported or reliable for native app.
+                     // This will likely open their web share dialog.
                      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://adabalap.github.io/Gita/')}&quote=${url}`;
                      break;
                  case 'twitter':
