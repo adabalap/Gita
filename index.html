@@ -95,34 +95,48 @@
             opacity: 1; /* Becomes visible */
         }
 
-        /* Styling for Sanskrit Verse */
+        /* Styling for Sanskrit Verse Text */
         .sanskrit-verse-text {
             color: #059669; /* Green color for Sanskrit verse */
             font-size: 1.3rem; /* Adjusted: Smaller font */
-            margin-bottom: 1rem; /* Increased margin below Sanskrit verse */
             font-weight: bold;
             line-height: 1.8; /* Improved line spacing */
             white-space: pre-wrap; /* Preserve whitespace and allow wrapping */
             text-align: center; /* Center Sanskrit verse */
-            /* Removed flex as audio button is now separate */
-            /* display: flex; */
-            /* align-items: center; */
-            /* justify-content: center; */
-            /* gap: 0.5rem; */
+            padding: 0 0.5rem; /* Add horizontal padding inside tile */
         }
 
-         /* Styling for the Sanskrit audio button specifically */
-        /* Removed as single audio button is used */
-        /* .sanskrit-verse-text .audio-button {
-             color: #059669;
-        } */
+         /* Styling for the Sanskrit Verse Tile */
+         #sanskritVerseTile {
+            /* Vibrant and Divine Styling */
+            background: linear-gradient(to bottom right, #fffbeb, #fef3c7); /* Light gold/yellow gradient */
+            border: 1px solid #fcd34d; /* Gold border */
+            border-radius: 0.75rem; /* Rounded corners */
+            margin-top: 1rem; /* Space above the tile */
+            margin-bottom: 1rem; /* Space below the tile */
+            padding: 1.5rem; /* Increased padding for a more substantial feel */
+            text-align: center; /* Center the tile content */
+            display: flex; /* Use flexbox to arrange items vertically */
+            flex-direction: column;
+            align-items: center; /* Center items horizontally within the tile */
+            box-shadow: 0 6px 12px rgba(252, 211, 77, 0.3); /* Subtle gold shadow */
+         }
+
+         /* Styling for the Chapter/Verse info inside the Sanskrit Tile */
+         .sanskrit-tile-info {
+            font-size: 1rem; /* Slightly larger font */
+            color: #92400e; /* Darker orange/brown color */
+            margin-bottom: 0.8rem; /* Increased space below info */
+            text-align: center; /* Center the info */
+            font-family: 'Roboto', sans-serif; /* Use Roboto for info */
+            font-weight: bold; /* Make info bold */
+         }
 
 
         /* Styling for Polished Telugu Verse (Shlokam) */
         .polished-telugu-verse-text {
             color: #4f46e5; /* Indigo color - blending with primary button color */
             font-size: 1.4rem; /* Slightly larger */
-            margin-bottom: 1rem;
             line-height: 1.7;
             font-style: normal; /* Ensure not italic */
             font-weight: bold; /* Make it bold */
@@ -132,7 +146,6 @@
         .telugu-bhavartham-text {
             color: #d97706; /* Orange color for meaning */
             font-size: 1.3rem; /* Slightly larger meaning font */
-            margin-bottom: 1rem;
             line-height: 1.7;
         }
 
@@ -141,9 +154,6 @@
             color: #1d4ed8; /* Blue color for description */
             font-size: 1.1rem; /* Slightly larger description font */
             font-style: italic;
-            margin-top: 1.5rem; /* Increased margin */
-            padding-top: 1.5rem;
-            border-top: 1px solid #d1d5db; /* Slightly darker border */
             line-height: 1.6;
         }
 
@@ -171,7 +181,6 @@
             font-size: 1.1rem;
             font-weight: bold;
             /* color: #4b5563; Removed default gray color */
-            margin-top: 1rem; /* Add space above labels */
             margin-bottom: 0.5rem;
             display: flex; /* Use flexbox for icon and text */
             align-items: center; /* Align items vertically */
@@ -208,10 +217,26 @@
              color: #4338ca; /* Darker indigo on hover */
          }
 
-         /* Removed specific colors for audio buttons next to labels */
-         /* .verse-label.shlokam .audio-button { color: #4f46e5; } */
-         /* .verse-label.bhavartham .audio-button { color: #d97706; } */
-         /* .verse-label.sandesham .audio-button { color: #1d4ed8; } */
+         /* Styling for the new content cards/tiles */
+         .content-card {
+             background-color: #ffffff; /* White background for cards */
+             border-radius: 0.75rem; /* Slightly less rounded than main card */
+             padding: 1.5rem; /* Padding inside cards */
+             margin-top: 0.8rem; /* Space above each card - Reduced slightly */
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for cards */
+             border: 1px solid #e5e7eb; /* Subtle border */
+         }
+
+         /* Specific styles for different content cards */
+         .content-card.shlokam {
+             border-left: 5px solid #4f46e5; /* Indigo border on the left */
+         }
+         .content-card.bhavartham {
+             border-left: 5px solid #d97706; /* Orange border on the left */
+         }
+          .content-card.sandesham {
+             border-left: 5px solid #1d4ed8; /* Blue border on the left */
+         }
 
 
         .card {
@@ -444,6 +469,72 @@
             text-decoration: underline;
         }
 
+        /* --- Landscape Optimization for small screens --- */
+        @media (orientation: landscape) and (max-width: 768px) {
+            #mainVerseHeading {
+                margin-bottom: 0.8rem; /* Reduced margin */
+                font-size: 1.3rem; /* Slightly smaller font */
+                gap: 0.5rem; /* Reduced gap */
+            }
+            #sanskritVerseTile { /* Targeting the new Sanskrit tile */
+                 margin-top: 0.8rem; /* Reduced margin */
+                 margin-bottom: 0.8rem; /* Reduced margin */
+                 padding: 0.8rem; /* Reduced padding */
+            }
+             .sanskrit-verse-text {
+                 font-size: 1.2rem; /* Slightly smaller font for text inside tile */
+             }
+             .sanskrit-tile-info {
+                 font-size: 0.7rem; /* Even smaller in landscape */
+                 margin-bottom: 0.2rem; /* Reduced margin */
+             }
+            .verse-label {
+                margin-top: 0.6rem; /* Reduced margin */
+                margin-bottom: 0.3rem; /* Reduced margin */
+                 font-size: 1rem; /* Slightly smaller label font */
+            }
+            .content-card {
+                margin-top: 0.6rem; /* Reduced margin */
+                padding: 1rem; /* Reduced padding */
+                 border-left-width: 3px; /* Slightly thinner border */
+            }
+             .polished-telugu-verse-text {
+                 font-size: 1.3rem; /* Adjusted font size */
+             }
+             .telugu-bhavartham-text {
+                 font-size: 1.2rem; /* Adjusted font size */
+             }
+             .sandesham-text {
+                 font-size: 1rem; /* Adjusted font size */
+             }
+             .audio-button {
+                 margin: 0.6rem auto; /* Reduced vertical margin */
+                 font-size: 1.6rem; /* Slightly smaller audio icon */
+             }
+             /* Adjust padding of the main card if needed */
+             .card {
+                 padding: 1.5rem; /* Reduced main card padding */
+             }
+             .share-container {
+                 margin-top: 1.5rem; /* Reduced margin */
+                 padding-top: 1rem; /* Reduced padding */
+             }
+              .share-container p {
+                 font-size: 1rem; /* Slightly smaller share text */
+             }
+             .share-buttons {
+                 gap: 0.5rem; /* Reduced gap */
+             }
+              .share-button {
+                 width: 35px; /* Smaller button size */
+                 height: 35px; /* Smaller button size */
+                 font-size: 1.1rem; /* Smaller share icon size */
+             }
+
+
+        }
+
+
     </style>
 </head>
 <body>
@@ -589,7 +680,7 @@
         }
 
 
-        // Function to display a verse in the new format
+        // Function to display a verse in the new format (using cards)
         function displayVerse(verseData) {
             hideMessage(); // Hide main message area
 
@@ -610,32 +701,45 @@
                 </div>
             `;
 
-            // Only add Sanskrit verse if it exists and is not the fallback message
-            if (sanskritVerse && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
+            // Only add Sanskrit verse tile if it exists and is not the fallback message or empty
+            if (sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
                  contentHTML += `
-                    <div id="sanskritVerse" class="sanskrit-verse-text">
-                        ${sanskritVerse}
+                    <div id="sanskritVerseTile">
+                         <div class="sanskrit-tile-info">
+                            అధ్యాయం [${verseData.chapter}], శ్లోకం [${verseData.verse}]:
+                         </div>
+                         <div id="sanskritVerse" class="sanskrit-verse-text">
+                            ${sanskritVerse.trim()} </div>
                     </div>
                  `;
             }
 
-
+            // Add Shlokam Card
             contentHTML += `
                 <div class="verse-label shlokam"><i class="ph ph-book-open"></i> శ్లోకం:</div>
-                 <div id="teluguVerse" class="polished-telugu-verse-text">
+                <div id="teluguVerse" class="content-card shlokam polished-telugu-verse-text">
                     ${polishedTeluguVerse}
                 </div>
+            `;
 
+            // Add Bhavartham Card
+            contentHTML += `
                 <div class="verse-label bhavartham"><i class="ph ph-lightbulb"></i> భావార్థం:</div>
-                <div id="teluguBhavartham" class="telugu-bhavartham-text">
+                <div id="teluguBhavartham" class="content-card bhavartham telugu-bhavartham-text">
                     ${polishedTeluguMeaning}
                 </div>
+            `;
 
+            // Add Sandesham Card
+            contentHTML += `
                 <div class="verse-label sandesham"><i class="ph ph-chat-centered-text"></i> సందేశం:</div>
-                <div id="sandesham" class="sandesham-text">
+                <div id="sandesham" class="content-card sandesham sandesham-text">
                     ${teluguDescription}
                 </div>
+            `;
 
+
+            contentHTML += `
                 <button class="audio-button" id="playAllAudio" title="అన్నీ వినండి">
                     <i class="ph ph-speaker-high"></i>
                 </button>
@@ -669,27 +773,41 @@
                 playAllAudioButton.addEventListener('click', () => {
                     // Concatenate all available text sections
                     let fullText = '';
-                    const sanskritText = verseDisplay.querySelector('#sanskritVerse')?.textContent.trim();
-                    const teluguVerseText = verseDisplay.querySelector('#teluguVerse')?.textContent.trim();
-                    const teluguBhavarthamText = verseDisplay.querySelector('#teluguBhavartham')?.textContent.trim();
-                    const sandeshamText = verseDisplay.querySelector('#sandesham')?.textContent.trim();
+                    const sanskritTextElement = verseDisplay.querySelector('#sanskritVerse'); // Get text from the div inside the tile
+                    const teluguVerseTextElement = verseDisplay.querySelector('#teluguVerse'); // Get text from shlokam card
+                    const teluguBhavarthamTextElement = verseDisplay.querySelector('#teluguBhavartham'); // Get text from bhavartham card
+                    const sandeshamTextElement = verseDisplay.querySelector('#sandesham'); // Get text from sandesham card
 
-                    // Add sections if they exist, with pauses between them
-                    if (sanskritText && sanskritText !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
-                        fullText += `${sanskritText}. `; // Add a pause after Sanskrit
-                    }
-                    if (teluguVerseText && teluguVerseText !== 'తెలుగు శ్లోకం అందుబాటులో లేదు.') {
-                         fullText += `శ్లోకం. ${teluguVerseText}. `; // Add label and pause
-                    }
-                    if (teluguBhavarthamText && teluguBhavarthamText !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') {
-                         fullText += `భావార్థం. ${teluguBhavarthamText}. `; // Add label and pause
-                    }
-                     if (sandeshamText && sandeshamText !== 'సందేశం అందుబాటులో లేదు.') {
+                    // Get text content, handling potential null elements and trimming
+                    const sanskritText = sanskritTextElement ? sanskritTextElement.textContent.trim() : '';
+                    const teluguVerseText = teluguVerseTextElement ? teluguVerseTextElement.textContent.trim() : '';
+                    const teluguBhavarthamText = teluguBhavarthamTextElement ? teluguBhavarthamTextElement.textContent.trim() : '';
+                    const sandeshamText = sandeshamTextElement ? sandeshamTextElement.textContent.trim() : '';
+
+
+                    // Add sections if they exist and are not the fallback messages, with labels and pauses
+                    // Add a pause after Sanskrit for better separation
+                     if (sanskritText && sanskritText !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
+                         // Include the info line in the spoken text for context
+                         const sanskritInfoElement = verseDisplay.querySelector('.sanskrit-tile-info');
+                         const sanskritInfoText = sanskritInfoElement ? sanskritInfoElement.textContent.trim() : '';
+                         fullText += `${sanskritInfoText} ${sanskritText}. `;
+                     }
+                     if (teluguVerseText && teluguVerseText !== 'తెలుగు శ్లోకం అందుబాటులో లేదు.') {
+                          fullText += `శ్లోకం. ${teluguVerseText}. `; // Add label and pause
+                     }
+                     if (teluguBhavarthamText && teluguBhavarthamText !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') {
+                          fullText += `భావార్థం. ${teluguBhavarthamText}. `; // Add label and pause
+                     }
+                      if (sandeshamText && sandeshamText !== 'సందేశం అందుబాటులో లేదు.') {
                          fullText += `సందేశం. ${sandeshamText}. `; // Add label and pause
                     }
 
+                     console.log("Text to speak:", fullText); // Log the text being sent to TTS
+
 
                     // Speak the concatenated text (defaulting to Telugu language)
+                    // Note: Speaking Sanskrit might require a different language code or voice
                     speakText(fullText.trim(), 'te-IN');
                 });
             }
@@ -840,30 +958,29 @@
                  const platform = button.dataset.platform;
 
                  // Get content from the displayed elements
-                 const mainVerseHeadingElement = document.getElementById('mainVerseHeading'); // Get the new heading
-                 const sanskritVerseElement = document.getElementById('sanskritVerse');
-                 const teluguVerseElement = document.getElementById('teluguVerse');
-                 const teluguBhavarthamElement = document.getElementById('teluguBhavartham');
-                 const sandeshamElement = document.getElementById('sandesham');
+                 const mainVerseHeadingElement = document.getElementById('mainVerseHeading'); // Get the main heading
+                 const sanskritInfoElement = verseDisplay.querySelector('.sanskrit-tile-info'); // Get info from Sanskrit tile
+                 const sanskritVerseElement = document.getElementById('sanskritVerse'); // Get text from Sanskrit verse div inside tile
+                 const teluguVerseElement = verseDisplay.querySelector('#teluguVerse'); // Get text from shlokam card
+                 const teluguBhavarthamTextElement = verseDisplay.querySelector('#teluguBhavartham'); // Get text from bhavartham card
+                 const sandeshamTextElement = verseDisplay.querySelector('#sandesham'); // Get text from sandesham card
 
-                 // Ensure elements exist before getting textContent
-                 // For the main heading, get text content excluding the icon
-                 // A more robust way to get text without icons might be needed for complex cases
-                 const mainVerseHeadingText = mainVerseHeadingElement ? mainVerseHeadingElement.textContent.replace('భగవద్గీత', 'భగవద్గీత').trim() : '';
-
-
-                 const sanskritVerseText = sanskritVerseElement ? sanskritVerseElement.textContent.replace('సంస్కృతంలో:', '').trim() : ''; // Remove label from text
-                 const teluguVerseText = teluguVerseElement ? teluguVerseElement.textContent.trim() : '';
-                 const teluguBhavarthamText = teluguBhavarthamElement ? teluguBhavarthamElement.textContent.trim() : '';
-                 const sandeshamText = sandeshamElement ? sandeshamElement.textContent.trim() : '';
+                 // Ensure elements exist before getting textContent and trimming
+                 const mainVerseHeadingText = mainVerseHeadingElement ? mainVerseHeadingElement.textContent.trim() : '';
+                 const sanskritInfoText = sanskritInfoElement ? sanskritInfoElement.textContent.trim() : '';
+                 const sanskritVerseText = sanskritVerseElement ? sanskritVerseElement.textContent.trim() : '';
+                 const teluguVerseText = teluguVerseTextElement ? teluguVerseTextElement.textContent.trim() : '';
+                 const teluguBhavarthamText = teluguBhavarthamTextElement ? teluguBhavarthamTextElement.textContent.trim() : '';
+                 const sandeshamText = sandeshamTextElement ? sandeshamTextElement.textContent.trim() : '';
 
 
                  // Construct the share text based on the new format
                  let shareText = `${mainVerseHeadingText}\n\n`; // Start with the main heading
-                 // Only include Sanskrit if it exists and is not the fallback message
+                 // Only include Sanskrit info and verse if they exist and are not the fallback message or empty
                  if (sanskritVerseText && sanskritVerseText !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
-                     shareText += `సంస్కృతంలో:\n${sanskritVerseText}\n\n`; // Added label for Sanskrit
+                      shareText += `${sanskritInfoText}\n${sanskritVerseText}\n\n`; // Include both info and verse
                  }
+
                   if (teluguVerseText && teluguVerseText !== 'తెలుగు శ్లోకం అందుబాటులో లేదు.') {
                      shareText += `శ్లోకం:\n${teluguVerseText}\n\n`; // Used new label
                  }
