@@ -104,17 +104,18 @@
             line-height: 1.8; /* Improved line spacing */
             white-space: pre-wrap; /* Preserve whitespace and allow wrapping */
             text-align: center; /* Center Sanskrit verse */
-            /* Added flex for audio button */
-            display: flex;
-            align-items: center;
-            justify-content: center; /* Center content */
-            gap: 0.5rem; /* Space between text and button */
+            /* Removed flex as audio button is now separate */
+            /* display: flex; */
+            /* align-items: center; */
+            /* justify-content: center; */
+            /* gap: 0.5rem; */
         }
 
          /* Styling for the Sanskrit audio button specifically */
-        .sanskrit-verse-text .audio-button {
-             color: #059669; /* Green color to match Sanskrit text */
-        }
+        /* Removed as single audio button is used */
+        /* .sanskrit-verse-text .audio-button {
+             color: #059669;
+        } */
 
 
         /* Styling for Polished Telugu Verse (Shlokam) */
@@ -193,29 +194,24 @@
              background: none;
              border: none;
              cursor: pointer;
-             font-size: 1.4rem; /* Icon size */
-             padding: 0.2rem; /* Small padding */
-             color: #4b5563; /* Default gray color */
+             font-size: 1.8rem; /* Larger icon size for the single button */
+             padding: 0.5rem; /* Increased padding */
+             color: #4f46e5; /* Indigo color for the main audio button */
              transition: color 0.2s ease-in-out;
              display: flex; /* Use flexbox for centering icon */
              align-items: center;
              justify-content: center;
+             margin: 1rem auto; /* Center the single button below the content */
          }
 
          .audio-button:hover {
-             color: #1f2937; /* Darker gray on hover */
+             color: #4338ca; /* Darker indigo on hover */
          }
 
-         /* Specific colors for audio buttons next to labels */
-         .verse-label.shlokam .audio-button {
-             color: #4f46e5; /* Indigo for Shlokam audio button */
-         }
-          .verse-label.bhavartham .audio-button {
-             color: #d97706; /* Orange for Bhavartham audio button */
-          }
-          .verse-label.sandesham .audio-button {
-             color: #1d4ed8; /* Blue for Sandesham audio button */
-          }
+         /* Removed specific colors for audio buttons next to labels */
+         /* .verse-label.shlokam .audio-button { color: #4f46e5; } */
+         /* .verse-label.bhavartham .audio-button { color: #d97706; } */
+         /* .verse-label.sandesham .audio-button { color: #1d4ed8; } */
 
 
         .card {
@@ -619,29 +615,31 @@
                  contentHTML += `
                     <div id="sanskritVerse" class="sanskrit-verse-text">
                         ${sanskritVerse}
-                        <button class="audio-button" data-text="${sanskritVerse}" data-lang="en-US" title="సంస్కృతం వినండి">
-                            <i class="ph ph-speaker-high"></i>
-                        </button>
                     </div>
                  `;
             }
 
 
             contentHTML += `
-                <div class="verse-label shlokam"><i class="ph ph-book-open"></i> శ్లోకం: <button class="audio-button" data-text="${polishedTeluguVerse}" data-lang="te-IN" title="శ్లోకం వినండి"><i class="ph ph-speaker-high"></i></button></div>
+                <div class="verse-label shlokam"><i class="ph ph-book-open"></i> శ్లోకం:</div>
                  <div id="teluguVerse" class="polished-telugu-verse-text">
                     ${polishedTeluguVerse}
                 </div>
 
-                <div class="verse-label bhavartham"><i class="ph ph-lightbulb"></i> భావార్థం: <button class="audio-button" data-text="${polishedTeluguMeaning}" data-lang="te-IN" title="భావార్థం వినండి"><i class="ph ph-speaker-high"></i></button></div>
+                <div class="verse-label bhavartham"><i class="ph ph-lightbulb"></i> భావార్థం:</div>
                 <div id="teluguBhavartham" class="telugu-bhavartham-text">
                     ${polishedTeluguMeaning}
                 </div>
 
-                <div class="verse-label sandesham"><i class="ph ph-chat-centered-text"></i> సందేశం: <button class="audio-button" data-text="${teluguDescription}" data-lang="te-IN" title="సందేశం వినండి"><i class="ph ph-speaker-high"></i></button></div>
+                <div class="verse-label sandesham"><i class="ph ph-chat-centered-text"></i> సందేశం:</div>
                 <div id="sandesham" class="sandesham-text">
                     ${teluguDescription}
                 </div>
+
+                <button class="audio-button" id="playAllAudio" title="అన్నీ వినండి">
+                    <i class="ph ph-speaker-high"></i>
+                </button>
+
 
                 <div class="share-container">
                     <p class="font-roboto">ఈ శ్లోకాన్ని పంచుకోండి:</p>
@@ -665,14 +663,36 @@
             verseDisplay.innerHTML = contentHTML;
             verseDisplay.classList.remove('hidden');
 
-            // Add event listeners to the new audio buttons
-            verseDisplay.querySelectorAll('.audio-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    const textToSpeak = button.dataset.text;
-                    const lang = button.dataset.lang || 'te-IN'; // Default to Telugu
-                    speakText(textToSpeak, lang);
+            // Add event listener to the single play all audio button
+            const playAllAudioButton = verseDisplay.querySelector('#playAllAudio');
+            if (playAllAudioButton) {
+                playAllAudioButton.addEventListener('click', () => {
+                    // Concatenate all available text sections
+                    let fullText = '';
+                    const sanskritText = verseDisplay.querySelector('#sanskritVerse')?.textContent.trim();
+                    const teluguVerseText = verseDisplay.querySelector('#teluguVerse')?.textContent.trim();
+                    const teluguBhavarthamText = verseDisplay.querySelector('#teluguBhavartham')?.textContent.trim();
+                    const sandeshamText = verseDisplay.querySelector('#sandesham')?.textContent.trim();
+
+                    // Add sections if they exist, with pauses between them
+                    if (sanskritText && sanskritText !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
+                        fullText += `${sanskritText}. `; // Add a pause after Sanskrit
+                    }
+                    if (teluguVerseText && teluguVerseText !== 'తెలుగు శ్లోకం అందుబాటులో లేదు.') {
+                         fullText += `శ్లోకం. ${teluguVerseText}. `; // Add label and pause
+                    }
+                    if (teluguBhavarthamText && teluguBhavarthamText !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') {
+                         fullText += `భావార్థం. ${teluguBhavarthamText}. `; // Add label and pause
+                    }
+                     if (sandeshamText && sandeshamText !== 'సందేశం అందుబాటులో లేదు.') {
+                         fullText += `సందేశం. ${sandeshamText}. `; // Add label and pause
+                    }
+
+
+                    // Speak the concatenated text (defaulting to Telugu language)
+                    speakText(fullText.trim(), 'te-IN');
                 });
-            });
+            }
 
 
             // Trigger confetti effect after displaying the verse
