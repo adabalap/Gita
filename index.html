@@ -95,113 +95,6 @@
             opacity: 1; /* Becomes visible */
         }
 
-        /* Header Bar */
-        .header-bar {
-            width: 100%;
-            padding: 0.75rem 1rem; /* Adjusted padding */
-            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky; /* Make it sticky */
-            top: 0; /* Stick to the top */
-            z-index: 10; /* Ensure it's above other content */
-        }
-
-        .header-icon {
-            font-size: 1.8rem; /* Icon size */
-            color: #4b5563; /* Gray color */
-            cursor: pointer;
-            transition: color 0.2s ease-in-out;
-        }
-        .header-icon:hover {
-            color: #1f2937; /* Darker gray on hover */
-        }
-
-        /* Burger Menu */
-        .burger-menu {
-            position: fixed;
-            top: 0;
-            left: -250px; /* Hidden by default */
-            width: 250px;
-            height: 100%;
-            background-color: #ffffff;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-            transition: left 0.3s ease-in-out;
-            z-index: 50; /* Above main content, below modals */
-            padding-top: 4rem; /* Space for fixed header */
-        }
-        .burger-menu.open {
-            left: 0; /* Slide in */
-        }
-        .menu-item {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
-            color: #374151;
-            cursor: pointer;
-            transition: background-color 0.2s ease-in-out;
-        }
-        .menu-item:hover {
-            background-color: #f3f4f6;
-        }
-        .menu-overlay {
-             position: fixed;
-             top: 0;
-             left: 0;
-             width: 100%;
-             height: 100%;
-             background-color: rgba(0, 0, 0, 0.5);
-             z-index: 40; /* Below menu, above main content */
-             display: none; /* Hidden by default */
-        }
-         .menu-overlay.visible {
-             display: block;
-         }
-
-
-        /* Modal Styling */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100; /* Above all other content */
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-        }
-        .modal.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-content {
-            background-color: #ffffff;
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            max-width: 90%;
-            max-height: 90%;
-            overflow-y: auto; /* Allow scrolling if content is long */
-            position: relative; /* Needed for close button positioning */
-        }
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #6b7280;
-        }
-         .modal-close:hover {
-             color: #374151;
-         }
-
         /* Styling for Sanskrit Verse */
         .sanskrit-verse-text {
             color: #059669; /* Green color for Sanskrit verse */
@@ -213,13 +106,14 @@
             text-align: center; /* Center Sanskrit verse */
         }
 
-        /* Styling for Polished Telugu Verse */
+        /* Styling for Polished Telugu Verse (Shlokam) */
         .polished-telugu-verse-text {
-            color: #374151; /* Dark gray color */
-            font-size: 1.2rem;
+            color: #4f46e5; /* Indigo color - blending with primary button color */
+            font-size: 1.4rem; /* Slightly larger */
             margin-bottom: 1rem;
             line-height: 1.7;
             font-style: normal; /* Ensure not italic */
+            font-weight: bold; /* Make it bold */
         }
 
         /* Styling for Telugu Bhavartham (Polished Meaning) */
@@ -241,24 +135,48 @@
             line-height: 1.6;
         }
 
-        /* Styling for the verse info (Chapter, Verse numbers) */
-        #verseInfo {
-            font-size: 1.3rem; /* Slightly larger */
-            color: #4b5563; /* Gray color */
-            margin-bottom: 0.8rem; /* Increased margin */
-            font-weight: normal;
-            text-align: center; /* Center the verse info */
+        /* Styling for the main verse info heading */
+        #mainVerseHeading {
+            font-size: 1.6rem; /* Larger font size for main heading */
+            margin-bottom: 1.5rem; /* Increased margin */
+            font-weight: bold;
+            text-align: center; /* Center the heading */
+            /* Added gradient color for heading */
+            background: linear-gradient to right, #6b46c1, #4f46e5; /* Purple to Indigo gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* Hide original text color */
+            display: flex; /* Use flexbox for icon and text */
+            align-items: center; /* Align items vertically */
+            justify-content: center; /* Center content horizontally */
+            gap: 0.75rem; /* Space between icon and text */
+            font-family: 'Roboto', sans-serif; /* Use Roboto for the heading */
         }
 
         /* Styling for labels */
         .verse-label {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #4b5563; /* Gray color */
+            /* color: #4b5563; Removed default gray color */
             margin-top: 1rem; /* Add space above labels */
             margin-bottom: 0.5rem;
-            display: block; /* Ensure label is on its own line */
+            display: flex; /* Use flexbox for icon and text */
+            align-items: center; /* Align items vertically */
+            gap: 0.5rem; /* Space between icon and text */
         }
+
+        /* Specific colors for labels */
+        .verse-label.shlokam {
+             color: #4f46e5; /* Indigo for Shlokam label */
+        }
+         .verse-label.bhavartham {
+             color: #d97706; /* Orange for Bhavartham label */
+         }
+         .verse-label.sandesham {
+             color: #1d4ed8; /* Blue color for Sandesham label */
+         }
+
 
         .card {
             background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white card background for readability over background image */
@@ -499,10 +417,6 @@
         <p>తెలుగులో</p>
         </div>
 
-    <div class="header-bar">
-        <i class="ph ph-list header-icon" id="burgerMenuIcon" title="మెను"></i> <i class="ph ph-info header-icon" id="infoIcon" title="యాప్ సమాచారం"></i> </div>
-
-
     <div class="main-content container mx-auto p-4 md:p-8" id="mainContent">
         <h1 class="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-800 font-roboto">శ్రీమద్భగవద్గీత</h1>
 
@@ -537,39 +451,6 @@
         &copy; 2025 <a href="https://adabala.com" target="_blank">adabala.com</a>. All rights reserved.
     </footer>
 
-    <div class="burger-menu" id="burgerMenu">
-        <div class="menu-item" id="feedbackMenuItem">ఫీడ్‌బ్యాక్ ఇవ్వండి</div>
-        </div>
-    <div class="menu-overlay" id="menuOverlay"></div>
-
-    <div class="modal" id="infoModal">
-        <div class="modal-content">
-            <span class="modal-close" id="infoModalClose">&times;</span>
-            <h2 class="text-2xl font-bold mb-4 font-roboto">యాప్ సమాచారం</h2>
-            <p class="mb-4">
-                ఈ ప్రోగ్రెసివ్ వెబ్ అప్లికేషన్ (PWA) శ్రీమద్భగవద్గీత శ్లోకాలను మరియు వాటి తెలుగు భావార్థాలను సులభంగా యాక్సెస్ చేయడానికి రూపొందించబడింది.
-                ఇది బ్యాకెండ్ API నుండి డేటాను పొందుతుంది మరియు ఆఫ్‌లైన్ యాక్సెస్ కోసం కొన్ని ఫీచర్‌లను అందిస్తుంది.
-            </p>
-            <p class="mb-4">
-                ఈ యాప్ ఓపెన్ సోర్స్ ప్రాజెక్ట్‌గా అభివృద్ధి చేయబడింది. మీ ఫీడ్‌బ్యాక్ మరియు సూచనలు ఎల్లప్పుడూ స్వాగతం.
-            </p>
-            <p class="text-right font-bold font-roboto">
-                - adabala
-            </p>
-        </div>
-    </div>
-
-    <div class="modal" id="feedbackModal">
-        <div class="modal-content">
-            <span class="modal-close" id="feedbackModalClose">&times;</span>
-            <h2 class="text-2xl font-bold mb-4 font-roboto">ఫీడ్‌బ్యాక్ ఇవ్వండి</h2>
-            <textarea id="feedbackTextarea" class="w-full p-3 border rounded-md mb-4" rows="4" placeholder="మీ ఫీడ్‌బ్యాక్ లేదా సూచనలను ఇక్కడ నమోదు చేయండి..."></textarea>
-            <button class="btn btn-primary w-full font-roboto" id="submitFeedbackBtn">ఫీడ్‌బ్యాక్ పంపండి</button>
-             <div id="feedbackMessageArea" class="message hidden mt-4"></div>
-        </div>
-    </div>
-
-
     <script>
         const splashScreen = document.getElementById('splashScreen');
         const mainContent = document.getElementById('mainContent');
@@ -580,21 +461,6 @@
         const fetchRandomVerseBtn = document.getElementById('fetchRandomVerseBtn');
         const messageArea = document.getElementById('messageArea');
         const confettiContainer = document.getElementById('confettiContainer');
-
-        // Header/Menu Elements
-        const burgerMenuIcon = document.getElementById('burgerMenuIcon');
-        const infoIcon = document.getElementById('infoIcon');
-        const burgerMenu = document.getElementById('burgerMenu');
-        const menuOverlay = document.getElementById('menuOverlay');
-        const infoModal = document.getElementById('infoModal');
-        const infoModalClose = document.getElementById('infoModalClose');
-        const feedbackModal = document.getElementById('feedbackModal');
-        const feedbackModalClose = document.getElementById('feedbackModalClose');
-        const feedbackMenuItem = document.getElementById('feedbackMenuItem');
-        const feedbackTextarea = document.getElementById('feedbackTextarea');
-        const submitFeedbackBtn = document.getElementById('submitFeedbackBtn');
-        const feedbackMessageArea = document.getElementById('feedbackMessageArea');
-
 
         // Base URL for your Flask API
         // Ensure this is HTTPS if your PWA is on HTTPS (like GitHub Pages)
@@ -674,29 +540,40 @@
 
             // Construct the new display structure
             // Use polished versions if available, otherwise fallback to original fetched
-            const sanskritVerse = verseData.sanskrit_verse_telugu_script || 'సంస్కృత శ్లోకం అందుబాటులో లేదు.';
+            const sanskritVerse = verseData.sanskrit_verse_telugu_script; // Get Sanskrit verse (can be null)
             const polishedTeluguVerse = verseData.polished_telugu_verse || verseData.telugu_verse || 'తెలుగు శ్లోకం అందుబాటులో లేదు.';
             const polishedTeluguMeaning = verseData.polished_telugu_meaning || verseData.telugu_meaning || 'తెలుగు భావార్థం అందుబాటులో లేదు.';
             const teluguDescription = verseData.telugu_description || 'సందేశం అందుబాటులో లేదు.';
 
 
             let contentHTML = `
-                <div id="verseInfo" class="text-lg font-semibold mb-4 text-gray-600 text-center">
-                    <span class="text-gray-600">భగవద్గీత</span> <span class="font-bold text-gray-800">[${verseData.chapter}]</span>, <span class="font-bold text-gray-800">[${verseData.verse}]</span> శ్లోకము (సంస్కృతంలో):
+                <div id="mainVerseHeading">
+                    <i class="ph ph-chariot"></i> <span>భగవద్గీత</span> <span class="font-bold">[${verseData.chapter}] అధ్యాయం</span>, <span class="font-bold">[${verseData.verse}] శ్లోకం</span>
                 </div>
-                <div id="sanskritVerse" class="sanskrit-verse-text">
-                    ${sanskritVerse}
-                </div>
+            `;
 
-                <div class="verse-label">శ్లోకం:</div> <div id="teluguVerse" class="polished-telugu-verse-text">
+            // Only add Sanskrit verse if it exists and is not the fallback message
+            if (sanskritVerse && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
+                 contentHTML += `
+                    <div id="sanskritVerse" class="sanskrit-verse-text">
+                        ${sanskritVerse}
+                    </div>
+                 `;
+            }
+
+
+            contentHTML += `
+                <div class="verse-label shlokam"><i class="ph ph-book-open"></i> శ్లోకం:</div>
+                 <div id="teluguVerse" class="polished-telugu-verse-text">
                     ${polishedTeluguVerse}
                 </div>
 
-                <div class="verse-label">భావార్థం:</div> <div id="teluguBhavartham" class="telugu-bhavartham-text">
+                <div class="verse-label bhavartham"><i class="ph ph-lightbulb"></i> భావార్థం:</div>
+                <div id="teluguBhavartham" class="telugu-bhavartham-text">
                     ${polishedTeluguMeaning}
                 </div>
 
-                <div class="verse-label">సందేశం:</div>
+                <div class="verse-label sandesham"><i class="ph ph-chat-centered-text"></i> సందేశం:</div>
                 <div id="sandesham" class="sandesham-text">
                     ${teluguDescription}
                 </div>
@@ -859,71 +736,6 @@
         });
 
 
-        // --- Menu and Modal Logic ---
-        burgerMenuIcon.addEventListener('click', () => {
-            burgerMenu.classList.add('open');
-            menuOverlay.classList.add('visible');
-        });
-
-        menuOverlay.addEventListener('click', () => {
-            burgerMenu.classList.remove('open');
-            menuOverlay.classList.remove('visible');
-        });
-
-        infoIcon.addEventListener('click', () => {
-            infoModal.classList.add('visible');
-        });
-
-        infoModalClose.addEventListener('click', () => {
-            infoModal.classList.remove('visible');
-        });
-
-        // Close modal if clicked outside content
-        infoModal.addEventListener('click', (e) => {
-            if (e.target === infoModal) {
-                infoModal.classList.remove('visible');
-            }
-        });
-
-        feedbackMenuItem.addEventListener('click', () => {
-            burgerMenu.classList.remove('open');
-            menuOverlay.classList.remove('visible');
-            feedbackModal.classList.add('visible');
-            hideMessage(feedbackMessageArea); // Hide previous feedback messages
-            feedbackTextarea.value = ''; // Clear textarea
-        });
-
-        feedbackModalClose.addEventListener('click', () => {
-            feedbackModal.classList.remove('visible');
-        });
-
-         // Close modal if clicked outside content
-        feedbackModal.addEventListener('click', (e) => {
-            if (e.target === feedbackModal) {
-                feedbackModal.classList.remove('visible');
-            }
-        });
-
-
-        submitFeedbackBtn.addEventListener('click', () => {
-            const feedbackText = feedbackTextarea.value.trim();
-            if (feedbackText) {
-                console.log("Feedback Submitted:", feedbackText);
-                // --- Placeholder for actual feedback submission ---
-                // In a real application, you would send this feedbackText to your backend API
-                // using a fetch() request to a new endpoint (e.g., POST /feedback).
-                // For this example, we'll just simulate success and show a message.
-                showMessage('మీ ఫీడ్‌బ్యాక్ పంపబడింది. ధన్యవాదాలు!', 'info', feedbackMessageArea); // Your feedback has been sent. Thank you!
-                feedbackTextarea.value = ''; // Clear the textarea after "sending"
-                // Optional: Automatically close modal after a delay
-                // setTimeout(() => { feedbackModal.classList.remove('visible'); }, 3000);
-                // ----------------------------------------------------
-            } else {
-                showMessage('దయచేసి ఫీడ్‌బ్యాక్ నమోదు చేయండి.', 'error', feedbackMessageArea); // Please enter feedback.
-            }
-        });
-
-
         // --- Social Share Logic ---
         // Update this logic to construct the share text from the displayed elements
         document.addEventListener('click', (event) => {
@@ -933,14 +745,16 @@
                  const platform = button.dataset.platform;
 
                  // Get content from the displayed elements
-                 const verseInfoElement = document.getElementById('verseInfo');
+                 const mainVerseHeadingElement = document.getElementById('mainVerseHeading'); // Get the new heading
                  const sanskritVerseElement = document.getElementById('sanskritVerse');
                  const teluguVerseElement = document.getElementById('teluguVerse');
                  const teluguBhavarthamElement = document.getElementById('teluguBhavartham');
                  const sandeshamElement = document.getElementById('sandesham');
 
                  // Ensure elements exist before getting textContent
-                 const verseInfoText = verseInfoElement ? verseInfoElement.textContent.trim() : '';
+                 // For the main heading, get text content excluding the icon
+                 const mainVerseHeadingText = mainVerseHeadingElement ? mainVerseHeadingElement.textContent.replace('భగవద్గీత', 'భగవద్గీత').trim() : ''; // Simple replace to get text
+
                  const sanskritVerseText = sanskritVerseElement ? sanskritVerseElement.textContent.trim() : '';
                  const teluguVerseText = teluguVerseElement ? teluguVerseElement.textContent.trim() : '';
                  const teluguBhavarthamText = teluguBhavarthamElement ? teluguBhavarthamElement.textContent.trim() : '';
@@ -948,7 +762,8 @@
 
 
                  // Construct the share text based on the new format
-                 let shareText = `${verseInfoText}\n\n`;
+                 let shareText = `${mainVerseHeadingText}\n\n`; // Start with the main heading
+                 // Only include Sanskrit if it exists and is not the fallback message
                  if (sanskritVerseText && sanskritVerseText !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
                      shareText += `సంస్కృతంలో:\n${sanskritVerseText}\n\n`; // Added label for Sanskrit
                  }
