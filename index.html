@@ -27,7 +27,8 @@
             display: flex;
             flex-direction: column;
             /* Divine Background for Main Content - Path updated for /Gita/ */
-            background-image: url('/Gita/images/divine-background.jpeg'); /* Replace with your divine background image URL */
+            /* Ensure you have this image or replace with a placeholder/color */
+            background-image: url('/Gita/images/divine-background.jpeg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed; /* Keep background fixed while scrolling */
@@ -58,7 +59,8 @@
             height: 100%;
             background-color: #6b46c1; /* Purple fallback */
              /* Classic Bhagavad Gita Image for Splash Screen - Path updated for /Gita/ */
-            background-image: url('/Gita/images/splash-image.jpeg'); /* Ensure this file exists in your /images folder */
+             /* Ensure you have this image or replace with a placeholder/color */
+            background-image: url('/Gita/images/splash-image.jpeg');
             background-size: cover;
             background-position: center;
             color: white;
@@ -93,21 +95,143 @@
             opacity: 1; /* Becomes visible */
         }
 
-        .verse-text {
-            color: #059669; /* Green color for verse */
-            font-size: 1.3rem; /* Adjusted: Smaller verse font */
-            margin-bottom: 0.75rem; /* Adjusted: Reduced margin bottom */
+        /* Header Bar */
+        .header-bar {
+            width: 100%;
+            padding: 0.75rem 1rem; /* Adjusted padding */
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky; /* Make it sticky */
+            top: 0; /* Stick to the top */
+            z-index: 10; /* Ensure it's above other content */
+        }
+
+        .header-icon {
+            font-size: 1.8rem; /* Icon size */
+            color: #4b5563; /* Gray color */
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+        .header-icon:hover {
+            color: #1f2937; /* Darker gray on hover */
+        }
+
+        /* Burger Menu */
+        .burger-menu {
+            position: fixed;
+            top: 0;
+            left: -250px; /* Hidden by default */
+            width: 250px;
+            height: 100%;
+            background-color: #ffffff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            transition: left 0.3s ease-in-out;
+            z-index: 50; /* Above main content, below modals */
+            padding-top: 4rem; /* Space for fixed header */
+        }
+        .burger-menu.open {
+            left: 0; /* Slide in */
+        }
+        .menu-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            color: #374151;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .menu-item:hover {
+            background-color: #f3f4f6;
+        }
+        .menu-overlay {
+             position: fixed;
+             top: 0;
+             left: 0;
+             width: 100%;
+             height: 100%;
+             background-color: rgba(0, 0, 0, 0.5);
+             z-index: 40; /* Below menu, above main content */
+             display: none; /* Hidden by default */
+        }
+         .menu-overlay.visible {
+             display: block;
+         }
+
+
+        /* Modal Styling */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100; /* Above all other content */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .modal.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto; /* Allow scrolling if content is long */
+            position: relative; /* Needed for close button positioning */
+        }
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+         .modal-close:hover {
+             color: #374151;
+         }
+
+        /* Styling for Sanskrit Verse */
+        .sanskrit-verse-text {
+            color: #059669; /* Green color for Sanskrit verse */
+            font-size: 1.3rem; /* Adjusted: Smaller font */
+            margin-bottom: 1rem; /* Increased margin below Sanskrit verse */
             font-weight: bold;
             line-height: 1.8; /* Improved line spacing */
             white-space: pre-wrap; /* Preserve whitespace and allow wrapping */
+            text-align: center; /* Center Sanskrit verse */
         }
-        .meaning-text {
+
+        /* Styling for Polished Telugu Verse */
+        .polished-telugu-verse-text {
+            color: #374151; /* Dark gray color */
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            font-style: normal; /* Ensure not italic */
+        }
+
+        /* Styling for Telugu Bhavartham (Polished Meaning) */
+        .telugu-bhavartham-text {
             color: #d97706; /* Orange color for meaning */
             font-size: 1.3rem; /* Slightly larger meaning font */
             margin-bottom: 1rem;
             line-height: 1.7;
         }
-        .description-text {
+
+        /* Styling for Sandesham (Description) */
+        .sandesham-text {
             color: #1d4ed8; /* Blue color for description */
             font-size: 1.1rem; /* Slightly larger description font */
             font-style: italic;
@@ -116,6 +240,26 @@
             border-top: 1px solid #d1d5db; /* Slightly darker border */
             line-height: 1.6;
         }
+
+        /* Styling for the verse info (Chapter, Verse numbers) */
+        #verseInfo {
+            font-size: 1.3rem; /* Slightly larger */
+            color: #4b5563; /* Gray color */
+            margin-bottom: 0.8rem; /* Increased margin */
+            font-weight: normal;
+            text-align: center; /* Center the verse info */
+        }
+
+        /* Styling for labels */
+        .verse-label {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #4b5563; /* Gray color */
+            margin-top: 1rem; /* Add space above labels */
+            margin-bottom: 0.5rem;
+            display: block; /* Ensure label is on its own line */
+        }
+
         .card {
             background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white card background for readability over background image */
             border-radius: 1rem; /* More rounded corners */
@@ -207,20 +351,6 @@
             background-color: #dbeafe; /* Blue background */
             color: #1e40af; /* Dark blue text */
              border: 1px solid #93c5fd;
-        }
-
-        /* Styling for the verse info (Chapter, Verse numbers) */
-        #verseInfo {
-            font-size: 1.3rem; /* Slightly larger */
-            color: #4b5563; /* Gray color */
-            margin-bottom: 0.8rem; /* Increased margin */
-            font-weight: normal;
-            text-align: center; /* Center the verse info */
-        }
-
-        /* Ensure content is below fixed splash screen */
-        .main-content {
-            padding-top: 2rem; /* Add padding to prevent content from being hidden by a fixed header if one were added */
         }
 
         /* Confetti/Flower Effect Styling */
@@ -367,12 +497,17 @@
     <div class="splash-screen" id="splashScreen">
         <h1>శ్రీమద్భగవద్గీత</h1>
         <p>తెలుగులో</p>
-    </div>
+        </div>
+
+    <div class="header-bar">
+        <i class="ph ph-list header-icon" id="burgerMenuIcon" title="మెను"></i> <i class="ph ph-info header-icon" id="infoIcon" title="యాప్ సమాచారం"></i> </div>
+
 
     <div class="main-content container mx-auto p-4 md:p-8" id="mainContent">
         <h1 class="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-800 font-roboto">శ్రీమద్భగవద్గీత</h1>
 
         <div class="controls mb-8 p-6 bg-white rounded-lg shadow-md border border-gray-200">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700 text-center font-roboto">ఒక శ్లోకం పొందండి</h2>
             <div class="input-group">
                 <select id="chapterSelect" class="focus:ring-blue-500 focus:border-blue-500 font-roboto">
                     <option value="">అధ్యాయం ఎంచుకోండి</option>
@@ -390,29 +525,7 @@
         </div>
 
         <div id="verseDisplay" class="card hidden">
-            <div id="verseInfo" class="text-lg font-semibold mb-4 text-gray-600 text-center"></div>
-            <div id="teluguVerse" class="verse-text"></div>
-            <div id="teluguMeaning" class="meaning-text"></div>
-            <div id="teluguDescription" class="description-text"></div>
-
-            <div class="share-container">
-                <p class="font-roboto">ఈ శ్లోకాన్ని పంచుకోండి:</p>
-                <div class="share-buttons">
-                    <button class="share-button whatsapp" data-platform="whatsapp" title="Share on WhatsApp">
-                        <i class="ph ph-whatsapp-logo"></i>
-                    </button>
-                    <button class="share-button facebook" data-platform="facebook" title="Share on Facebook">
-                         <i class="ph ph-facebook-logo"></i>
-                    </button>
-                     <button class="share-button twitter" data-platform="twitter" title="Share on Twitter">
-                         <i class="ph ph-twitter-logo"></i>
-                    </button>
-                     <button class="share-button generic" data-platform="generic" title="Share or Copy">
-                         <i class="ph ph-share-network"></i>
-                    </button>
-                </div>
             </div>
-        </div>
 
         <div id="messageArea" class="message hidden"></div>
 
@@ -424,26 +537,68 @@
         &copy; 2025 <a href="https://adabala.com" target="_blank">adabala.com</a>. All rights reserved.
     </footer>
 
+    <div class="burger-menu" id="burgerMenu">
+        <div class="menu-item" id="feedbackMenuItem">ఫీడ్‌బ్యాక్ ఇవ్వండి</div>
+        </div>
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <div class="modal" id="infoModal">
+        <div class="modal-content">
+            <span class="modal-close" id="infoModalClose">&times;</span>
+            <h2 class="text-2xl font-bold mb-4 font-roboto">యాప్ సమాచారం</h2>
+            <p class="mb-4">
+                ఈ ప్రోగ్రెసివ్ వెబ్ అప్లికేషన్ (PWA) శ్రీమద్భగవద్గీత శ్లోకాలను మరియు వాటి తెలుగు భావార్థాలను సులభంగా యాక్సెస్ చేయడానికి రూపొందించబడింది.
+                ఇది బ్యాకెండ్ API నుండి డేటాను పొందుతుంది మరియు ఆఫ్‌లైన్ యాక్సెస్ కోసం కొన్ని ఫీచర్‌లను అందిస్తుంది.
+            </p>
+            <p class="mb-4">
+                ఈ యాప్ ఓపెన్ సోర్స్ ప్రాజెక్ట్‌గా అభివృద్ధి చేయబడింది. మీ ఫీడ్‌బ్యాక్ మరియు సూచనలు ఎల్లప్పుడూ స్వాగతం.
+            </p>
+            <p class="text-right font-bold font-roboto">
+                - adabala
+            </p>
+        </div>
+    </div>
+
+    <div class="modal" id="feedbackModal">
+        <div class="modal-content">
+            <span class="modal-close" id="feedbackModalClose">&times;</span>
+            <h2 class="text-2xl font-bold mb-4 font-roboto">ఫీడ్‌బ్యాక్ ఇవ్వండి</h2>
+            <textarea id="feedbackTextarea" class="w-full p-3 border rounded-md mb-4" rows="4" placeholder="మీ ఫీడ్‌బ్యాక్ లేదా సూచనలను ఇక్కడ నమోదు చేయండి..."></textarea>
+            <button class="btn btn-primary w-full font-roboto" id="submitFeedbackBtn">ఫీడ్‌బ్యాక్ పంపండి</button>
+             <div id="feedbackMessageArea" class="message hidden mt-4"></div>
+        </div>
+    </div>
+
+
     <script>
         const splashScreen = document.getElementById('splashScreen');
         const mainContent = document.getElementById('mainContent');
         const verseDisplay = document.getElementById('verseDisplay');
-        const verseInfo = document.getElementById('verseInfo');
-        const teluguVerse = document.getElementById('teluguVerse');
-        const teluguMeaning = document.getElementById('teluguMeaning');
-        const teluguDescription = document.getElementById('teluguDescription');
         const chapterSelect = document.getElementById('chapterSelect');
         const verseSelect = document.getElementById('verseSelect');
         const fetchSpecificVerseBtn = document.getElementById('fetchSpecificVerseBtn');
         const fetchRandomVerseBtn = document.getElementById('fetchRandomVerseBtn');
         const messageArea = document.getElementById('messageArea');
         const confettiContainer = document.getElementById('confettiContainer');
-        const shareButtons = document.querySelectorAll('.share-button');
+
+        // Header/Menu Elements
+        const burgerMenuIcon = document.getElementById('burgerMenuIcon');
+        const infoIcon = document.getElementById('infoIcon');
+        const burgerMenu = document.getElementById('burgerMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const infoModal = document.getElementById('infoModal');
+        const infoModalClose = document.getElementById('infoModalClose');
+        const feedbackModal = document.getElementById('feedbackModal');
+        const feedbackModalClose = document.getElementById('feedbackModalClose');
+        const feedbackMenuItem = document.getElementById('feedbackMenuItem');
+        const feedbackTextarea = document.getElementById('feedbackTextarea');
+        const submitFeedbackBtn = document.getElementById('submitFeedbackBtn');
+        const feedbackMessageArea = document.getElementById('feedbackMessageArea');
 
 
         // Base URL for your Flask API
         // Ensure this is HTTPS if your PWA is on HTTPS (like GitHub Pages)
-        const API_BASE_URL = 'https://gita.adabala.com';
+        const API_BASE_URL = 'https://gita.adabala.com'; // UPDATE THIS IF YOUR API URL CHANGES
 
         // Simple local cache using localStorage
         const verseCache = JSON.parse(localStorage.getItem('bhagavathGitaCache')) || {};
@@ -456,15 +611,15 @@
         };
 
         // Function to show messages
-        function showMessage(msg, type = 'info') {
-            messageArea.textContent = msg;
-            messageArea.className = `message ${type}`;
-            messageArea.classList.remove('hidden');
+        function showMessage(msg, type = 'info', area = messageArea) {
+            area.textContent = msg;
+            area.className = `message ${type}`;
+            area.classList.remove('hidden');
         }
 
         // Function to hide messages
-        function hideMessage() {
-            messageArea.classList.add('hidden');
+        function hideMessage(area = messageArea) {
+            area.classList.add('hidden');
         }
 
         // Function to trigger confetti/flower effect
@@ -510,41 +665,62 @@
         }
 
 
-        // Function to display a verse
+        // Function to display a verse in the new format
         function displayVerse(verseData) {
-            hideMessage();
+            hideMessage(); // Hide main message area
 
-            // --- Data Cleaning and Formatting (Kept for now as backend cleanup is skipped) ---
+            // Clear previous content
+            verseDisplay.innerHTML = '';
 
-            // 1. Clean up asterisks and parenthetical notes
-            let cleanedVerse = (verseData.polished_telugu_verse || verseData.telugu_verse || '')
-                                .replace(/\*\*/g, '') // Remove double asterisks
-                                .replace(/\s*\([^)]*\)\s*/g, ''); // Remove text within parentheses and surrounding whitespace
-
-            let cleanedMeaning = (verseData.polished_telugu_meaning || verseData.telugu_meaning || '')
-                                 .replace(/\*\*/g, '') // Remove double asterisks
-                                 .replace(/\s*\([^)]*\)\s*/g, ''); // Remove text within parentheses and surrounding whitespace
-
-            let cleanedDescription = (verseData.telugu_description || '')
-                                     .replace(/\*\*/g, '') // Remove double asterisks
-                                     .replace(/\s*\([^)]*\)\s*/g, ''); // Remove text within parentheses and surrounding whitespace
+            // Construct the new display structure
+            // Use polished versions if available, otherwise fallback to original fetched
+            const sanskritVerse = verseData.sanskrit_verse_telugu_script || 'సంస్కృత శ్లోకం అందుబాటులో లేదు.';
+            const polishedTeluguVerse = verseData.polished_telugu_verse || verseData.telugu_verse || 'తెలుగు శ్లోకం అందుబాటులో లేదు.';
+            const polishedTeluguMeaning = verseData.polished_telugu_meaning || verseData.telugu_meaning || 'తెలుగు భావార్థం అందుబాటులో లేదు.';
+            const teluguDescription = verseData.telugu_description || 'సందేశం అందుబాటులో లేదు.';
 
 
-            // 2. Format the Sanskrit verse with line breaks
-            // Replace '|' with '| <br>' and add a <br> at the end if needed
-            let formattedVerse = cleanedVerse.split('|').join('| <br>');
-            if (!formattedVerse.endsWith('<br>')) {
-                 formattedVerse += '<br>';
-            }
+            let contentHTML = `
+                <div id="verseInfo" class="text-lg font-semibold mb-4 text-gray-600 text-center">
+                    <span class="text-gray-600">భగవద్గీత</span> <span class="font-bold text-gray-800">[${verseData.chapter}]</span>, <span class="font-bold text-gray-800">[${verseData.verse}]</span> శ్లోకము (సంస్కృతంలో):
+                </div>
+                <div id="sanskritVerse" class="sanskrit-verse-text">
+                    ${sanskritVerse}
+                </div>
 
+                <div class="verse-label">శ్లోకం:</div> <div id="teluguVerse" class="polished-telugu-verse-text">
+                    ${polishedTeluguVerse}
+                </div>
 
-            // --- Displaying the cleaned and formatted data ---
+                <div class="verse-label">భావార్థం:</div> <div id="teluguBhavartham" class="telugu-bhavartham-text">
+                    ${polishedTeluguMeaning}
+                </div>
 
-            // Improved display of chapter and verse numbers
-            verseInfo.innerHTML = `<span class="text-gray-600">భగవద్గీత</span> <span class="font-bold text-gray-800">[${verseData.chapter}]</span>, <span class="font-bold text-gray-800">[${verseData.verse}]</span>`;
-            teluguVerse.innerHTML = formattedVerse; // Use innerHTML for line breaks
-            teluguMeaning.textContent = cleanedMeaning;
-            teluguDescription.textContent = cleanedDescription;
+                <div class="verse-label">సందేశం:</div>
+                <div id="sandesham" class="sandesham-text">
+                    ${teluguDescription}
+                </div>
+
+                <div class="share-container">
+                    <p class="font-roboto">ఈ శ్లోకాన్ని పంచుకోండి:</p>
+                    <div class="share-buttons">
+                        <button class="share-button whatsapp" data-platform="whatsapp" title="Share on WhatsApp">
+                            <i class="ph ph-whatsapp-logo"></i>
+                        </button>
+                        <button class="share-button facebook" data-platform="facebook" title="Share on Facebook">
+                             <i class="ph ph-facebook-logo"></i>
+                        </button>
+                         <button class="share-button twitter" data-platform="twitter" title="Share on Twitter">
+                             <i class="ph ph-twitter-logo"></i>
+                        </button>
+                         <button class="share-button generic" data-platform="generic" title="Share or Copy">
+                             <i class="ph ph-share-network"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            verseDisplay.innerHTML = contentHTML;
             verseDisplay.classList.remove('hidden');
 
             // Trigger confetti effect after displaying the verse
@@ -556,9 +732,10 @@
             const cacheKey = `${chapter}-${verse}`;
 
             // 1. Check local cache first
-            if (verseCache[cacheKey]) {
+            const cachedData = verseCache[cacheKey];
+            if (cachedData) {
                 console.log(`Serving Chapter ${chapter}, Verse ${verse} from cache.`);
-                displayVerse(verseCache[cacheKey]);
+                displayVerse(cachedData);
                 return; // Exit if found in cache
             }
 
@@ -682,53 +859,149 @@
         });
 
 
-        // --- Social Share Logic ---
-        shareButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const platform = button.dataset.platform;
-                // Get the text content from the displayed elements
-                const verseText = teluguVerse.textContent;
-                const meaningText = teluguMeaning.textContent;
-                const verseInfoText = verseInfo.textContent;
-                // Construct the share text including verse info, verse, meaning, and a concise source/link
-                const shareText = `${verseInfoText}\n\n${verseText}\n\nఅర్థం: ${meaningText}\n\nSource: adabala.com - https://adabalap.github.io/Gita/`; // Concise share text
-
-                if (navigator.share) {
-                    // Use Web Share API if available (for generic sharing)
-                    if (platform === 'generic') {
-                        navigator.share({
-                            title: 'శ్రీమద్భగవద్గీత శ్లోకం', // Title for the share dialog
-                            text: shareText, // The text content to share
-                            url: 'https://adabalap.github.io/Gita/' // The URL to share
-                        }).then(() => {
-                            console.log('Successfully shared via Web Share API');
-                        }).catch((error) => {
-                            console.error('Error sharing via Web Share API:', error);
-                            // Fallback for generic share if Web Share API fails
-                            copyToClipboard(shareText);
-                            showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'info'); // Verse copied! You can now share it anywhere.
-                        });
-                    } else {
-                         // For specific platforms, try Web Share API first, then fallback
-                         // Web Share API is the preferred method as it leverages native sharing.
-                         navigator.share({
-                            title: 'శ్రీమద్భగవద్గీత శ్లోకం',
-                            text: shareText,
-                            url: 'https://adabalap.github.io/Gita/'
-                         }).then(() => {
-                             console.log(`Successfully shared to ${platform} via Web Share API`);
-                         }).catch((error) => {
-                             console.error(`Error sharing to ${platform} via Web Share API:`, error);
-                             // Fallback to specific platform web intents if Web Share API fails
-                             handleSpecificPlatformShare(platform, shareText);
-                         });
-                    }
-                } else {
-                    // Fallback for browsers that don't support Web Share API
-                    handleSpecificPlatformShare(platform, shareText);
-                }
-            });
+        // --- Menu and Modal Logic ---
+        burgerMenuIcon.addEventListener('click', () => {
+            burgerMenu.classList.add('open');
+            menuOverlay.classList.add('visible');
         });
+
+        menuOverlay.addEventListener('click', () => {
+            burgerMenu.classList.remove('open');
+            menuOverlay.classList.remove('visible');
+        });
+
+        infoIcon.addEventListener('click', () => {
+            infoModal.classList.add('visible');
+        });
+
+        infoModalClose.addEventListener('click', () => {
+            infoModal.classList.remove('visible');
+        });
+
+        // Close modal if clicked outside content
+        infoModal.addEventListener('click', (e) => {
+            if (e.target === infoModal) {
+                infoModal.classList.remove('visible');
+            }
+        });
+
+        feedbackMenuItem.addEventListener('click', () => {
+            burgerMenu.classList.remove('open');
+            menuOverlay.classList.remove('visible');
+            feedbackModal.classList.add('visible');
+            hideMessage(feedbackMessageArea); // Hide previous feedback messages
+            feedbackTextarea.value = ''; // Clear textarea
+        });
+
+        feedbackModalClose.addEventListener('click', () => {
+            feedbackModal.classList.remove('visible');
+        });
+
+         // Close modal if clicked outside content
+        feedbackModal.addEventListener('click', (e) => {
+            if (e.target === feedbackModal) {
+                feedbackModal.classList.remove('visible');
+            }
+        });
+
+
+        submitFeedbackBtn.addEventListener('click', () => {
+            const feedbackText = feedbackTextarea.value.trim();
+            if (feedbackText) {
+                console.log("Feedback Submitted:", feedbackText);
+                // --- Placeholder for actual feedback submission ---
+                // In a real application, you would send this feedbackText to your backend API
+                // using a fetch() request to a new endpoint (e.g., POST /feedback).
+                // For this example, we'll just simulate success and show a message.
+                showMessage('మీ ఫీడ్‌బ్యాక్ పంపబడింది. ధన్యవాదాలు!', 'info', feedbackMessageArea); // Your feedback has been sent. Thank you!
+                feedbackTextarea.value = ''; // Clear the textarea after "sending"
+                // Optional: Automatically close modal after a delay
+                // setTimeout(() => { feedbackModal.classList.remove('visible'); }, 3000);
+                // ----------------------------------------------------
+            } else {
+                showMessage('దయచేసి ఫీడ్‌బ్యాక్ నమోదు చేయండి.', 'error', feedbackMessageArea); // Please enter feedback.
+            }
+        });
+
+
+        // --- Social Share Logic ---
+        // Update this logic to construct the share text from the displayed elements
+        document.addEventListener('click', (event) => {
+             // Use event delegation to handle clicks on dynamically created share buttons
+             if (event.target.closest('.share-button')) {
+                 const button = event.target.closest('.share-button');
+                 const platform = button.dataset.platform;
+
+                 // Get content from the displayed elements
+                 const verseInfoElement = document.getElementById('verseInfo');
+                 const sanskritVerseElement = document.getElementById('sanskritVerse');
+                 const teluguVerseElement = document.getElementById('teluguVerse');
+                 const teluguBhavarthamElement = document.getElementById('teluguBhavartham');
+                 const sandeshamElement = document.getElementById('sandesham');
+
+                 // Ensure elements exist before getting textContent
+                 const verseInfoText = verseInfoElement ? verseInfoElement.textContent.trim() : '';
+                 const sanskritVerseText = sanskritVerseElement ? sanskritVerseElement.textContent.trim() : '';
+                 const teluguVerseText = teluguVerseElement ? teluguVerseElement.textContent.trim() : '';
+                 const teluguBhavarthamText = teluguBhavarthamElement ? teluguBhavarthamElement.textContent.trim() : '';
+                 const sandeshamText = sandeshamElement ? sandeshamElement.textContent.trim() : '';
+
+
+                 // Construct the share text based on the new format
+                 let shareText = `${verseInfoText}\n\n`;
+                 if (sanskritVerseText && sanskritVerseText !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
+                     shareText += `సంస్కృతంలో:\n${sanskritVerseText}\n\n`; // Added label for Sanskrit
+                 }
+                  if (teluguVerseText && teluguVerseText !== 'తెలుగు శ్లోకం అందుబాటులో లేదు.') {
+                     shareText += `శ్లోకం:\n${teluguVerseText}\n\n`; // Used new label
+                 }
+                 if (teluguBhavarthamText && teluguBhavarthamText !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') {
+                     shareText += `భావార్థం:\n${teluguBhavarthamText}\n\n`; // Used new label
+                 }
+                 if (sandeshamText && sandeshamText !== 'సందేశం అందుబాటులో లేదు.') {
+                      shareText += `సందేశం:\n${sandeshamText}\n\n`;
+                 }
+
+                 shareText += `Source: adabala.com - https://adabalap.github.io/Gita/`; // Concise source/link
+
+
+                 if (navigator.share) {
+                     // Use Web Share API if available (for generic sharing)
+                     if (platform === 'generic') {
+                         navigator.share({
+                             title: 'శ్రీమద్భగవద్గీత శ్లోకం', // Title for the share dialog
+                             text: shareText, // The text content to share
+                             url: 'https://adabalap.github.io/Gita/' // The URL to share
+                         }).then(() => {
+                             console.log('Successfully shared via Web Share API');
+                         }).catch((error) => {
+                             console.error('Error sharing via Web Share API:', error);
+                             // Fallback for generic share if Web Share API fails
+                             copyToClipboard(shareText);
+                             showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'info'); // Verse copied! You can now share it anywhere.
+                         });
+                     } else {
+                          // For specific platforms, try Web Share API first, then fallback
+                          // Web Share API is the preferred method as it leverages native sharing.
+                          navigator.share({
+                             title: 'శ్రీమద్భగవద్గీత శ్లోకం',
+                             text: shareText,
+                             url: 'https://adabalap.github.io/Gita/'
+                          }).then(() => {
+                              console.log(`Successfully shared to ${platform} via Web Share API`);
+                          }).catch((error) => {
+                              console.error(`Error sharing to ${platform} via Web Share API:`, error);
+                              // Fallback to specific platform web intents if Web Share API fails
+                              handleSpecificPlatformShare(platform, shareText);
+                          });
+                     }
+                 } else {
+                     // Fallback for browsers that don't support Web Share API
+                     handleSpecificPlatformShare(platform, shareText);
+                 }
+             }
+        });
+
 
         // Fallback function for specific platform sharing (opens new tab)
         // Note: Web Share API is generally more reliable for opening native apps
@@ -804,6 +1077,28 @@
                     });
             });
         }
+
+        // --- Offline Data Display from Cache ---
+        // This is handled implicitly by the fetchVerse function.
+        // When offline, the fetch() request will fail, but the Service Worker
+        // might intercept it and serve from the cache if the API response was cached.
+        // Additionally, the localStorage cache check at the beginning of fetchVerse
+        // allows displaying previously viewed verses even if the Service Worker cache is missed
+        // for the API request itself (though the Service Worker should ideally cache API responses too).
+        // To explicitly handle offline *initial* load for a specific verse (e.g., last viewed),
+        // you could add logic here on window.load to check localStorage and display if available.
+
+        window.addEventListener('online', () => {
+            console.log('App is online.');
+            // Optional: Re-fetch current verse or sync data if needed
+        });
+
+        window.addEventListener('offline', () => {
+            console.log('App is offline.');
+            // Optional: Display an offline message to the user
+            showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. కాష్ చేయబడిన శ్లోకాలు మాత్రమే అందుబాటులో ఉండవచ్చు.', 'info'); // You are offline. Only cached verses may be available.
+        });
+
 
     </script>
 </body>
