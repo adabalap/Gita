@@ -32,6 +32,7 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed; /* Keep background fixed while scrolling */
+            overflow-x: hidden; /* Prevent horizontal scrollbar when menu is open */
         }
 
         /* Apply Roboto to headings and UI elements */
@@ -112,16 +113,20 @@
             opacity: 1; /* Becomes visible */
         }
 
-        /* Styling for the main app heading */
+        /* Styling for the main app heading - Enhanced with Gradient */
         #appHeading {
             font-size: 2.5rem; /* Adjusted size */
             font-weight: bold;
             text-align: center;
             margin-bottom: 1.5rem; /* Reduced margin */
-            /* Added a darker color for contrast */
-            color: #374151; /* Dark gray */
             font-family: 'Roboto', sans-serif;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            /* Peacock Color Gradient */
+            background: linear-gradient(to right, #008080, #4682b4, #008080); /* Teal, Steel Blue, Teal */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* Fallback for browsers that don't support text clipping */
         }
 
 
@@ -488,68 +493,191 @@
             text-decoration: underline;
         }
 
+        /* --- Side Menu Styling --- */
+        .side-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+            z-index: 20; /* Above main content, below menu */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+
+        .side-menu-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -80%; /* Start off-screen */
+            width: 80%; /* Menu width */
+            max-width: 300px; /* Max width for larger screens */
+            height: 100%;
+            background-color: #ffffff; /* White background */
+            z-index: 30; /* Above overlay */
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2); /* Shadow on the right edge */
+            transition: left 0.3s ease-in-out; /* Slide transition */
+            padding: 1.5rem; /* Padding inside the menu */
+            overflow-y: auto; /* Enable scrolling if content overflows */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-menu.open {
+            left: 0; /* Slide in */
+        }
+
+        /* Burger Icon - REMOVED */
+
+
+        /* Adjust main content margin - REMOVED as burger icon is gone */
+        /* .main-content {
+            margin-top: 3rem;
+        } */
+
+        /* Style for the side menu heading */
+        .side-menu h2 {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #374151;
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+        }
+
+         /* Style for the controls inside the side menu */
+         .side-menu .controls {
+             padding: 0; /* Remove padding as it's already on the menu */
+             margin-bottom: 0; /* Remove bottom margin */
+             box-shadow: none; /* Remove shadow */
+             border: none; /* Remove border */
+             background-color: transparent; /* Transparent background */
+         }
+
+         /* Style for input groups inside the side menu */
+         .side-menu .input-group {
+             margin-bottom: 1rem; /* Reduced margin */
+             gap: 0.5rem; /* Reduced gap */
+         }
+
+         /* Style for buttons inside the side menu */
+         .side-menu .btn {
+             padding: 0.8rem 1.5rem; /* Reduced padding */
+             font-size: 1rem; /* Reduced font size */
+             gap: 0.4rem; /* Reduced gap */
+         }
+
+         /* Subtle hint for the side menu - Enhanced Aesthetics (Peacock Feather inspired) */
+         .side-menu-hint {
+             position: fixed;
+             top: 50%;
+             left: 0;
+             transform: translateY(-50%);
+             width: 15px; /* Wider bar */
+             height: 120px; /* Significantly taller */
+             /* Peacock Feather Gradient */
+             background: linear-gradient(to bottom, #008080, #4682b4, #008080); /* Teal, Steel Blue, Teal */
+             z-index: 10; /* Below main content */
+             border-top-right-radius: 15px; /* More rounded */
+             border-bottom-right-radius: 15px; /* More rounded */
+             transition: width 0.3s ease-in-out, background 0.3s ease-in-out; /* Transition background too */
+             cursor: grab; /* Indicate it's draggable */
+             box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3); /* More prominent shadow */
+         }
+
+         .side-menu-hint:hover {
+             width: 20px; /* Wider on hover */
+             background: linear-gradient(to bottom, #006666, #3a6b94, #006666); /* Slightly darker gradient on hover */
+         }
+
+         /* Add a pulse animation to the hint */
+         @keyframes pulse-hint {
+             0% { opacity: 0.7; transform: translateY(-50%) scale(1); }
+             50% { opacity: 1; transform: translateY(-50%) scale(1.05); }
+             100% { opacity: 0.7; transform: translateY(-50%) scale(1); }
+         }
+
+         .side-menu-hint {
+             animation: pulse-hint 2s infinite ease-in-out; /* Apply pulse animation */
+         }
+
+
         /* --- Landscape Optimization for small screens --- */
         @media (orientation: landscape) and (max-width: 768px) {
-            #mainVerseHeading { /* This rule is now unused as the element is removed */
-                margin-bottom: 0.8rem;
-                font-size: 1.3rem;
-                gap: 0.5rem;
+            #appHeading {
+                font-size: 2rem; /* Slightly smaller */
+                margin-bottom: 1rem;
             }
-            #sanskritVerseTile { /* Targeting the new Sanskrit tile */
-                 margin-top: 0.8rem; /* Reduced margin */
-                 margin-bottom: 0.8rem; /* Reduced margin */
-                 padding: 0.8rem; /* Reduced padding */
+            /* .main-content margin-top removed */
+            #sanskritVerseTile {
+                 margin-top: 0.8rem;
+                 margin-bottom: 0.8rem;
+                 padding: 0.8rem;
             }
              .sanskrit-verse-text {
-                 font-size: 1.2rem; /* Slightly smaller font for text inside tile */
+                 font-size: 1.2rem;
              }
              .sanskrit-tile-info {
-                 font-size: 0.7rem; /* Even smaller in landscape */
-                 margin-bottom: 0.2rem; /* Reduced margin */
+                 font-size: 0.7rem;
+                 margin-bottom: 0.2rem;
              }
             .verse-label {
-                margin-top: 0.6rem; /* Reduced margin */
-                margin-bottom: 0.3rem; /* Reduced margin */
-                 font-size: 1rem; /* Slightly smaller label font */
+                margin-top: 0.6rem;
+                margin-bottom: 0.3rem;
+                 font-size: 1rem;
             }
             .content-card {
-                margin-top: 0.6rem; /* Reduced margin */
-                padding: 1rem; /* Reduced padding */
-                 border-left-width: 3px; /* Slightly thinner border */
+                margin-top: 0.6rem;
+                padding: 1rem;
+                 border-left-width: 3px;
             }
              .polished-telugu-verse-text {
-                 font-size: 1.3rem; /* Adjusted font size */
+                 font-size: 1.3rem;
              }
              .telugu-bhavartham-text {
-                 font-size: 1.2rem; /* Adjusted font size */
+                 font-size: 1.2rem;
              }
              .sandesham-text {
-                 font-size: 1rem; /* Adjusted font size */
+                 font-size: 1rem;
              }
              .audio-button {
-                 /* Adjusted position for landscape */
                  top: 0.3rem;
                  right: 0.3rem;
-                 font-size: 1.6rem; /* Slightly smaller audio icon */
+                 font-size: 1.6rem;
              }
-             /* Adjust padding of the main card if needed */
              .card {
-                 padding: 1.5rem; /* Reduced main card padding */
+                 padding: 1.5rem;
              }
              .share-container {
-                 margin-top: 1.5rem; /* Reduced margin */
-                 padding-top: 1rem; /* Reduced padding */
+                 margin-top: 1.5rem;
+                 padding-top: 1rem;
              }
               .share-container p {
-                 font-size: 1rem; /* Slightly smaller share text */
+                 font-size: 1rem;
              }
              .share-buttons {
-                 gap: 0.5rem; /* Reduced gap */
+                 gap: 0.5rem;
              }
               .share-button {
-                 width: 35px; /* Smaller button size */
-                 height: 35px; /* Smaller button size */
-                 font-size: 1.1rem; /* Smaller share icon size */
+                 width: 35px;
+                 height: 35px;
+                 font-size: 1.1rem;
+             }
+             /* Burger icon rules removed */
+
+             .side-menu {
+                 width: 90%; /* Wider menu in landscape */
+             }
+             .side-menu-hint {
+                 height: 80px; /* Shorter hint in landscape */
+                 /* Disable pulse animation in landscape to be less distracting */
+                 animation: none;
              }
 
 
@@ -565,12 +693,11 @@
         <p>తెలుగులో</p>
         </div>
 
-    <div class="main-content container mx-auto p-4 md:p-8" id="mainContent">
-        <h1 id="appHeading">శ్రీమద్భగవద్గీత</h1>
+    <div class="side-menu-overlay" id="sideMenuOverlay"></div>
 
-        <div class="controls mb-8 p-6 bg-white rounded-lg shadow-md border border-gray-200">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700 text-center font-roboto">ఒక శ్లోకం పొందండి</h2>
-            <div class="input-group">
+    <div class="side-menu" id="sideMenu">
+         <h2>ఒక శ్లోకం పొందండి</h2>
+         <div class="controls"> <div class="input-group">
                 <select id="chapterSelect" class="focus:ring-blue-500 focus:border-blue-500 font-roboto">
                     <option value="">అధ్యాయం ఎంచుకోండి</option>
                 </select>
@@ -585,6 +712,13 @@
                  <i class="ph ph-shuffle"></i> యాదృచ్ఛిక శ్లోకం పొందండి
             </button>
         </div>
+    </div>
+
+    <div class="side-menu-hint" id="sideMenuHint" title="మెనూ తెరవడానికి స్వైప్ చేయండి"></div>
+
+
+    <div class="main-content container mx-auto p-4 md:p-8" id="mainContent">
+        <h1 id="appHeading">శ్రీమద్భగవద్గీత</h1>
 
         <div id="verseDisplay" class="card hidden">
             </div>
@@ -610,12 +744,19 @@
         const messageArea = document.getElementById('messageArea');
         const confettiContainer = document.getElementById('confettiContainer');
 
+        const sideMenu = document.getElementById('sideMenu');
+        const sideMenuOverlay = document.getElementById('sideMenuOverlay');
+        // Burger Icon removed from JS references
+        const sideMenuHint = document.getElementById('sideMenuHint');
+
+
         // Base URL for your Flask API
         // Ensure this is HTTPS if your PWA is on HTTPS (like GitHub Pages)
         const API_BASE_URL = 'https://gita.adabala.com'; // UPDATE THIS IF YOUR API URL CHANGES
 
         // Simple local cache using localStorage
-        const verseCache = JSON.parse(localStorage.getItem('bhagavathGitaCache')) || {};
+        let verseCache = JSON.parse(localStorage.getItem('bhagavathGitaCache')) || {};
+        const CACHE_KEY = 'bhagavathGitaCache'; // Key for localStorage
 
         // Define the number of verses in each chapter (same as backend)
         const CHAPTER_VERSE_COUNTS = {
@@ -692,8 +833,6 @@
                 currentUtterance = new SpeechSynthesisUtterance(text);
                 currentUtterance.lang = lang; // Set language (Telugu for te-IN, Sanskrit might need a different approach or voice)
                 // Optional: Set rate, pitch, or select a specific voice
-                // currentUtterance.rate = 1;
-                // currentUtterance.pitch = 1;
                 // const voices = synth.getVoices();
                 // currentUtterance.voice = voices.find(voice => voice.lang === lang); // Find a suitable voice
 
@@ -807,8 +946,13 @@
             verseDisplay.classList.remove('hidden');
 
             // --- Auto-play TTS ---
-            if (fullTextToSpeak) {
-                 speakText(fullTextToSpeak.trim(), 'te-IN'); // Auto-play the concatenated text, trim again just in case
+            // Check if TTS is available and enabled (though we want it default,
+            // some environments might disable it or require user interaction first)
+            if (synth && fullTextToSpeak) {
+                 // A small delay might be needed on some mobile browsers for TTS to initialize fully
+                 setTimeout(() => {
+                     speakText(fullTextToSpeak.trim(), 'te-IN'); // Auto-play the concatenated text, trim again just in case
+                 }, 100); // Small delay
             }
 
 
@@ -835,16 +979,24 @@
         // Function to fetch a verse from API or cache
         async function fetchVerse(chapter, verse) {
             const cacheKey = `${chapter}-${verse}`;
+            const cachedData = verseCache[cacheKey]; // Read from the global verseCache variable
 
             // 1. Check local cache first
-            const cachedData = verseCache[cacheKey];
             if (cachedData) {
                 console.log(`Serving Chapter ${chapter}, Verse ${verse} from cache.`);
                 displayVerse(cachedData);
-                return; // Exit if found in cache
+                 // No need to fetch from API if found in cache
+                return;
             }
 
             // 2. If not in cache, fetch from API
+            // Check if online before attempting to fetch
+            if (!navigator.onLine) {
+                 showMessage(`మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`, 'error'); // You are offline and verse X:Y is not available in cache.
+                 verseDisplay.classList.add('hidden');
+                 return; // Stop here if offline and not in cache
+            }
+
             showMessage('శ్లోకం పొందుతోంది...'); // Getting verse...
             try {
                 console.log(`Attempting to fetch from API: ${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`); // Log the fetch URL
@@ -869,9 +1021,9 @@
 
                 const data = await response.json();
 
-                // Cache the fetched data
+                // Cache the fetched data in the global variable and localStorage
                 verseCache[cacheKey] = data;
-                localStorage.setItem('bhagavathGitaCache', JSON.stringify(verseCache));
+                localStorage.setItem(CACHE_KEY, JSON.stringify(verseCache));
                 console.log(`Fetched Chapter ${chapter}, Verse ${verse} from API and cached.`);
                 console.log('Fetched data:', data); // Log the fetched data
 
@@ -880,7 +1032,11 @@
             } catch (error) {
                 console.error('Error fetching verse:', error);
                 let displayMessage = `శ్లోకం పొందడంలో లోపం: ${error.message}`;
-                if (!error.message || error.message === '[object Object]') {
+                // Check if the error is likely due to being offline
+                if (error.message.includes('Failed to fetch') || navigator.onLine === false) {
+                     displayMessage = `మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`;
+                     console.log("Likely offline error, displaying specific message.");
+                } else if (!error.message || error.message === '[object Object]') {
                      console.error('Raw error object:', error);
                      displayMessage = `శ్లోకం పొందడంలో లోపం. వివరాల కోసం కన్సోల్ చూడండి.`;
                 }
@@ -891,13 +1047,33 @@
 
         // Function to fetch a random verse
         async function fetchRandomVerse() {
-             const maxChapter = 18;
-             const randomChapter = Math.floor(Math.random() * maxChapter) + 1;
-             const maxVerse = CHAPTER_VERSE_COUNTS[randomChapter] || 78;
-             const randomVerse = Math.floor(Math.random() * maxVerse) + 1;
+             // Check if offline
+             if (!navigator.onLine) {
+                 const cachedVerseKeys = Object.keys(verseCache);
+                 if (cachedVerseKeys.length > 0) {
+                     // Select a random key from the cached verses
+                     const randomKey = cachedVerseKeys[Math.floor(Math.random() * cachedVerseKeys.length)];
+                     const [chapter, verse] = randomKey.split('-').map(Number);
+                     console.log(`Fetching random verse from cache: Chapter ${chapter}, Verse ${verse}`);
+                     displayVerse(verseCache[randomKey]); // Display directly from cache
+                     // Auto-TTS is handled by displayVerse
+                 } else {
+                     // No verses in cache and offline
+                     showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు కాష్‌లో శ్లోకాలు అందుబాటులో లేవు.', 'error'); // You are offline and no verses are available in cache.
+                     verseDisplay.classList.add('hidden');
+                 }
+             } else {
+                 // If online, fetch a random verse from the API (original logic)
+                 const maxChapter = 18;
+                 const randomChapter = Math.floor(Math.random() * maxChapter) + 1;
+                 const maxVerse = CHAPTER_VERSE_COUNTS[randomChapter] || 78;
+                 const randomVerse = Math.floor(Math.random() * maxVerse) + 1;
 
-             console.log(`Fetching random verse: Chapter ${randomChapter}, Verse ${randomVerse}`);
-             fetchVerse(randomChapter, randomVerse);
+                 console.log(`Fetching random verse from API: Chapter ${randomChapter}, Verse ${randomVerse}`);
+                 fetchVerse(randomChapter, randomVerse); // fetchVerse handles caching
+             }
+             // Close the side menu after fetching a verse
+             closeSideMenu();
         }
 
         // Function to populate the chapter dropdown
@@ -927,6 +1103,24 @@
             }
         }
 
+        // --- Side Menu Logic ---
+        function openSideMenu() {
+            sideMenu.classList.add('open');
+            sideMenuOverlay.classList.add('visible');
+             sideMenuHint.style.display = 'none'; // Hide hint when menu is open
+        }
+
+        function closeSideMenu() {
+            sideMenu.classList.remove('open');
+            sideMenuOverlay.classList.remove('visible');
+             // Show hint again after a delay if not in landscape on small screen
+             if (!(window.matchMedia("(orientation: landscape) and (max-width: 768px)").matches)) {
+                 setTimeout(() => {
+                     sideMenuHint.style.display = 'block';
+                 }, 500); // Show hint after menu closes
+             }
+        }
+
         // Event listeners
         fetchSpecificVerseBtn.addEventListener('click', () => {
             const chapter = parseInt(chapterSelect.value);
@@ -938,21 +1132,82 @@
             }
 
             fetchVerse(chapter, verse);
+            closeSideMenu(); // Close menu after fetching
         });
 
-        fetchRandomVerseBtn.addEventListener('click', fetchRandomVerse);
+        fetchRandomVerseBtn.addEventListener('click', fetchRandomVerse); // fetchRandomVerse now handles closing the menu
 
         chapterSelect.addEventListener('change', (event) => {
             const selectedChapter = parseInt(event.target.value);
             populateVerseDropdown(selectedChapter);
         });
 
+        // Burger icon event listener removed
+        sideMenuOverlay.addEventListener('click', closeSideMenu); // Close menu when clicking overlay
+
+        // --- Swipe Functionality for Side Menu Hint ---
+        let touchStartX = 0;
+        const swipeThreshold = 50; // Minimum horizontal distance for a swipe
+
+        sideMenuHint.addEventListener('touchstart', (e) => {
+            // Store the starting X position of the touch
+            touchStartX = e.touches[0].clientX;
+             // Prevent default behavior only if it's clearly a horizontal swipe attempt
+             // This is tricky, so we'll handle it in touchmove
+        });
+
+        sideMenuHint.addEventListener('touchmove', (e) => {
+            if (touchStartX === 0) return; // If touchstart didn't fire correctly
+
+            const touchMoveX = e.touches[0].clientX;
+            const diffX = touchMoveX - touchStartX;
+
+            // Check if it's a swipe to the right and exceeds the threshold
+            if (diffX > swipeThreshold) {
+                openSideMenu();
+                touchStartX = 0; // Reset touchStartX to prevent multiple triggers
+                 e.preventDefault(); // Prevent default scrolling/behavior
+            } else if (Math.abs(e.touches[0].clientY - e.changedTouches[0].clientY) > Math.abs(diffX)) {
+                 // If vertical movement is greater than horizontal, it's likely a scroll,
+                 // so reset touchStartX and allow default behavior.
+                 touchStartX = 0;
+            }
+             // If diffX is positive but less than threshold, or negative, do nothing yet.
+        });
+
+        sideMenuHint.addEventListener('touchend', (e) => {
+            // Reset touchStartX regardless of swipe outcome
+            touchStartX = 0;
+        });
+
+        // Also add a click listener to the hint for desktop/non-swipe interaction
+        sideMenuHint.addEventListener('click', openSideMenu);
+
+
+        // --- Handle orientation change for hint visibility ---
+        function handleOrientationChange() {
+             if (window.matchMedia("(orientation: landscape) and (max-width: 768px)").matches) {
+                 sideMenuHint.style.display = 'none';
+             } else {
+                 // Only show hint if menu is not open
+                 if (!sideMenu.classList.contains('open')) {
+                     sideMenuHint.style.display = 'block';
+                 }
+             }
+        }
+
+        // Listen for orientation changes
+        window.addEventListener('orientationchange', handleOrientationChange);
+        // Also check on load
+        window.addEventListener('load', handleOrientationChange);
+
+
         // --- Splash Screen Logic ---
         function hideSplashScreen() {
              splashScreen.classList.add('hidden');
              mainContent.classList.add('visible');
              // Optionally fetch a random verse after splash screen hides
-             fetchRandomVerse();
+             fetchRandomVerse(); // Fetch a random verse on load (will use cache if offline)
         }
 
         // Hide splash screen after a delay, ensuring content is loaded
@@ -977,7 +1232,7 @@
                  const sanskritVerseElement = document.getElementById('sanskritVerse'); // Get text from Sanskrit verse div inside tile
                  const teluguVerseElement = verseDisplay.querySelector('#teluguVerse'); // Get text from shlokam card
                  const teluguBhavarthamTextElement = verseDisplay.querySelector('#teluguBhavartham'); // Get text from bhavartham card
-                 const sandeshamTextElement = verseDisplay.querySelector('#sandesham'); // Get text from sandesham card
+                 const sandeshamTextElement = document.getElementById('sandesham'); // Get text from sandesham card
 
                  // Ensure elements exist before getting textContent and trimming
                  const sanskritInfoText = sanskritInfoElement ? sanskritInfoElement.textContent.trim() : '';
@@ -1138,10 +1393,12 @@
         window.addEventListener('offline', () => {
             console.log('App is offline.');
             // Optional: Display an offline message to the user
-            showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. కాష్ చేయబడిన శ్లోకాలు మాత్రమే అందుబాటులో ఉండవచ్చు.', 'info'); // You are offline. Only cached verses may be available.
+            // The fetchVerse function now handles showing a specific offline message
+            // if the requested verse is not in the cache.
         });
 
 
     </script>
 </body>
 </html>
+
