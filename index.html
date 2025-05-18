@@ -218,7 +218,7 @@
              color: #1d4ed8; /* Blue color for Sandesham label */
          }
 
-         /* Styling for Audio Buttons */
+         /* Styling for Audio Buttons - Refined Positioning */
          .audio-button {
              background: none;
              border: none;
@@ -235,6 +235,8 @@
              top: 0.5rem; /* Adjust top position */
              right: 0.5rem; /* Adjust right position */
              z-index: 10; /* Ensure it's above other tile content */
+             /* Added transform to fine-tune vertical alignment relative to its position */
+             transform: translateY(-10%); /* Adjust vertically */
          }
 
          .audio-button:hover {
@@ -785,6 +787,7 @@
         let currentUtterance = null; // To keep track of the current speech
         let wordSpans = []; // Array to store references to word spans and their text/index info
         let currentHighlightSpan = null; // To keep track of the currently highlighted span
+        let isMuted = false; // State for mute/unmute
 
         // Function to show messages
         function showMessage(msg, type = 'info', area = messageArea) {
@@ -884,6 +887,12 @@
                 synth.cancel();
                 clearHighlight();
             }
+
+            if (isMuted) {
+                 console.log("Speech is muted. Not speaking.");
+                 return; // Don't speak if muted
+            }
+
             if (text) {
                 currentUtterance = new SpeechSynthesisUtterance(text);
                 currentUtterance.lang = lang; // Set language (Telugu for te-IN, Sanskrit might need a different approach or voice)
@@ -919,6 +928,7 @@
                 // Event listener for end of speech
                 currentUtterance.onend = () => {
                     clearHighlight(); // Clear highlight when speech ends
+                     console.log("Speech ended.");
                 };
 
                 // Event listener for errors
@@ -930,6 +940,8 @@
 
 
                 synth.speak(currentUtterance);
+            } else {
+                 console.warn("No text provided to speakText function.");
             }
         }
 
@@ -938,6 +950,38 @@
             if (currentHighlightSpan) {
                 currentHighlightSpan.classList.remove('highlighted-word');
                 currentHighlightSpan = null;
+            }
+             // Also remove highlight from all spans just in case
+             document.querySelectorAll('.verse-word.highlighted-word').forEach(span => {
+                 span.classList.remove('highlighted-word');
+             });
+        }
+
+        // Function to toggle mute state and update icon
+        function toggleMute() {
+            isMuted = !isMuted;
+            const audioButton = verseDisplay.querySelector('#playAllAudio');
+            if (audioButton) {
+                 const icon = audioButton.querySelector('i');
+                 if (isMuted) {
+                     synth.cancel(); // Stop speech immediately when muting
+                     clearHighlight(); // Clear highlight on mute
+                     // Update icon to muted state
+                     icon.classList.remove('ph-speaker-high');
+                     icon.classList.add('ph-speaker-slash');
+                     audioButton.title = 'అన్‌మ్యూట్ చేయండి'; // Update title
+                     console.log("Muted.");
+                 } else {
+                     // Update icon to unmuted state
+                     icon.classList.remove('ph-speaker-slash');
+                     icon.classList.add('ph-speaker-high');
+                     audioButton.title = 'అన్నీ వినండి / ఆపు'; // Update title
+                     console.log("Unmuted.");
+                     // Note: Unmuting doesn't automatically resume speech.
+                     // The user needs to click the button again to start speaking.
+                 }
+            } else {
+                 console.warn("Audio button not found when toggling mute.");
             }
         }
 
@@ -973,8 +1017,8 @@
                          </div>
                          <div id="sanskritVerse" class="sanskrit-verse-text">
                              </div>
-                         <button class="audio-button" id="playAllAudio" title="అన్నీ వినండి / ఆపు">
-                             <i class="ph ph-speaker-high"></i>
+                         <button class="audio-button" id="playAllAudio" title="${isMuted ? 'అన్‌మ్యూట్ చేయండి' : 'అన్నీ వినండి / ఆపు'}">
+                             <i class="ph ${isMuted ? 'ph-speaker-slash' : 'ph-speaker-high'}"></i>
                          </button>
                     </div>
                  `;
@@ -1056,14 +1100,15 @@
             const teluguBhavarthamElement = verseDisplay.querySelector('#teluguBhavartham');
             const sandeshamElement = verseDisplay.querySelector('#sandesham');
 
+
             // Wrap words and build the wordSpans array
             let currentSpanIndex = 0; // Keep track of the index in the fullTextToSpeak string *for the actual text content*
 
              // Wrap Sanskrit verse words
              if (sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
                  // Account for the label text added to fullTextToSpeak before the Sanskrit verse
-                 const sanskritLabelText = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
-                 currentSpanIndex = sanskritLabelText.length;
+                 const sanskritInfoText = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
+                 currentSpanIndex = sanskritInfoText.length;
                  currentSpanIndex = wrapWordsInSpans(sanskritVerse.trim(), sanskritVerseElement, currentSpanIndex);
              } else if (sanskritVerseElement) {
                  // If Sanskrit verse is not available, set the fallback text directly
@@ -1073,25 +1118,48 @@
 
              // Wrap Telugu verse words
              const teluguVerseLabelText = `తెలుగు శ్లోకం. `;
-             currentSpanIndex = fullTextToSpeak.indexOf(teluguVerseLabelText) + teluguVerseLabelText.length;
-             currentSpanIndex = wrapWordsInSpans(polishedTeluguVerse, teluguVerseElement, currentSpanIndex);
+             // Find the index of the label in the full text to get the correct start index for the verse text
+             const teluguVerseLabelIndex = fullTextToSpeak.indexOf(teluguVerseLabelText);
+             if (teluguVerseLabelIndex !== -1) {
+                 currentSpanIndex = teluguVerseLabelIndex + teluguVerseLabelText.length;
+                 currentSpanIndex = wrapWordsInSpans(polishedTeluguVerse, teluguVerseElement, currentSpanIndex);
+             } else {
+                  // Fallback if label text not found (shouldn't happen with current logic)
+                  console.error("Telugu verse label text not found in fullTextToSpeak!");
+                  teluguVerseElement.textContent = polishedTeluguVerse; // Set text directly without spans
+             }
 
 
              // Wrap Bhavartham words
              const teluguBhavarthamLabelText = `భావార్థం. `;
-             currentSpanIndex = fullTextToSpeak.indexOf(teluguBhavarthamLabelText) + teluguBhavarthamLabelText.length;
-             currentSpanIndex = wrapWordsInSpans(polishedTeluguMeaning, teluguBhavarthamElement, currentSpanIndex);
+             const teluguBhavarthamLabelIndex = fullTextToSpeak.indexOf(teluguBhavarthamLabelText);
+              if (teluguBhavarthamLabelIndex !== -1) {
+                 currentSpanIndex = teluguBhavarthamLabelIndex + teluguBhavarthamLabelText.length;
+                 currentSpanIndex = wrapWordsInSpans(polishedTeluguMeaning, teluguBhavarthamElement, currentSpanIndex);
+              } else {
+                 console.error("Telugu Bhavartham label text not found in fullTextToSpeak!");
+                 teluguBhavarthamElement.textContent = polishedTeluguMeaning;
+              }
+
 
              // Wrap Sandesham words
              const sandeshamLabelText = `సందేశం. `;
-             currentSpanIndex = fullTextToSpeak.indexOf(sandeshamLabelText) + sandeshamLabelText.length;
-             currentSpanIndex = wrapWordsInSpans(teluguDescription, sandeshamElement, currentSpanIndex);
+             const sandeshamLabelIndex = fullTextToSpeak.indexOf(sandeshamLabelText);
+              if (sandeshamLabelIndex !== -1) {
+                 currentSpanIndex = sandeshamLabelIndex + sandeshamLabelText.length;
+                 currentSpanIndex = wrapWordsInSpans(teluguDescription, sandeshamElement, currentSpanIndex);
+              } else {
+                 console.error("Sandesham label text not found in fullTextToSpeak!");
+                 sandeshamElement.textContent = teluguDescription;
+              }
 
 
             // --- Auto-play TTS ---
             // Check if TTS is available and enabled (though we want it default,
             // some environments might disable it or require user interaction first)
-            if (synth && fullTextToSpeak && fullTextToSpeak.trim() !== '') {
+            // Only auto-play if not muted
+            if (synth && fullTextToSpeak && fullTextToSpeak.trim() !== '' && !isMuted) {
+                 console.log("Auto-playing speech.");
                  // A small delay might be needed on some mobile browsers for TTS to initialize fully
                  setTimeout(() => {
                      speakText(fullTextToSpeak.trim(), 'te-IN'); // Auto-play the concatenated text, trim again just in case
@@ -1099,26 +1167,56 @@
             } else if (fullTextToSpeak.trim() === '') {
                  console.warn("No text to speak.");
                  showMessage('వచనం అందుబాటులో లేదు.', 'info'); // No text available.
+            } else if (isMuted) {
+                 console.log("App is muted, not auto-playing speech.");
             }
 
 
-            // Add event listener to the single play all audio button (now also acts as stop/restart)
+            // Add event listener to the single play all audio button (now also acts as stop/restart/mute/unmute)
             const playAllAudioButton = verseDisplay.querySelector('#playAllAudio');
             if (playAllAudioButton) {
-                playAllAudioButton.addEventListener('click', () => {
+                // Remove any existing listener to prevent duplicates
+                const old_element = playAllAudioButton;
+                const new_element = old_element.cloneNode(true);
+                old_element.parentNode.replaceChild(new_element, old_element);
+                const updatedPlayAllAudioButton = verseDisplay.querySelector('#playAllAudio');
+
+
+                updatedPlayAllAudioButton.addEventListener('click', () => {
+                    console.log("Audio button clicked. Current mute state:", isMuted, "Speaking:", synth.speaking);
                     if (synth.speaking) {
-                        synth.cancel(); // Stop if speaking
+                        // If currently speaking, this click acts as STOP
+                        console.log("Stopping speech.");
+                        synth.cancel(); // Stop speech immediately
                         clearHighlight(); // Clear highlight immediately on stop
+                        // Don't change mute state here, just stop playback
                     } else {
-                        // If not speaking, restart playback
-                        if (fullTextToSpeak && fullTextToSpeak.trim() !== '') {
-                             speakText(fullTextToSpeak.trim(), 'te-IN'); // Trim here too
+                        // If not speaking, this click acts as PLAY/UNMUTE and START
+                        if (isMuted) {
+                             // If currently muted, unmute and prepare to speak
+                             console.log("Unmuting and starting speech.");
+                             toggleMute(); // This will update the icon and state
+                             // Speech will start below after unmuting
+                             if (fullTextToSpeak && fullTextToSpeak.trim() !== '') {
+                                 speakText(fullTextToSpeak.trim(), 'te-IN');
+                             } else {
+                                 console.warn("No text to speak after unmuting.");
+                                 showMessage('వచనం అందుబాటులో లేదు.', 'info');
+                             }
                         } else {
-                            console.warn("No text to speak on play button click.");
-                            showMessage('వచనం అందుబాటులో లేదు.', 'info'); // No text available.
+                             // If not muted and not speaking, start speech
+                             console.log("Starting speech.");
+                             if (fullTextToSpeak && fullTextToSpeak.trim() !== '') {
+                                 speakText(fullTextToSpeak.trim(), 'te-IN'); // Trim here too
+                             } else {
+                                 console.warn("No text to speak.");
+                                 showMessage('వచనం అందుబాటులో లేదు.', 'info'); // No text available.
+                             }
                         }
                     }
                 });
+            } else {
+                console.warn("Play all audio button not found after displayVerse.");
             }
 
 
@@ -1543,7 +1641,7 @@
             console.log('App is offline.');
             // Optional: Display an offline message to the user
             // The fetchVerse function now handles showing a specific offline message
-            // if the requested verse is not in the cache.
+            // if the requested verse is in the cache.
         });
 
 
