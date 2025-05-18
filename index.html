@@ -625,6 +625,16 @@
              border-radius: 3px; /* Slightly rounded corners for highlight */
          }
 
+         /* Styling for the app version display in the side menu */
+         #appVersionDisplay {
+             margin-top: auto; /* Push to the bottom */
+             padding-top: 1rem;
+             border-top: 1px solid #e5e7eb;
+             font-size: 0.8rem;
+             color: #6b7280;
+             text-align: center;
+         }
+
 
         /* --- Landscape Optimization for small screens --- */
         @media (orientation: landscape) and (max-width: 768px) {
@@ -730,6 +740,7 @@
                  <i class="ph ph-shuffle"></i> యాదృచ్ఛిక శ్లోకం పొందండి
             </button>
         </div>
+        <div id="appVersionDisplay"></div>
     </div>
 
     <div class="side-menu-hint" id="sideMenuHint" title="మెనూ తెరవడానికి స్వైప్ చేయండి"></div>
@@ -765,6 +776,7 @@
         const sideMenu = document.getElementById('sideMenu');
         const sideMenuOverlay = document.getElementById('sideMenuOverlay');
         const sideMenuHint = document.getElementById('sideMenuHint');
+        const appVersionDisplay = document.getElementById('appVersionDisplay'); // Get the version display element
 
 
         // Base URL for your Flask API
@@ -844,17 +856,20 @@
         }
 
         // Function to wrap words in spans and build wordSpans array
-        function wrapWordsInSpans(text, containerElement, startIndexInFullText) {
-            const words = text.split(/\s+/); // Split by one or more whitespace characters
+        // This function now takes the text to wrap, the container, and the *start index in the full spoken text*
+        function wrapWordsInSpans(textToWrap, containerElement, startIndexInFullSpokenText) {
+            const words = textToWrap.split(/\s+/); // Split by one or more whitespace characters
             let currentHtml = '';
-            let currentIndex = startIndexInFullText;
+            let currentSpokenIndex = startIndexInFullSpokenText; // Index in the full spoken text
 
             words.forEach((word, index) => {
                 if (word) { // Avoid creating spans for empty strings from multiple spaces
-                    // Add a space before the word if it's not the first word in this segment
+                    // Add a space before the word in HTML if it's not the first word in this segment
                     if (index > 0) {
                          currentHtml += ' ';
-                         currentIndex += 1; // Account for the space
+                         // We don't increment currentSpokenIndex for the space here because
+                         // the onboundary event gives the start of the word itself in the spoken text.
+                         // The mapping relies on finding the word in the spoken string.
                     }
 
                     // Create a span for the word
@@ -865,18 +880,25 @@
                     // Store word info and span reference
                     wordSpans.push({
                         text: word,
-                        startIndex: currentIndex,
-                        endIndex: currentIndex + word.length,
+                        // Store the approximate start index in the full spoken text string
+                        // This is an approximation and might need fine-tuning based on TTS behavior
+                        startIndex: currentSpokenIndex,
+                        endIndex: currentSpokenIndex + word.length, // Approximate end index
                         span: span // Store reference to the actual span element
                     });
 
                     currentHtml += span.outerHTML; // Add the span HTML
-                    currentIndex += word.length; // Update index
+                    currentSpokenIndex += word.length; // Increment index by word length
+
+                    // Add 1 for the space that will follow this word in the spoken text (if not the last word)
+                    if (index < words.length - 1) {
+                         currentSpokenIndex += 1; // Account for the space *after* the word
+                    }
                 }
             });
 
             containerElement.innerHTML = currentHtml; // Set the HTML of the container
-            return currentIndex; // Return the ending index after this segment
+            return currentSpokenIndex; // Return the ending index in the full spoken text after this segment
         }
 
 
@@ -890,6 +912,14 @@
 
             if (isMuted) {
                  console.log("Speech is muted. Not speaking.");
+                 // Ensure icon is correct if speech was attempted while muted
+                 const audioButton = verseDisplay.querySelector('#playAllAudio');
+                 if (audioButton) {
+                     const icon = audioButton.querySelector('i');
+                     icon.classList.remove('ph-speaker-high');
+                     icon.classList.add('ph-speaker-slash');
+                     audioButton.title = 'అన్‌మ్యూట్ చేయండి';
+                 }
                  return; // Don't speak if muted
             }
 
@@ -901,26 +931,40 @@
                 currentUtterance.onboundary = (event) => {
                     if (event.name === 'word') {
                         const charIndex = event.charIndex;
-                        // Find the word span that contains this character index
-                        const targetWord = wordSpans.find(wordInfo =>
-                            charIndex >= wordInfo.startIndex && charIndex < wordInfo.endIndex
-                        );
+                        // Find the word span whose *spoken text index range* contains this charIndex
+                        // This is the core mapping from spoken text index to displayed word span
+                        const targetWordInfo = wordSpans.find(wordInfo => {
+                             // A simple check: see if the spoken text at charIndex starts with the word's text
+                             // This is more robust than relying purely on calculated indices
+                             const spokenSegment = text.substring(charIndex);
+                             // Clean the spoken segment and word text for comparison (remove punctuation, normalize space)
+                             const cleanSpokenSegment = spokenSegment.replace(/[\s.,!?;:]+/g, ' ').trim();
+                             const cleanWordText = wordInfo.text.replace(/[\s.,!?;:]+/g, ' ').trim();
 
-                        if (targetWord) {
+                             // Check if the cleaned spoken segment starts with the cleaned word text
+                             // Also check if the charIndex falls within the approximate range stored
+                             return cleanSpokenSegment.startsWith(cleanWordText) &&
+                                    charIndex >= wordInfo.startIndex && charIndex < wordInfo.endIndex + (wordInfo.text.length * 0.5); // Add a buffer for approximation
+                        });
+
+
+                        if (targetWordInfo) {
                             clearHighlight(); // Remove previous highlight
-                            currentHighlightSpan = targetWord.span;
+                            currentHighlightSpan = targetWordInfo.span;
                             currentHighlightSpan.classList.add('highlighted-word');
 
                             // Scroll the word into view
-                            targetWord.span.scrollIntoView({
+                            targetWordInfo.span.scrollIntoView({
                                 behavior: 'smooth', // Smooth scrolling
                                 block: 'center' // Center the word in the viewport
                             });
                         } else {
-                             // Handle cases where charIndex might not perfectly match (e.g., punctuation)
-                             // Find the nearest span or log a warning
-                             console.warn('Could not find word span for charIndex:', charIndex, 'Word:', text.substring(charIndex, charIndex + 10) + '...');
-                             // Optional: Implement fallback logic to find nearest word
+                             // Handle cases where charIndex might not perfectly match (e.g., punctuation, TTS variations)
+                             // This can happen if the simple startsWith check fails or indices are off.
+                             // We can try a fallback: find the word span whose text is nearest to the spoken word at charIndex.
+                             // Or, log a warning and skip highlighting for this word.
+                             console.warn('Could not find word span for charIndex:', charIndex, 'Spoken text snippet:', text.substring(charIndex, charIndex + 20) + '...');
+                             // Optional: Add more sophisticated fuzzy matching or index correction here if needed.
                         }
                     }
                 };
@@ -945,6 +989,15 @@
                      showMessage(`వచనాన్ని చదవడంలో లోపం: ${event.error}`, 'error'); // Error reading text
                      clearHighlight(); // Clear highlight on error
                  };
+
+                // Before speaking, update the icon to indicate speaking is starting (high speaker)
+                 const audioButton = verseDisplay.querySelector('#playAllAudio');
+                 if (audioButton) {
+                     const icon = audioButton.querySelector('i');
+                     icon.classList.remove('ph-speaker-slash');
+                     icon.classList.add('ph-speaker-high');
+                     audioButton.title = 'అన్నీ వినండి / ఆపు'; // Or 'ఆపు'
+                 }
 
 
                 synth.speak(currentUtterance);
@@ -1025,9 +1078,21 @@
             const polishedTeluguMeaning = verseData.polished_telugu_meaning || verseData.telugu_meaning || 'తెలుగు భావార్థం అందుబాటులో లేదు.';
             const teluguDescription = verseData.telugu_description || 'సందేశం అందుబాటులో లేదు.';
 
-            // Build the full text to speak and the word spans mapping
+            // Build the full text to speak (including labels and pauses)
             let fullTextToSpeak = '';
-            let currentTextIndex = 0; // Track index in the fullTextToSpeak string
+            if (sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
+                 fullTextToSpeak += `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. ${sanskritVerse.trim()}. `;
+            }
+            if (polishedTeluguVerse && polishedTeluguVerse !== 'తెలుగు శ్లోకం అందుబాటులో లేదు.') {
+                 fullTextToSpeak += `తెలుగు శ్లోకం. ${polishedTeluguVerse}. `;
+            }
+            if (polishedTeluguMeaning && polishedTeluguMeaning !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') {
+                 fullTextToSpeak += `భావార్థం. ${polishedTeluguMeaning}. `;
+            }
+             if (teluguDescription && teluguDescription !== 'సందేశం అందుబాటులో లేదు.') {
+                fullTextToSpeak += `సందేశం. ${teluguDescription}. `;
+            }
+
 
             let contentHTML = ``; // Start with empty HTML as main heading is removed
 
@@ -1045,11 +1110,6 @@
                          </button>
                     </div>
                  `;
-                 // Append Sanskrit text to fullTextToSpeak and update index
-                 const sanskritInfoText = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
-                 fullTextToSpeak += sanskritInfoText;
-                 // Append the actual verse text and a pause
-                 fullTextToSpeak += sanskritVerse.trim() + '. ';
             }
 
             // Add Shlokam Card
@@ -1060,12 +1120,6 @@
                          </div>
                 </div>
             `;
-            // Append Shlokam text to fullTextToSpeak and update index
-            const teluguVerseLabel = `తెలుగు శ్లోకం. `;
-            fullTextToSpeak += teluguVerseLabel;
-            // Append the actual verse text and a pause
-            fullTextToSpeak += polishedTeluguVerse + '. ';
-
 
             // Add Bhavartham Card
             contentHTML += `
@@ -1075,12 +1129,6 @@
                          </div>
                 </div>
             `;
-             // Append Bhavartham text to fullTextToSpeak and update index
-            const teluguBhavarthamLabel = `భావార్థం. `;
-            fullTextToSpeak += teluguBhavarthamLabel;
-            // Append the actual meaning text and a pause
-            fullTextToSpeak += polishedTeluguMeaning + '. ';
-
 
             // Add Sandesham Card
             contentHTML += `
@@ -1090,11 +1138,6 @@
                          </div>
                 </div>
             `;
-             // Append Sandesham text to fullTextToSpeak and update index
-            const sandeshamLabel = `సందేశం. `;
-            fullTextToSpeak += sandeshamLabel;
-            // Append the actual description text and a pause
-            fullTextToSpeak += teluguDescription + '. ';
 
 
             contentHTML += `
@@ -1127,42 +1170,46 @@
             const teluguBhavarthamElement = verseDisplay.querySelector('#teluguBhavartham');
             const sandeshamElement = verseDisplay.querySelector('#sandesham');
 
+            // Keep track of the current index in the fullTextToSpeak string for word wrapping
+            let currentSpokenIndex = 0;
 
-            // Wrap words and build the wordSpans array
-            // The startIndexInFullText needs to be calculated based on the labels and previous text segments
-            let currentSpanIndex = 0;
-
-             // Wrap Sanskrit verse words
-             if (sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
+            // Wrap Sanskrit verse words
+             if (sanskritVerseElement && sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
                  const sanskritInfoText = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
-                 currentSpanIndex = sanskritInfoText.length; // Start index after the label
-                 currentSpanIndex = wrapWordsInSpans(sanskritVerse.trim(), sanskritVerseElement, currentSpanIndex);
-                 currentSpanIndex += 2; // Account for the ". " added after the Sanskrit verse in fullTextToSpeak
+                 currentSpokenIndex += sanskritInfoText.length; // Account for the label text
+                 currentSpokenIndex = wrapWordsInSpans(sanskritVerse.trim(), sanskritVerseElement, currentSpokenIndex);
+                 currentSpokenIndex += 2; // Account for the ". " added after the Sanskrit verse in fullTextToSpeak
              } else if (sanskritVerseElement) {
-                 // If Sanskrit verse is not available, set the fallback text directly
-                 sanskritVerseElement.textContent = sanskritVerse || 'సంస్కృత శ్లోకం అందుబాటులో లేదు.';
+                 // If Sanskrit verse is not available, set the fallback text directly without wrapping
+                 sanskritVerseElement.textContent = sanskritVerse || 'సంస్కృత శ्लोకం అందుబాటులో లేదు.';
              }
 
 
              // Wrap Telugu verse words
-             const teluguVerseLabelText = `తెలుగు శ్లోకం. `;
-             currentSpanIndex += teluguVerseLabelText.length; // Start index after the label
-             currentSpanIndex = wrapWordsInSpans(polishedTeluguVerse, teluguVerseElement, currentSpanIndex);
-             currentSpanIndex += 2; // Account for the ". " added after the Telugu verse in fullTextToSpeak
+             if (teluguVerseElement) {
+                 const teluguVerseLabelText = `తెలుగు శ్లోకం. `;
+                 currentSpokenIndex += teluguVerseLabelText.length; // Account for the label text
+                 currentSpokenIndex = wrapWordsInSpans(polishedTeluguVerse, teluguVerseElement, currentSpokenIndex);
+                 currentSpokenIndex += 2; // Account for the ". " added after the Telugu verse in fullTextToSpeak
+             }
 
 
              // Wrap Bhavartham words
-             const teluguBhavarthamLabelText = `భావార్థం. `;
-             currentSpanIndex += teluguBhavarthamLabelText.length; // Start index after the label
-             currentSpanIndex = wrapWordsInSpans(polishedTeluguMeaning, teluguBhavarthamElement, currentSpanIndex);
-             currentSpanIndex += 2; // Account for the ". " added after the Bhavartham in fullTextToSpeak
+             if (teluguBhavarthamElement) {
+                 const teluguBhavarthamLabelText = `భావార్థం. `;
+                 currentSpokenIndex += teluguBhavarthamLabelText.length; // Account for the label text
+                 currentSpokenIndex = wrapWordsInSpans(polishedTeluguMeaning, teluguBhavarthamElement, currentSpokenIndex);
+                 currentSpokenIndex += 2; // Account for the ". " added after the Bhavartham in fullTextToSpeak
+             }
 
 
              // Wrap Sandesham words
-             const sandeshamLabelText = `సందేశం. `;
-             currentSpanIndex += sandeshamLabelText.length; // Start index after the label
-             currentSpanIndex = wrapWordsInSpans(teluguDescription, sandeshamElement, currentSpanIndex);
-             currentSpanIndex += 2; // Account for the ". " added after the Sandesham in fullTextToSpeak
+             if (sandeshamElement) {
+                 const sandeshamLabelText = `సందేశం. `;
+                 currentSpokenIndex += sandeshamLabelText.length; // Account for the label text
+                 currentSpokenIndex = wrapWordsInSpans(teluguDescription, sandeshamElement, currentSpokenIndex);
+                 currentSpokenIndex += 2; // Account for the ". " added after the Sandesham in fullTextToSpeak
+             }
 
 
             // --- Auto-play TTS ---
@@ -1186,12 +1233,11 @@
             // Add event listener to the single play all audio button (now also acts as stop/restart/mute/unmute)
             const playAllAudioButton = verseDisplay.querySelector('#playAllAudio');
             if (playAllAudioButton) {
-                // Remove any existing listener to prevent duplicates
+                // Remove any existing listener to prevent duplicates before adding a new one
                 const old_element = playAllAudioButton;
-                const new_element = old_element.cloneNode(true);
+                const new_element = old_element.cloneNode(true); // Clone with all children (the icon)
                 old_element.parentNode.replaceChild(new_element, old_element);
-                const updatedPlayAllAudioButton = verseDisplay.querySelector('#playAllAudio');
-
+                const updatedPlayAllAudioButton = verseDisplay.querySelector('#playAllAudio'); // Get the new element
 
                 updatedPlayAllAudioButton.addEventListener('click', () => {
                     console.log("Audio button clicked. Current mute state:", isMuted, "Speaking:", synth.speaking);
@@ -1209,11 +1255,11 @@
                              updatedPlayAllAudioButton.title = 'అన్‌మ్యూట్ చేయండి';
                          } else {
                              icon.classList.remove('ph-speaker-slash');
-                             icon.classList.add('ph-speaker-high');
-                             updatedPlayAllAudioButton.title = 'అన్నీ వినండి / ఆపు';
+                             icon.classList.add('ph-speaker-high'); // Stay as high speaker if not muted
+                             updatedPlayAllAudioButton.title = 'అన్నీ వినండి / ఆపు'; // Stay as Play/Stop title
                          }
                     } else {
-                        // If not speaking, this click acts as a Mute/Unmute and Play toggle
+                        // If not speaking, this click acts as a Play/Mute Toggle
                         if (isMuted) {
                              // Was muted, now unmuting and playing
                              console.log("Unmuting and starting speech.");
@@ -1489,6 +1535,7 @@
         // Hide splash screen after a delay, ensuring content is loaded
         window.addEventListener('load', () => {
             populateChapterDropdown(); // Populate dropdowns early
+            displayAppVersion(); // Display app version on load
 
             // Use a combination of load event and a timeout as a fallback
             setTimeout(hideSplashScreen, 2000); // Hide after 2 seconds
@@ -1672,6 +1719,59 @@
             // The fetchVerse function now handles showing a specific offline message
             // if the requested verse is in the cache.
         });
+
+        // --- App Version Display ---
+        function displayAppVersion() {
+            // This is where you will get the version from your build process.
+            // For GitHub Pages releases, you can use a GitHub Action to:
+            // 1. Get the release tag (e.g., from GITHUB_REF environment variable like 'refs/tags/v1.0.0').
+            // 2. Extract the version number (e.g., 'v1.0.0').
+            // 3. Inject this version number into your index.html or a separate JS file.
+            //    A simple way is to replace a placeholder string in index.html during the build/deploy step.
+            //    Example GitHub Action step (using sed, requires bash):
+            //    - name: Inject App Version
+            //      run: sed -i "s|__APP_VERSION__|${{ github.ref_name }}|g" index.html
+            //      env:
+            //        GITHUB_REF_NAME: ${{ github.ref_name }}
+
+            // In your HTML, you would have a placeholder like:
+            // <div id="appVersionDisplay">Version: __APP_VERSION__</div>
+
+            // And here in the script, you would read that placeholder text.
+            // If you use the sed example above, the HTML will be updated directly.
+            // If you set a global JS variable in the build, you would read it here:
+            // const appVersion = window.APP_VERSION || 'N/A';
+            // appVersionDisplay.textContent = `Version: ${appVersion}`;
+
+            // For now, let's use a simple placeholder text that you can manually update
+            // or that your GitHub Action will replace.
+            const versionPlaceholder = appVersionDisplay.textContent || '';
+            if (versionPlaceholder.includes('__APP_VERSION__')) {
+                // If the placeholder is still there, set a default or instruction
+                appVersionDisplay.textContent = 'App Version: (Build process needs to inject version)';
+            } else if (versionPlaceholder.trim() === '') {
+                 // If the div is empty, set a default or instruction
+                 appVersionDisplay.textContent = 'App Version: (Version placeholder missing)';
+            } else {
+                 // If the placeholder was replaced by the build process, the text is already correct.
+                 // You might want to prepend "App Version: " if your build process only injects the number.
+                 if (!versionPlaceholder.startsWith('App Version:')) {
+                      appVersionDisplay.textContent = `App Version: ${versionPlaceholder.trim()}`;
+                 }
+            }
+
+            // Example of how you might set a global variable in your build process (e.g., in a separate JS file loaded before this script):
+            // window.APP_VERSION = "${{ github.ref_name }}"; // This line would be injected by GitHub Actions
+
+            // If using the global variable method:
+            // const appVersion = window.APP_VERSION || 'N/A';
+            // appVersionDisplay.textContent = `App Version: ${appVersion}`;
+
+             // Let's add a default text if no version is injected
+             if (appVersionDisplay.textContent.includes('__APP_VERSION__') || appVersionDisplay.textContent.trim() === '' || appVersionDisplay.textContent.includes('(Version placeholder missing)')) {
+                  appVersionDisplay.textContent = `App Version: Development Build`; // Default text
+             }
+        }
 
 
     </script>
