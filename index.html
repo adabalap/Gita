@@ -48,7 +48,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white overlay */
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white overlay - Keep this for overall readability */
             z-index: -1; /* Place behind content */
         }
 
@@ -243,7 +243,7 @@
 
          /* Styling for the new content cards/tiles */
          .content-card {
-             background-color: #ffffff; /* White background for cards */
+             background-color: rgba(255, 255, 255, 0.8); /* Slightly more transparent white background for cards */
              border-radius: 0.75rem; /* Slightly less rounded than main card */
              padding: 1.5rem; /* Padding inside cards */
              margin-top: 0.8rem; /* Space above each card - Reduced slightly */
@@ -264,13 +264,22 @@
 
 
         .card {
-            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white card background for readability over background image */
+            background-color: rgba(255, 255, 255, 0.8); /* Increased transparency for the main card */
             border-radius: 1rem; /* More rounded corners */
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* More prominent shadow */
             padding: 2rem; /* Increased padding */
             margin-bottom: 2rem; /* Increased margin */
             border: 1px solid #e5e7eb; /* Subtle border */
         }
+        .controls { /* Targeting the controls div */
+             background-color: rgba(255, 255, 255, 0.8); /* Increased transparency for controls */
+             border-radius: 0.75rem; /* Rounded corners */
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+             padding: 1.5rem; /* Padding */
+             margin-bottom: 1.5rem; /* Margin below */
+             border: 1px solid #e5e7eb; /* Subtle border */
+        }
+
         .input-group {
             display: flex;
             gap: 0.75rem; /* Increased gap */
@@ -346,12 +355,12 @@
             font-size: 1rem;
         }
         .message.error {
-            background-color: #fee2e2; /* Red background */
+            background-color: rgba(254, 226, 226, 0.9); /* Red background with transparency */
             color: #991b1b; /* Dark red text */
             border: 1px solid #f87171;
         }
          .message.info {
-            background-color: #dbeafe; /* Blue background */
+            background-color: rgba(219, 234, 254, 0.9); /* Blue background with transparency */
             color: #1e40af; /* Dark blue text */
              border: 1px solid #93c5fd;
         }
@@ -607,6 +616,13 @@
              animation: pulse-hint 2s infinite ease-in-out; /* Apply pulse animation */
          }
 
+         /* Styling for highlighted words */
+         .highlighted-word {
+             background-color: rgba(255, 255, 0, 0.5); /* Semi-transparent yellow highlight */
+             padding: 0 2px; /* Add a little padding around the highlight */
+             border-radius: 3px; /* Slightly rounded corners for highlight */
+         }
+
 
         /* --- Landscape Optimization for small screens --- */
         @media (orientation: landscape) and (max-width: 768px) {
@@ -746,7 +762,6 @@
 
         const sideMenu = document.getElementById('sideMenu');
         const sideMenuOverlay = document.getElementById('sideMenuOverlay');
-        // Burger Icon removed from JS references
         const sideMenuHint = document.getElementById('sideMenuHint');
 
 
@@ -768,6 +783,8 @@
         // Initialize Speech Synthesis
         const synth = window.speechSynthesis;
         let currentUtterance = null; // To keep track of the current speech
+        let wordSpans = []; // Array to store references to word spans and their text/index info
+        let currentHighlightSpan = null; // To keep track of the currently highlighted span
 
         // Function to show messages
         function showMessage(msg, type = 'info', area = messageArea) {
@@ -823,20 +840,104 @@
             }
         }
 
-        // Function to speak text
+        // Function to wrap words in spans and build wordSpans array
+        function wrapWordsInSpans(text, containerElement, startIndexInFullText) {
+            const words = text.split(/\s+/); // Split by one or more whitespace characters
+            let currentHtml = '';
+            let currentIndex = startIndexInFullText;
+
+            words.forEach((word, index) => {
+                if (word) { // Avoid creating spans for empty strings from multiple spaces
+                    // Add a space before the word if it's not the first word and not the very beginning of the full text
+                    if (index > 0 || startIndexInFullText > 0) {
+                         currentHtml += ' ';
+                         currentIndex += 1; // Account for the space
+                    }
+
+                    // Create a span for the word
+                    const span = document.createElement('span');
+                    span.textContent = word;
+                    span.classList.add('verse-word'); // Add a class for styling/selection
+
+                    // Store word info and span reference
+                    wordSpans.push({
+                        text: word,
+                        startIndex: currentIndex,
+                        endIndex: currentIndex + word.length,
+                        span: span // Store reference to the actual span element
+                    });
+
+                    currentHtml += span.outerHTML; // Add the span HTML
+                    currentIndex += word.length; // Update index
+                }
+            });
+
+            containerElement.innerHTML = currentHtml; // Set the HTML of the container
+            return currentIndex; // Return the ending index after this segment
+        }
+
+
+        // Function to speak text and handle highlighting
         function speakText(text, lang = 'te-IN') {
-            // Stop any ongoing speech before starting new speech
+            // Stop any ongoing speech before starting new speech and clear highlight
             if (synth.speaking) {
                 synth.cancel();
+                clearHighlight();
             }
             if (text) {
                 currentUtterance = new SpeechSynthesisUtterance(text);
                 currentUtterance.lang = lang; // Set language (Telugu for te-IN, Sanskrit might need a different approach or voice)
-                // Optional: Set rate, pitch, or select a specific voice
-                // const voices = synth.getVoices();
-                // currentUtterance.voice = voices.find(voice => voice.lang === lang); // Find a suitable voice
+
+                // Event listener for word boundaries
+                currentUtterance.onboundary = (event) => {
+                    if (event.name === 'word') {
+                        const charIndex = event.charIndex;
+                        // Find the word span that contains this character index
+                        const targetWord = wordSpans.find(wordInfo =>
+                            charIndex >= wordInfo.startIndex && charIndex < wordInfo.endIndex
+                        );
+
+                        if (targetWord) {
+                            clearHighlight(); // Remove previous highlight
+                            currentHighlightSpan = targetWord.span;
+                            currentHighlightSpan.classList.add('highlighted-word');
+
+                            // Scroll the word into view
+                            targetWord.span.scrollIntoView({
+                                behavior: 'smooth', // Smooth scrolling
+                                block: 'center' // Center the word in the viewport
+                            });
+                        } else {
+                             // Handle cases where charIndex might not perfectly match (e.g., punctuation)
+                             // Find the nearest span or log a warning
+                             console.warn('Could not find word span for charIndex:', charIndex);
+                             // Optional: Implement fallback logic to find nearest word
+                        }
+                    }
+                };
+
+                // Event listener for end of speech
+                currentUtterance.onend = () => {
+                    clearHighlight(); // Clear highlight when speech ends
+                };
+
+                // Event listener for errors
+                 currentUtterance.onerror = (event) => {
+                     console.error('SpeechSynthesisUtterance error:', event.error);
+                     showMessage(`వచనాన్ని చదవడంలో లోపం: ${event.error}`, 'error'); // Error reading text
+                     clearHighlight(); // Clear highlight on error
+                 };
+
 
                 synth.speak(currentUtterance);
+            }
+        }
+
+        // Function to clear highlighting
+        function clearHighlight() {
+            if (currentHighlightSpan) {
+                currentHighlightSpan.classList.remove('highlighted-word');
+                currentHighlightSpan = null;
             }
         }
 
@@ -844,6 +945,8 @@
         // Function to display a verse in the new format (using cards)
         function displayVerse(verseData) {
             hideMessage(); // Hide main message area
+            clearHighlight(); // Clear any highlight from previous verse
+            wordSpans = []; // Reset word spans array for the new verse
 
             // Clear previous content
             verseDisplay.innerHTML = '';
@@ -855,27 +958,9 @@
             const polishedTeluguMeaning = verseData.polished_telugu_meaning || verseData.telugu_meaning || 'తెలుగు భావార్థం అందుబాటులో లేదు.';
             const teluguDescription = verseData.telugu_description || 'సందేశం అందుబాటులో లేదు.';
 
-            // Generate the full text for auto-TTS
+            // Build the full text to speak and the word spans mapping
             let fullTextToSpeak = '';
-            const sanskritTextTrimmed = (sanskritVerse && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') ? sanskritVerse.trim() : '';
-            const teluguVerseTextTrimmed = (polishedTeluguVerse && polishedTeluguVerse !== 'తెలుగు శ్లోకం అందుబాటులో లేదు.') ? polishedTeluguVerse.trim() : '';
-            const teluguBhavarthamTextTrimmed = (polishedTeluguMeaning && polishedTeluguMeaning !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') ? polishedTeluguMeaning.trim() : '';
-            const sandeshamTextTrimmed = (teluguDescription && teluguDescription !== 'సందేశం అందుబాటులో లేదు.') ? teluguDescription.trim() : '';
-
-             // Construct the text to speak with labels and pauses
-             if (sanskritTextTrimmed) {
-                 fullTextToSpeak += `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. ${sanskritTextTrimmed}. `;
-             }
-             if (teluguVerseTextTrimmed) {
-                  fullTextToSpeak += `తెలుగు శ్లోకం. ${teluguVerseTextTrimmed}. `;
-             }
-             if (teluguBhavarthamTextTrimmed) {
-                  fullTextToSpeak += `భావార్థం. ${teluguBhavarthamTextTrimmed}. `;
-             }
-              if (sandeshamTextTrimmed) {
-                 fullTextToSpeak += `సందేశం. ${sandeshamTextTrimmed}. `;
-             }
-
+            let currentTextIndex = 0; // Track index in the fullTextToSpeak string
 
             let contentHTML = ``; // Start with empty HTML as main heading is removed
 
@@ -887,39 +972,58 @@
                             అధ్యాయం [${verseData.chapter}], శ్లోకం [${verseData.verse}]:
                          </div>
                          <div id="sanskritVerse" class="sanskrit-verse-text">
-                            ${sanskritVerse.trim()} </div>
+                             </div>
                          <button class="audio-button" id="playAllAudio" title="అన్నీ వినండి / ఆపు">
                              <i class="ph ph-speaker-high"></i>
                          </button>
                     </div>
                  `;
+                 // Append Sanskrit text to fullTextToSpeak and update index
+                 const sanskritInfoText = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
+                 fullTextToSpeak += sanskritInfoText;
+                 currentTextIndex += sanskritInfoText.length;
             }
-
-            /* Removed the individual labels and integrated them into the content cards */
 
             // Add Shlokam Card
             contentHTML += `
-                <div id="teluguVerse" class="content-card shlokam polished-telugu-verse-text">
+                <div id="teluguVerseContainer" class="content-card shlokam">
                     <div class="verse-label shlokam"><i class="ph ph-book-open"></i> శ్లోకం:</div>
-                    ${polishedTeluguVerse}
+                     <div id="teluguVerse" class="polished-telugu-verse-text">
+                         </div>
                 </div>
             `;
+            // Append Shlokam text to fullTextToSpeak and update index
+            const teluguVerseLabel = `తెలుగు శ్లోకం. `;
+            fullTextToSpeak += teluguVerseLabel;
+            currentTextIndex += teluguVerseLabel.length;
+
 
             // Add Bhavartham Card
             contentHTML += `
-                <div id="teluguBhavartham" class="content-card bhavartham telugu-bhavartham-text">
+                <div id="teluguBhavarthamContainer" class="content-card bhavartham">
                     <div class="verse-label bhavartham"><i class="ph ph-lightbulb"></i> భావార్థం:</div>
-                    ${polishedTeluguMeaning}
+                     <div id="teluguBhavartham" class="telugu-bhavartham-text">
+                         </div>
                 </div>
             `;
+             // Append Bhavartham text to fullTextToSpeak and update index
+            const teluguBhavarthamLabel = `భావార్థం. `;
+            fullTextToSpeak += teluguBhavarthamLabel;
+            currentTextIndex += teluguBhavarthamLabel.length;
+
 
             // Add Sandesham Card
             contentHTML += `
-                <div id="sandesham" class="content-card sandesham sandesham-text">
+                <div id="sandeshamContainer" class="content-card sandesham">
                      <div class="verse-label sandesham"><i class="ph ph-chat-centered-text"></i> సందేశం:</div>
-                    ${teluguDescription}
+                     <div id="sandesham" class="sandesham-text">
+                         </div>
                 </div>
             `;
+             // Append Sandesham text to fullTextToSpeak and update index
+            const sandeshamLabel = `సందేశం. `;
+            fullTextToSpeak += sandeshamLabel;
+            currentTextIndex += sandeshamLabel.length;
 
 
             contentHTML += `
@@ -945,14 +1049,56 @@
             verseDisplay.innerHTML = contentHTML;
             verseDisplay.classList.remove('hidden');
 
+            // Now populate the text content and wrap words in spans
+            // Get the container elements *after* they have been added to the DOM
+            const sanskritVerseElement = verseDisplay.querySelector('#sanskritVerse');
+            const teluguVerseElement = verseDisplay.querySelector('#teluguVerse');
+            const teluguBhavarthamElement = verseDisplay.querySelector('#teluguBhavartham');
+            const sandeshamElement = verseDisplay.querySelector('#sandesham');
+
+            // Wrap words and build the wordSpans array
+            let currentSpanIndex = 0; // Keep track of the index in the fullTextToSpeak string *for the actual text content*
+
+             // Wrap Sanskrit verse words
+             if (sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
+                 // Account for the label text added to fullTextToSpeak before the Sanskrit verse
+                 const sanskritLabelText = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
+                 currentSpanIndex = sanskritLabelText.length;
+                 currentSpanIndex = wrapWordsInSpans(sanskritVerse.trim(), sanskritVerseElement, currentSpanIndex);
+             } else if (sanskritVerseElement) {
+                 // If Sanskrit verse is not available, set the fallback text directly
+                 sanskritVerseElement.textContent = sanskritVerse || 'సంస్కృత శ్లోకం అందుబాటులో లేదు.';
+             }
+
+
+             // Wrap Telugu verse words
+             const teluguVerseLabelText = `తెలుగు శ్లోకం. `;
+             currentSpanIndex = fullTextToSpeak.indexOf(teluguVerseLabelText) + teluguVerseLabelText.length;
+             currentSpanIndex = wrapWordsInSpans(polishedTeluguVerse, teluguVerseElement, currentSpanIndex);
+
+
+             // Wrap Bhavartham words
+             const teluguBhavarthamLabelText = `భావార్థం. `;
+             currentSpanIndex = fullTextToSpeak.indexOf(teluguBhavarthamLabelText) + teluguBhavarthamLabelText.length;
+             currentSpanIndex = wrapWordsInSpans(polishedTeluguMeaning, teluguBhavarthamElement, currentSpanIndex);
+
+             // Wrap Sandesham words
+             const sandeshamLabelText = `సందేశం. `;
+             currentSpanIndex = fullTextToSpeak.indexOf(sandeshamLabelText) + sandeshamLabelText.length;
+             currentSpanIndex = wrapWordsInSpans(teluguDescription, sandeshamElement, currentSpanIndex);
+
+
             // --- Auto-play TTS ---
             // Check if TTS is available and enabled (though we want it default,
             // some environments might disable it or require user interaction first)
-            if (synth && fullTextToSpeak) {
+            if (synth && fullTextToSpeak && fullTextToSpeak.trim() !== '') {
                  // A small delay might be needed on some mobile browsers for TTS to initialize fully
                  setTimeout(() => {
                      speakText(fullTextToSpeak.trim(), 'te-IN'); // Auto-play the concatenated text, trim again just in case
                  }, 100); // Small delay
+            } else if (fullTextToSpeak.trim() === '') {
+                 console.warn("No text to speak.");
+                 showMessage('వచనం అందుబాటులో లేదు.', 'info'); // No text available.
             }
 
 
@@ -962,10 +1108,14 @@
                 playAllAudioButton.addEventListener('click', () => {
                     if (synth.speaking) {
                         synth.cancel(); // Stop if speaking
+                        clearHighlight(); // Clear highlight immediately on stop
                     } else {
                         // If not speaking, restart playback
-                        if (fullTextToSpeak) {
+                        if (fullTextToSpeak && fullTextToSpeak.trim() !== '') {
                              speakText(fullTextToSpeak.trim(), 'te-IN'); // Trim here too
+                        } else {
+                            console.warn("No text to speak on play button click.");
+                            showMessage('వచనం అందుబాటులో లేదు.', 'info'); // No text available.
                         }
                     }
                 });
@@ -1142,7 +1292,6 @@
             populateVerseDropdown(selectedChapter);
         });
 
-        // Burger icon event listener removed
         sideMenuOverlay.addEventListener('click', closeSideMenu); // Close menu when clicking overlay
 
         // --- Swipe Functionality for Side Menu Hint ---
@@ -1401,4 +1550,3 @@
     </script>
 </body>
 </html>
-
