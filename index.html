@@ -1184,19 +1184,27 @@
 
                 updatedPlayAllAudioButton.addEventListener('click', () => {
                     console.log("Audio button clicked. Current mute state:", isMuted, "Speaking:", synth.speaking);
+                    const icon = updatedPlayAllAudioButton.querySelector('i'); // Get the icon element
+
                     if (synth.speaking) {
                         // If currently speaking, this click acts as STOP
                         console.log("Stopping speech.");
                         synth.cancel(); // Stop speech immediately
                         clearHighlight(); // Clear highlight immediately on stop
-                        // Don't change mute state here, just stop playback
+                        // Icon should remain in the "high" state if not muted, or "slash" if muted
+                        // No icon change needed here, as stopping doesn't change mute state
                     } else {
                         // If not speaking, this click acts as PLAY/UNMUTE and START
                         if (isMuted) {
                              // If currently muted, unmute and prepare to speak
                              console.log("Unmuting and starting speech.");
-                             toggleMute(); // This will update the icon and state
-                             // Speech will start below after unmuting
+                             isMuted = false; // Update state
+                             // Update icon to unmuted state
+                             icon.classList.remove('ph-speaker-slash');
+                             icon.classList.add('ph-speaker-high');
+                             updatedPlayAllAudioButton.title = 'అన్నీ వినండి / ఆపు'; // Update title
+
+                             // Now start speech
                              if (fullTextToSpeak && fullTextToSpeak.trim() !== '') {
                                  speakText(fullTextToSpeak.trim(), 'te-IN');
                              } else {
@@ -1204,17 +1212,39 @@
                                  showMessage('వచనం అందుబాటులో లేదు.', 'info');
                              }
                         } else {
-                             // If not muted and not speaking, start speech
+                             // If not muted and not speaking, mute and stop speech (this scenario is less likely with auto-play)
+                             // Or, if auto-play is off, this is the standard play button
+                             // Let's make this button primarily a Play/Stop button, and use the mute state for auto-play.
+                             // If the user clicks while not speaking and not muted, they likely want to start speech.
                              console.log("Starting speech.");
                              if (fullTextToSpeak && fullTextToSpeak.trim() !== '') {
                                  speakText(fullTextToSpeak.trim(), 'te-IN'); // Trim here too
+                                 // Icon should already be 'ph-speaker-high' if not muted
                              } else {
                                  console.warn("No text to speak.");
                                  showMessage('వచనం అందుబాటులో లేదు.', 'info'); // No text available.
                              }
                         }
                     }
+                     // After handling the click, ensure the icon state is correct based on the *final* isMuted state
+                     // This might be redundant with the logic inside the if/else, but adds a layer of safety.
+                     if (isMuted) {
+                         icon.classList.remove('ph-speaker-high');
+                         icon.classList.add('ph-speaker-slash');
+                         updatedPlayAllAudioButton.title = 'అన్‌మ్యూట్ చేయండి';
+                     } else {
+                         icon.classList.remove('ph-speaker-slash');
+                         icon.classList.add('ph-speaker-high');
+                         updatedPlayAllAudioButton.title = 'అన్నీ వినండి / ఆపు';
+                     }
                 });
+                 // Add a separate listener for the mute/unmute toggle behavior
+                 updatedPlayAllAudioButton.addEventListener('contextmenu', (event) => {
+                     event.preventDefault(); // Prevent default context menu
+                     console.log("Audio button right-clicked/long-pressed. Toggling mute.");
+                     toggleMute(); // This function already handles icon update
+                 });
+
             } else {
                 console.warn("Play all audio button not found after displayVerse.");
             }
