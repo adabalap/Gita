@@ -48,7 +48,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white overlay - Keep this for overall readability */
+            background-color: rgba(255, 255, 255, 0.6); /* Slightly more transparent background overlay */
             z-index: -1; /* Place behind content */
         }
 
@@ -127,6 +127,11 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             color: transparent; /* Fallback for browsers that don't support text clipping */
+            /* backdrop-filter added for transparency */
+            backdrop-filter: blur(3px); /* Frosted glass effect */
+            background-color: rgba(255, 255, 255, 0.7); /* Slightly more transparent white */
+            padding: 1rem; /* Add padding for a better floating effect */
+            border-radius: 0.75rem; /* Match card radius */
         }
 
 
@@ -144,8 +149,10 @@
          /* Styling for the Sanskrit Verse Tile */
          #sanskritVerseTile {
             /* Vibrant and Divine Styling */
-            background: linear-gradient(to bottom right, #fffbeb, #fef3c7); /* Light gold/yellow gradient */
-            border: 1px solid #fcd34d; /* Gold border */
+            /* Transparency and blur */
+            background: linear-gradient(to bottom right, rgba(255, 251, 235, 0.7), rgba(254, 243, 199, 0.7));
+            backdrop-filter: blur(3px); /* Frosted glass effect */
+            border: 1px solid rgba(252, 211, 77, 0.7); /* More subtle gold border */
             border-radius: 0.75rem; /* Rounded corners */
             margin-top: 1rem; /* Space above the tile */
             margin-bottom: 1rem; /* Space below the tile */
@@ -154,7 +161,7 @@
             display: flex; /* Use flexbox to arrange items vertically */
             flex-direction: column;
             align-items: center; /* Center items horizontally within the tile */
-            box-shadow: 0 6px 12px rgba(252, 211, 77, 0.3); /* Subtle gold shadow */
+            box-shadow: 0 6px 12px rgba(252, 211, 77, 0.2); /* Lighter shadow */
             position: relative; /* Needed for absolute positioning of audio icon */
          }
 
@@ -184,14 +191,10 @@
             line-height: 1.6;
         }
 
-        /* Styling for the main verse info heading - REMOVED */
-
-
         /* Styling for labels */
         .verse-label {
             font-size: 1.1rem;
             font-weight: bold;
-            /* color: #4b5563; Removed default gray color */
             margin-bottom: 0.5rem;
             display: flex; /* Use flexbox for icon and text */
             align-items: center; /* Align items vertically */
@@ -259,15 +262,24 @@
              color: #dc2626; /* Darker red on hover */
          }
 
+         /* Ensure icon visibility within buttons */
+         .audio-button i, .favorite-button i, .share-button i, .btn i {
+             display: inline-block; /* Ensure it's not hidden by default */
+             min-width: 1em; /* Give it some width */
+             min-height: 1em; /* Give it some height */
+             line-height: 1; /* Ensure line height doesn't affect vertical alignment */
+         }
+
 
          /* Styling for the new content cards/tiles */
          .content-card {
-             background-color: rgba(255, 255, 255, 0.8); /* Slightly more transparent white background for cards */
+             background-color: rgba(255, 255, 255, 0.6); /* More transparent white background for nested cards */
+             backdrop-filter: blur(2px); /* Frosted glass effect */
              border-radius: 0.75rem; /* Slightly less rounded than main card */
              padding: 1.5rem; /* Padding inside cards */
              margin-top: 0.8rem; /* Space above each card - Reduced slightly */
-             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for cards */
-             border: 1px solid #e5e7eb; /* Subtle border */
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.07); /* Lighter shadow */
+             border: 1px solid rgba(229, 231, 235, 0.6); /* More subtle border */
          }
 
          /* Specific styles for different content cards */
@@ -279,21 +291,23 @@
          }
 
 
-        .card {
-            background-color: rgba(255, 255, 255, 0.8); /* Increased transparency for the main card */
+        .card { /* Main verseDisplay card */
+            background-color: rgba(255, 255, 255, 0.65); /* More transparent white background for the main card */
+            backdrop-filter: blur(3px); /* Frosted glass effect */
             border-radius: 1rem; /* More rounded corners */
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* More prominent shadow */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Slightly lighter shadow */
             padding: 2rem; /* Increased padding */
             margin-bottom: 2rem; /* Increased margin */
-            border: 1px solid #e5e7eb; /* Subtle border */
+            border: 1px solid rgba(229, 231, 235, 0.7); /* More subtle border */
         }
         .controls { /* Targeting the controls div */
-             background-color: rgba(255, 255, 255, 0.8); /* Increased transparency for controls */
+             background-color: rgba(255, 255, 255, 0.65); /* More transparent for controls */
+             backdrop-filter: blur(3px); /* Frosted glass effect */
              border-radius: 0.75rem; /* Rounded corners */
-             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); /* Slightly lighter shadow */
              padding: 1.5rem; /* Padding */
              margin-bottom: 1.5rem; /* Margin below */
-             border: 1px solid #e5e7eb; /* Subtle border */
+             border: 1px solid rgba(229, 231, 235, 0.7); /* More subtle border */
         }
 
         .input-group {
@@ -313,14 +327,19 @@
         }
 
         .input-group input,
-        .input-group select {
+        .input-group select,
+        .input-group textarea { /* Added textarea */
             flex-grow: 1;
             padding: 0.9rem; /* Increased padding */
-            border: 1px solid #d1d5db;
+            border: 1px solid rgba(209, 213, 219, 0.7); /* More subtle border */
             border-radius: 0.5rem; /* More rounded input corners */
-            background-color: #f9fafb;
-            height: 48px; /* Increased height */
+            background-color: rgba(249, 250, 251, 0.8); /* Slightly transparent input background */
+            height: 48px; /* Increased height for inputs/selects */
             font-size: 1rem; /* Standard font size */
+        }
+        .input-group textarea {
+            min-height: 100px; /* Specific height for textarea */
+            resize: vertical; /* Allow vertical resizing */
         }
 
          .input-group select {
@@ -363,23 +382,48 @@
         .btn-secondary:hover {
             background-color: #059669; /* Darker emerald */
         }
-        .message {
-            margin-top: 1.5rem; /* Increased margin */
-            padding: 1rem; /* Increased padding */
-            border-radius: 0.5rem; /* More rounded corners */
+        /* Message Area */
+        .message-area {
+            position: fixed; /* Fixed position */
+            bottom: 1rem; /* At the bottom */
+            left: 50%;
+            transform: translateX(-50%); /* Center horizontally */
+            width: calc(100% - 2rem); /* Full width minus padding */
+            max-width: 400px; /* Max width for readability */
+            z-index: 90; /* Above most content, below splash screen */
+            padding: 0.8rem 1rem;
+            border-radius: 0.5rem;
             font-weight: medium;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            text-align: center;
+            opacity: 0; /* Hidden by default */
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 1px solid;
+            color: #333; /* Default text color */
         }
-        .message.error {
-            background-color: rgba(254, 226, 226, 0.9); /* Red background with transparency */
+        .message-area.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .message-area.error {
+            background-color: rgba(254, 226, 226, 0.8); /* Red background with higher transparency */
             color: #991b1b; /* Dark red text */
-            border: 1px solid #f87171;
+            border-color: rgba(248, 113, 113, 0.8);
         }
-         .message.info {
-            background-color: rgba(219, 234, 254, 0.9); /* Blue background with transparency */
+         .message-area.info {
+            background-color: rgba(219, 234, 254, 0.8); /* Blue background with higher transparency */
             color: #1e40af; /* Dark blue text */
-             border: 1px solid #93c5fd;
+            border-color: rgba(147, 197, 253, 0.8);
         }
+        /* New: success message style for toast */
+        .message-area.success {
+            background-color: rgba(209, 250, 229, 0.8); /* Light green with transparency */
+            color: #065f46; /* Dark green text */
+            border-color: rgba(74, 222, 128, 0.8);
+        }
+
 
         /* Confetti/Flower Effect Styling */
          .confetti-container {
@@ -428,7 +472,7 @@
         .share-container {
             margin-top: 2rem;
             padding-top: 1.5rem;
-            border-top: 1px solid #d1d5db;
+            border-top: 1px solid rgba(209, 213, 219, 0.7); /* Subtle border */
             text-align: center;
         }
 
@@ -505,8 +549,9 @@
             text-align: center;
             font-size: 0.9rem;
             color: #6b7280; /* Gray text */
-            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
-            border-top: 1px solid #d1d5db;
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+            border-top: 1px solid rgba(209, 213, 219, 0.7); /* More subtle border */
+            backdrop-filter: blur(3px); /* Frosted glass effect */
         }
 
         footer a {
@@ -544,9 +589,10 @@
             width: 80%; /* Menu width */
             max-width: 300px; /* Max width for larger screens */
             height: 100%;
-            background-color: #ffffff; /* White background */
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque for readability but still hints background */
+            backdrop-filter: blur(8px); /* Stronger blur for background behind menu */
             z-index: 30; /* Above overlay */
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2); /* Shadow on the right edge */
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15); /* Slightly lighter shadow */
             transition: left 0.3s ease-in-out; /* Slide transition */
             padding: 1.5rem; /* Padding inside the menu */
             overflow-y: auto; /* Enable scrolling if content overflows */
@@ -557,14 +603,6 @@
         .side-menu.open {
             left: 0; /* Slide in */
         }
-
-        /* Burger Icon - REMOVED */
-
-
-        /* Adjust main content margin - REMOVED as burger icon is gone */
-        /* .main-content {
-            margin-top: 3rem;
-        } */
 
         /* Style for the side menu heading */
         .side-menu h2 {
@@ -640,14 +678,14 @@
          }
 
          /* Styling for Favorites Section (Collapsible) */
-         #favoritesSection {
+         #favoritesSection, #feedbackSection, #llmFeaturesSection { /* Apply to all collapsible sections */
              margin-top: 2rem;
              padding-top: 1.5rem;
              border-top: 1px solid #d1d5db;
              cursor: pointer; /* Indicate it's clickable */
          }
 
-         #favoritesSection h2 {
+         #favoritesSection h2, #feedbackSection h2, #llmFeaturesSection h2 { /* Apply to all collapsible section headers */
              font-size: 1.3rem;
              font-weight: bold;
              margin-bottom: 0.5rem; /* Reduced margin */
@@ -660,15 +698,15 @@
              gap: 0.5rem; /* Space between icon and text */
          }
 
-         #favoritesSection h2 i {
+         #favoritesSection h2 i, #feedbackSection h2 i, #llmFeaturesSection h2 i {
              transition: transform 0.2s ease-in-out; /* Animation for the icon */
          }
 
-         #favoritesSection.expanded h2 i {
+         #favoritesSection.expanded h2 i, #feedbackSection.expanded h2 i, #llmFeaturesSection.expanded h2 i {
              transform: rotate(90deg); /* Rotate icon when expanded */
          }
 
-         #favoritesList {
+         #favoritesList, #feedbackFormContainer, #llmFeaturesContainer { /* Apply to all collapsible list/form containers */
              max-height: 0; /* Initially hidden */
              overflow: hidden;
              transition: max-height 0.3s ease-in-out; /* Smooth expand/collapse */
@@ -676,9 +714,8 @@
              margin-top: 0; /* Remove margin when collapsed */
          }
 
-         #favoritesSection.expanded #favoritesList {
+         #favoritesSection.expanded #favoritesList, #feedbackSection.expanded #feedbackFormContainer, #llmFeaturesSection.expanded #llmFeaturesContainer {
              max-height: 300px; /* Adjust as needed for max height when expanded */
-             /* You might need to calculate a better max-height based on content */
              padding-top: 0.5rem; /* Add padding when expanded */
              margin-top: 0.5rem; /* Add margin when expanded */
              overflow-y: auto; /* Enable scrolling for the list itself */
@@ -692,8 +729,8 @@
          }
 
          #favoritesList li {
-             background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
-             border: 1px solid #d1d5db;
+             background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+             border: 1px solid rgba(209, 213, 219, 0.7);
              border-radius: 0.5rem;
              padding: 0.8rem;
              margin-bottom: 0.5rem;
@@ -705,7 +742,129 @@
          }
 
          #favoritesList li:hover {
-             background-color: rgba(243, 244, 246, 0.8); /* Lighter gray on hover */
+             background-color: rgba(243, 244, 246, 0.85); /* Lighter gray on hover */
+         }
+
+         /* Specific styles for Feedback Form */
+         #feedbackFormContainer .input-group {
+             margin-bottom: 0.75rem; /* Slightly reduced margin for form elements */
+         }
+         #feedbackFormContainer .btn {
+             margin-top: 1rem; /* Space above submit button */
+         }
+
+         /* LLM Modals */
+         .llm-modal-overlay {
+             position: fixed;
+             top: 0;
+             left: 0;
+             width: 100%;
+             height: 100%;
+             background-color: rgba(0, 0, 0, 0.7);
+             z-index: 40; /* Above side menu */
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             opacity: 0;
+             visibility: hidden;
+             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+         }
+         .llm-modal-overlay.visible {
+             opacity: 1;
+             visibility: visible;
+         }
+
+         .llm-modal-content {
+             background-color: rgba(255, 255, 255, 0.95);
+             backdrop-filter: blur(10px);
+             border-radius: 1rem;
+             padding: 1.5rem;
+             width: 90%;
+             max-width: 600px;
+             max-height: 80vh; /* Limit height */
+             overflow-y: auto; /* Scrollable content */
+             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+             position: relative;
+             display: flex;
+             flex-direction: column;
+         }
+
+         .llm-modal-content h3 {
+             font-size: 1.5rem;
+             font-weight: bold;
+             margin-bottom: 1rem;
+             color: #4f46e5;
+             text-align: center;
+         }
+
+         .llm-modal-content .close-button {
+             position: absolute;
+             top: 0.75rem;
+             right: 0.75rem;
+             background: none;
+             border: none;
+             font-size: 1.5rem;
+             cursor: pointer;
+             color: #6b7280;
+         }
+         .llm-modal-content .close-button:hover {
+             color: #374151;
+         }
+
+         .llm-response-area {
+             background-color: rgba(249, 250, 251, 0.8);
+             border: 1px solid rgba(209, 213, 219, 0.7);
+             border-radius: 0.5rem;
+             padding: 1rem;
+             min-height: 100px;
+             white-space: pre-wrap; /* Preserve formatting */
+             font-size: 1rem;
+             line-height: 1.6;
+             color: #374151;
+             overflow-y: auto;
+             flex-grow: 1; /* Allow it to take available space */
+         }
+
+         .llm-loading-spinner {
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             padding: 1rem;
+             color: #4f46e5;
+             font-size: 2rem;
+             animation: spin 1s linear infinite;
+         }
+
+         @keyframes spin {
+             0% { transform: rotate(0deg); }
+             100% { transform: rotate(360deg); }
+         }
+
+         /* Q&A specific styles */
+         #qaInput {
+             width: 100%;
+             padding: 0.75rem;
+             border: 1px solid #d1d5db;
+             border-radius: 0.5rem;
+             margin-top: 1rem;
+             margin-bottom: 0.75rem;
+             font-size: 1rem;
+         }
+         #qaSubmitBtn {
+             width: 100%;
+             margin-bottom: 1rem;
+         }
+         #qaResponse {
+             min-height: 80px;
+             background-color: rgba(249, 250, 251, 0.8);
+             border: 1px solid rgba(209, 213, 219, 0.7);
+             border-radius: 0.5rem;
+             padding: 1rem;
+             white-space: pre-wrap;
+             font-size: 1rem;
+             line-height: 1.6;
+             color: #374151;
+             overflow-y: auto;
          }
 
 
@@ -715,7 +874,6 @@
                 font-size: 2rem; /* Slightly smaller */
                 margin-bottom: 1rem;
             }
-            /* .main-content margin-top removed */
             #sanskritVerseTile {
                  margin-top: 0.8rem;
                  margin-bottom: 0.8rem;
@@ -772,8 +930,6 @@
                  height: 35px;
                  font-size: 1.1rem;
              }
-             /* Burger icon rules removed */
-
              .side-menu {
                  width: 90%; /* Wider menu in landscape */
              }
@@ -782,14 +938,17 @@
                  /* Disable pulse animation in landscape to be less distracting */
                  animation: none;
              }
-             #favoritesSection h2 {
+             #favoritesSection h2, #feedbackSection h2, #llmFeaturesSection h2 {
                  font-size: 1.2rem;
              }
              #favoritesList li {
                  font-size: 1rem;
                  padding: 0.6rem;
              }
-
+             .llm-modal-content {
+                 max-height: 90vh; /* More height in landscape */
+                 padding: 1rem;
+             }
 
         }
 
@@ -832,9 +991,62 @@
                     <li>ఇష్టమైన శ్లోకాలు లేవు.</li> </ul>
              </div>
         </div>
+
+        <div id="feedbackSection">
+            <h2>
+                <i class="ph ph-caret-right"></i> మీ సూచనలు / సవరణలు
+            </h2>
+            <div id="feedbackFormContainer">
+                <div class="input-group">
+                    <label for="feedbackTypeSelect" class="sr-only">ఫీడ్‌బ్యాక్ రకం</label>
+                    <select id="feedbackTypeSelect" class="font-roboto">
+                        <option value="">ఫీడ్‌బ్యాక్ రకం ఎంచుకోండి</option>
+                        <option value="shloka_correction">శ్లోకం దిద్దుబాటు</option>
+                        <option value="bhavartham_correction">భావార్థం దిద్దుబాటు</option>
+                        <option value="sandesham_correction">సందేశం దిద్దుబాటు</option>
+                        <option value="general_suggestion">సాధారణ సూచన</option>
+                        <option value="other">ఇతర</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="feedbackChapter" class="sr-only">అధ్యాయం (ఆటో-ఫిల్ చేయబడింది)</label>
+                    <input type="text" id="feedbackChapter" placeholder="అధ్యాయం" class="font-roboto" readonly>
+                    <label for="feedbackVerse" class="sr-only">శ్లోకం (ఆటో-ఫిల్ చేయబడింది)</label>
+                    <input type="text" id="feedbackVerse" placeholder="శ్లోకం" class="font-roboto" readonly>
+                </div>
+                <div class="input-group">
+                    <label for="feedbackMessageInput" class="sr-only">మీ సూచన/సవరణ</label>
+                    <textarea id="feedbackMessageInput" rows="4" placeholder="మీ సూచన/సవరణ ఇక్కడ వ్రాయండి..." class="font-roboto"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="feedbackNameInput" class="sr-only">మీ పేరు (ఐచ్ఛికం)</label>
+                    <input type="text" id="feedbackNameInput" placeholder="మీ పేరు (ఐచ్ఛికం)" class="font-roboto">
+                    <label for="feedbackEmailInput" class="sr-only">మీ ఇమెయిల్ (ఐచ్ఛికం)</label>
+                    <input type="email" id="feedbackEmailInput" placeholder="మీ ఇమెయిల్ (ఐచ్ఛికం)" class="font-roboto">
+                </div>
+                <button class="btn btn-primary w-full font-roboto" id="submitFeedbackBtn">
+                    <i class="ph ph-paper-plane-tilt"></i> సూచనను సమర్పించండి
+                </button>
+            </div>
+        </div>
+
+        <div id="llmFeaturesSection">
+            <h2>
+                <i class="ph ph-caret-right"></i> LLM ఫీచర్‌లు ✨
+            </h2>
+            <div id="llmFeaturesContainer">
+                <button class="btn btn-secondary w-full mb-3 font-roboto" id="deepDiveBtn">
+                    <i class="ph ph-sparkle"></i> శ్లోక వివరణ పొందండి
+                </button>
+                <button class="btn btn-secondary w-full font-roboto" id="askQuestionBtn">
+                    <i class="ph ph-question"></i> శ్లోకం గురించి అడగండి
+                </button>
+            </div>
+        </div>
+
     </div>
 
-    <div class="side-menu-hint" id="sideMenuHint" title="మెనూ తెరవడానికి స్వైప్ చేయండి"></div>
+     <div class="side-menu-hint" id="sideMenuHint" title="మెనూ తెరవడానికి స్వైప్ చేయండి"></div>
 
 
     <div class="main-content container mx-auto p-4 md:p-8" id="mainContent">
@@ -843,15 +1055,44 @@
         <div id="verseDisplay" class="card hidden">
             </div>
 
-        <div id="messageArea" class="message hidden"></div>
-
     </div>
+
+    <div id="messageArea" class="message-area hidden"></div>
 
     <div class="confetti-container" id="confettiContainer"></div>
 
     <footer>
         &copy; 2025 <a href="https://adabala.com" target="_blank">adabala.com</a>. All rights reserved.
     </footer>
+
+    <div class="llm-modal-overlay" id="deepDiveModalOverlay">
+        <div class="llm-modal-content">
+            <button class="close-button" id="closeDeepDiveModal">&times;</button>
+            <h3>శ్లోక వివరణ ✨</h3>
+            <div id="deepDiveResponse" class="llm-response-area">
+                </div>
+            <div id="deepDiveLoading" class="llm-loading-spinner hidden">
+                <i class="ph ph-spinner"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="llm-modal-overlay" id="askQuestionModalOverlay">
+        <div class="llm-modal-content">
+            <button class="close-button" id="closeAskQuestionModal">&times;</button>
+            <h3>మీ ప్రశ్న ✨</h3>
+            <textarea id="qaInput" placeholder="శ్లోకం గురించి మీ ప్రశ్నను ఇక్కడ టైప్ చేయండి..."></textarea>
+            <button class="btn btn-primary font-roboto" id="qaSubmitBtn">
+                <i class="ph ph-paper-plane-tilt"></i> సమాధానం పొందండి
+            </button>
+            <div id="qaResponse" class="llm-response-area">
+                </div>
+            <div id="qaLoading" class="llm-loading-spinner hidden">
+                <i class="ph ph-spinner"></i>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         const splashScreen = document.getElementById('splashScreen');
@@ -861,15 +1102,48 @@
         const verseSelect = document.getElementById('verseSelect');
         const fetchSpecificVerseBtn = document.getElementById('fetchSpecificVerseBtn');
         const fetchRandomVerseBtn = document.getElementById('fetchRandomVerseBtn');
-        const messageArea = document.getElementById('messageArea');
+        const messageArea = document.getElementById('messageArea'); // This is now the centralized toast/error area
+
         const confettiContainer = document.getElementById('confettiContainer');
 
         const sideMenu = document.getElementById('sideMenu');
         const sideMenuOverlay = document.getElementById('sideMenuOverlay');
         const sideMenuHint = document.getElementById('sideMenuHint');
-        const favoritesSection = document.getElementById('favoritesSection'); // Reference to the favorites section
-        const favoritesList = document.getElementById('favoritesList'); // Reference to the favorites list container
+
+        // Favorites elements
+        const favoritesSection = document.getElementById('favoritesSection');
+        const favoritesList = document.getElementById('favoritesList');
         const favoritesUl = document.getElementById('favoritesUl');
+
+        // Feedback elements
+        const feedbackSection = document.getElementById('feedbackSection');
+        const feedbackFormContainer = document.getElementById('feedbackFormContainer');
+        const feedbackTypeSelect = document.getElementById('feedbackTypeSelect');
+        const feedbackChapterInput = document.getElementById('feedbackChapter');
+        const feedbackVerseInput = document.getElementById('feedbackVerse');
+        const feedbackMessageInput = document.getElementById('feedbackMessageInput');
+        const feedbackNameInput = document.getElementById('feedbackNameInput');
+        const feedbackEmailInput = document.getElementById('feedbackEmailInput');
+        const submitFeedbackBtn = document.getElementById('submitFeedbackBtn');
+
+        // LLM Feature elements
+        const llmFeaturesSection = document.getElementById('llmFeaturesSection');
+        const deepDiveBtn = document.getElementById('deepDiveBtn');
+        const askQuestionBtn = document.getElementById('askQuestionBtn');
+
+        // Deep Dive Modal elements
+        const deepDiveModalOverlay = document.getElementById('deepDiveModalOverlay');
+        const closeDeepDiveModalBtn = document.getElementById('closeDeepDiveModal');
+        const deepDiveResponseArea = document.getElementById('deepDiveResponse');
+        const deepDiveLoadingSpinner = document.getElementById('deepDiveLoading');
+
+        // Ask Question Modal elements
+        const askQuestionModalOverlay = document.getElementById('askQuestionModalOverlay');
+        const closeAskQuestionModalBtn = document.getElementById('closeAskQuestionModal');
+        const qaInput = document.getElementById('qaInput');
+        const qaSubmitBtn = document.getElementById('qaSubmitBtn');
+        const qaResponseArea = document.getElementById('qaResponse');
+        const qaLoadingSpinner = document.getElementById('qaLoading');
 
 
         // Base URL for your Flask API
@@ -898,16 +1172,30 @@
         let currentHighlightSpan = null; // To keep track of the currently highlighted span
         let isAudioMuted = true; // Audio mute state, default to true (muted)
 
-        // Function to show messages
-        function showMessage(msg, type = 'info', area = messageArea) {
-            area.textContent = msg;
-            area.className = `message ${type}`;
-            area.classList.remove('hidden');
+        // Function to show messages (now handles toast behavior)
+        function showMessage(msg, type = 'info', duration = 3000) { // duration for info/success
+            messageArea.textContent = msg;
+            messageArea.className = `message-area ${type} show`; // Add 'show' class
+
+            // Clear any existing timeout for auto-hide
+            if (messageArea.hideTimeout) {
+                clearTimeout(messageArea.hideTimeout);
+            }
+
+            if (type === 'info' || type === 'success') {
+                messageArea.hideTimeout = setTimeout(() => {
+                    messageArea.classList.remove('show');
+                }, duration);
+            }
+            // Error messages will not auto-hide, they stay until explicitly hidden or new message appears
         }
 
-        // Function to hide messages
-        function hideMessage(area = messageArea) {
-            area.classList.add('hidden');
+        // Function to hide messages (for errors or if needed explicitly)
+        function hideMessage() {
+            messageArea.classList.remove('show');
+            if (messageArea.hideTimeout) {
+                clearTimeout(messageArea.hideTimeout);
+            }
         }
 
         // Function to trigger confetti/flower effect
@@ -952,44 +1240,43 @@
             }
         }
 
-        // Function to wrap words in spans and build wordSpans array
-        function wrapWordsInSpans(text, containerElement, startIndexInFullText) {
-            // Clear existing content before wrapping
-            containerElement.innerHTML = '';
+        // Function to wrap words in spans and populate the global wordSpans array
+        // This function now only handles the DOM manipulation and populating wordSpans relative to the full spoken text
+        function wrapWordsInSpans(textToWrap, containerElement, currentAbsoluteOffset) {
+            if (!containerElement) {
+                console.warn("Container element for wrapWordsInSpans is null or undefined.");
+                return;
+            }
+            containerElement.innerHTML = ''; // Clear previous content in the DOM element
 
-            const words = text.split(/\s+/); // Split by one or more whitespace characters
-            let currentIndex = startIndexInFullText;
+            // Split text by any whitespace and filter out empty strings
+            const words = textToWrap.split(/\s+/).filter(word => word.length > 0);
+            let currentRelativeOffsetInSegment = 0; // Tracks index within the `textToWrap` segment
 
             words.forEach((word, index) => {
-                if (word) { // Avoid creating spans for empty strings from multiple spaces
-                    // Add a space before the word if it's not the first word and not the very beginning of the full text
-                    if (index > 0 || startIndexInFullText > 0) {
-                         const spaceNode = document.createTextNode(' ');
-                         containerElement.appendChild(spaceNode);
-                         currentIndex += 1; // Account for the space
-                    }
-
-                    // Create a span for the word
-                    const span = document.createElement('span');
-                    span.textContent = word;
-                    span.classList.add('verse-word'); // Add a class for styling/selection
-
-                    // Store word info and span reference
-                    wordSpans.push({
-                        text: word,
-                        startIndex: currentIndex,
-                        endIndex: currentIndex + word.length,
-                        span: span // Store reference to the actual span element
-                    });
-
-                    containerElement.appendChild(span); // Add the span element
-                    currentIndex += word.length; // Update index
+                // If not the first word in this segment, add a space (which is also spoken and needs to be accounted for)
+                if (index > 0) {
+                    const spaceNode = document.createTextNode(' ');
+                    containerElement.appendChild(spaceNode);
+                    currentRelativeOffsetInSegment += 1; // Account for the space in our index tracking
                 }
+
+                const span = document.createElement('span');
+                span.textContent = word;
+                span.classList.add('verse-word');
+
+                // Add this word's info to the global wordSpans array
+                wordSpans.push({
+                    text: word,
+                    startIndex: currentAbsoluteOffset + currentRelativeOffsetInSegment, // Absolute start in fullTextToSpeak
+                    endIndex: currentAbsoluteOffset + currentRelativeOffsetInSegment + word.length, // Absolute end in fullTextToSpeak
+                    span: span // Reference to the actual DOM element
+                });
+
+                containerElement.appendChild(span);
+                currentRelativeOffsetInSegment += word.length; // Advance relative index by word length
             });
-
-            return currentIndex; // Return the ending index after this segment
         }
-
 
         // Function to speak text and handle highlighting
         function speakText(text, lang = 'te-IN') {
@@ -1002,7 +1289,7 @@
             // Only speak if audio is not muted and there is text to speak
             if (text && text.trim() !== '' && !isAudioMuted) {
                 currentUtterance = new SpeechSynthesisUtterance(text);
-                currentUtterance.lang = lang; // Set language (Telugu for te-IN, Sanskrit might need a different approach or voice)
+                currentUtterance.lang = lang; // Set language (Telugu for te-IN)
 
                 // Event listener for word boundaries
                 currentUtterance.onboundary = (event) => {
@@ -1024,10 +1311,10 @@
                                 block: 'center' // Center the word in the viewport
                             });
                         } else {
-                             // Handle cases where charIndex might not perfectly match (e.g., punctuation)
-                             // Find the nearest span or log a warning
-                             console.warn('Could not find word span for charIndex:', charIndex);
-                             // Optional: Implement fallback logic to find nearest word
+                            // This console.warn is helpful for debugging if indices are off
+                            console.warn('Could not find word span for charIndex:', charIndex, 'Text portion:', text.substring(charIndex, charIndex + 20));
+                            // Optional: If a word is not found, clear highlight to avoid stale highlights
+                            clearHighlight();
                         }
                     }
                 };
@@ -1040,11 +1327,10 @@
                 // Event listener for errors
                  currentUtterance.onerror = (event) => {
                      console.error('SpeechSynthesisUtterance error:', event.error);
-                     // Show error message only if not intentionally cancelled (e.g. by muting)
                      if (event.error !== 'cancelled') {
-                        showMessage(`వచనాన్ని చదవడంలో లోపం: ${event.error}`, 'error'); // Error reading text
+                        showMessage(`వచనాన్ని చదవడంలో లోపం: ${event.error}`, 'error');
                      }
-                     clearHighlight(); // Clear highlight on error
+                     clearHighlight();
                  };
 
 
@@ -1117,105 +1403,91 @@
                          icon.classList.add('ph-heart');
                      }
                  }
+                 console.log("Favorite button updated. Is favorited:", isFavorited); // Debugging line
+             } else {
+                 console.error("Favorite button element not found in displayVerse for icon update.");
              }
         }
 
 
         // Function to display a verse in the new format (using cards)
         function displayVerse(verseData) {
-            hideMessage(); // Hide main message area
+            hideMessage(); // Hide general message area
             clearHighlight(); // Clear any highlight from previous verse
-            wordSpans = []; // Reset word spans array for the new verse
+            wordSpans = []; // **CRITICAL: Reset global wordSpans array for the new verse**
 
             // Scroll to the top of the page
             window.scrollTo(0, 0);
 
 
-            // Clear previous content
+            // Clear previous content in the main display area
             verseDisplay.innerHTML = '';
 
             // Store current verse data temporarily for favorite/share actions
             verseDisplay.dataset.chapter = verseData.chapter;
             verseDisplay.dataset.verse = verseData.verse;
+            verseDisplay.dataset.sanskritVerse = verseData.sanskrit_verse_telugu_script || '';
+            verseDisplay.dataset.teluguMeaning = verseData.polished_telugu_meaning || verseData.telugu_meaning || '';
+            verseDisplay.dataset.teluguDescription = verseData.telugu_description || '';
 
 
-            // Construct the new display structure
-            // Use polished versions if available, otherwise fallback to original fetched
-            const sanskritVerse = verseData.sanskrit_verse_telugu_script; // Get Sanskrit verse (can be null)
-            // Use Bhavartham for the merged section content
+            // Pre-fill feedback form with current chapter and verse
+            feedbackChapterInput.value = verseData.chapter;
+            feedbackVerseInput.value = verseData.verse;
+
+            // Get the raw text content for each part
+            const sanskritVerse = verseData.sanskrit_verse_telugu_script;
             const polishedTeluguMeaning = verseData.polished_telugu_meaning || verseData.telugu_meaning || 'తెలుగు భావార్థం అందుబాటులో లేదు.';
             const teluguDescription = verseData.telugu_description || 'సందేశం అందుబాటులో లేదు.';
 
-            // Build the full text to speak and the word spans mapping
-            let fullTextToSpeak = '';
-            let currentTextIndex = 0; // Track index in the fullTextToSpeak string
+            // --- Phase 1: Construct the HTML structure and append to DOM ---
+            let contentHTML = ``;
 
-            let contentHTML = ``; // Start with empty HTML as main heading is removed
-
-            // Only add Sanskrit verse tile if it exists and is not the fallback message or empty
+            let hasSanskritVerse = false;
             if (sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
-                 contentHTML += `
+                hasSanskritVerse = true;
+                contentHTML += `
                     <div id="sanskritVerseTile">
-                         <div class="sanskrit-tile-info">
+                        <div class="sanskrit-tile-info">
                             అధ్యాయం [${verseData.chapter}], శ్లోకం [${verseData.verse}]:
-                         </div>
-                         <div id="sanskritVerse" class="sanskrit-verse-text">
-                             </div>
-                         <button class="audio-button" id="playAllAudio" title="ఆడియో ఆన్ చేయండి">
-                             <i class="ph ph-speaker-slash"></i>
-                         </button>
-                          <button class="favorite-button" id="favoriteVerseBtn" title="ఇష్టమైనదిగా గుర్తించండి">
-                             <i class="ph ph-heart"></i>
-                         </button>
+                        </div>
+                        <div id="sanskritVerse" class="sanskrit-verse-text">
+                            </div>
+                        <button class="audio-button" id="playAllAudio" title="ఆడియో ఆన్ చేయండి">
+                            <i class="ph ph-speaker-slash"></i>
+                        </button>
+                        <button class="favorite-button" id="favoriteVerseBtn" title="ఇష్టమైనదిగా గుర్తించండి">
+                            <i class="ph ph-heart"></i>
+                        </button>
                     </div>
-                 `;
-                 // Append Sanskrit text to fullTextToSpeak and update index
-                 const sanskritInfoText = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
-                 fullTextToSpeak += sanskritInfoText;
-                 currentTextIndex += sanskritInfoText.length;
+                `;
             } else {
-                 // If no Sanskrit verse, still add favorite and audio buttons to a container
-                  contentHTML += `
-                     <div style="position: relative; min-height: 40px; margin-bottom: 1rem;"> <button class="favorite-button" id="favoriteVerseBtn" title="ఇష్టమైనదిగా గుర్తించండి" style="top: 0.5rem; left: 0.5rem;">
-                             <i class="ph ph-heart"></i>
-                         </button>
-                         <button class="audio-button" id="playAllAudio" title="ఆడియో ఆన్ చేయండి" style="top: 0.5rem; right: 0.5rem;">
-                             <i class="ph ph-speaker-slash"></i>
-                         </button>
-                     </div>
-                  `;
+                // If no Sanskrit verse, still add favorite and audio buttons to a container
+                contentHTML += `
+                    <div style="position: relative; min-height: 40px; margin-bottom: 1rem;">
+                        <button class="favorite-button" id="favoriteVerseBtn" title="ఇష్టమైనదిగా గుర్తించండి" style="top: 0.5rem; left: 0.5rem;">
+                            <i class="ph ph-heart"></i>
+                        </button>
+                        <button class="audio-button" id="playAllAudio" title="ఆడియో ఆన్ చేయండి" style="top: 0.5rem; right: 0.5rem;">
+                            <i class="ph ph-speaker-slash"></i>
+                        </button>
+                    </div>
+                `;
             }
 
-
-            // Add Merged Shlokam/Bhavartham Card
             contentHTML += `
                 <div id="shlokamBhavarthamContainer" class="content-card shlokam-bhavartham">
                     <div class="verse-label shlokam-bhavartham"><i class="ph ph-lightbulb"></i> శ్లోకం భావార్థం:</div>
-                     <div id="shlokamBhavartham" class="shlokam-bhavartham-text">
-                         </div>
+                    <div id="shlokamBhavartham" class="shlokam-bhavartham-text">
+                        </div>
                 </div>
-            `;
-            // Append Bhavartham text to fullTextToSpeak and update index
-            const shlokamBhavarthamLabel = `శ్లోకం భావార్థం. `; // Use the new label for TTS
-            fullTextToSpeak += shlokamBhavarthamLabel;
-            currentTextIndex += shlokamBhavarthamLabel.length;
 
-
-            // Add Sandesham Card
-            contentHTML += `
                 <div id="sandeshamContainer" class="content-card sandesham">
-                     <div class="verse-label sandesham"><i class="ph ph-chat-centered-text"></i> సందేశం:</div>
-                     <div id="sandesham" class="sandesham-text">
-                         </div>
+                    <div class="verse-label sandesham"><i class="ph ph-chat-centered-text"></i> సందేశం:</div>
+                    <div id="sandesham" class="sandesham-text">
+                        </div>
                 </div>
-            `;
-             // Append Sandesham text to fullTextToSpeak and update index
-            const sandeshamLabel = `సందేశం. `;
-            fullTextToSpeak += sandeshamLabel;
-            currentTextIndex += sandeshamLabel.length;
 
-
-            contentHTML += `
                 <div class="share-container">
                     <p class="font-roboto">ఈ శ్లోకాన్ని పంచుకోండి:</p>
                     <div class="share-buttons">
@@ -1223,129 +1495,162 @@
                             <i class="ph ph-whatsapp-logo"></i>
                         </button>
                         <button class="share-button facebook" data-platform="facebook" title="Share on Facebook">
-                             <i class="ph ph-facebook-logo"></i>
+                            <i class="ph ph-facebook-logo"></i>
                         </button>
-                         <button class="share-button twitter" data-platform="twitter" title="Share on Twitter">
-                             <i class="ph ph-twitter-logo"></i>
+                        <button class="share-button twitter" data-platform="twitter" title="Share on Twitter">
+                            <i class="ph ph-twitter-logo"></i>
                         </button>
-                         <button class="share-button generic" data-platform="generic" title="Share or Copy">
-                             <i class="ph ph-share-network"></i>
+                        <button class="share-button generic" data-platform="generic" title="Share or Copy">
+                            <i class="ph ph-share-network"></i>
                         </button>
                     </div>
                 </div>
             `;
 
-            verseDisplay.innerHTML = contentHTML;
+            verseDisplay.innerHTML = contentHTML; // Render the HTML structure
             verseDisplay.classList.remove('hidden');
 
-            // Now populate the text content and wrap words in spans
-            // Get the container elements *after* they have been added to the DOM
+            // Get references to the elements now that they are in the DOM
             const sanskritVerseElement = verseDisplay.querySelector('#sanskritVerse');
-            const shlokamBhavarthamElement = verseDisplay.querySelector('#shlokamBhavartham'); // Get the new merged element
+            const shlokamBhavarthamElement = verseDisplay.querySelector('#shlokamBhavartham');
             const sandeshamElement = verseDisplay.querySelector('#sandesham');
 
-            // Wrap words and build the wordSpans array
-            let currentSpanIndex = 0; // Keep track of the index in the fullTextToSpeak string *for the actual text content*
+            // Helper to format text for speech (ensures single spaces between words)
+            // This is crucial for consistent indexing between spoken text and displayed text
+            const formatTextForSpeech = (text) => text.trim().split(/\s+/).filter(word => word.length > 0).join(' ');
 
-             // Wrap Sanskrit verse words (if element exists)
-             if (sanskritVerseElement) {
-                 if (sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
-                     // Account for the label text added to fullTextToSpeak before the Sanskrit verse
-                     const sanskritLabelText = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
-                     currentSpanIndex = sanskritLabelText.length;
-                     currentSpanIndex = wrapWordsInSpans(sanskritVerse.trim(), sanskritVerseElement, currentSpanIndex);
-                 } else {
-                     // If Sanskrit verse is not available, set the fallback text directly
-                     sanskritVerseElement.textContent = sanskritVerse || 'సంస్కృత శ్లోకం అందుబాటులో లేదు.';
-                 }
-             }
+            // --- Phase 2: Build the full text for speech and populate DOM with wrapped words ---
+            let fullTextToSpeak = '';
+            let currentAbsoluteOffset = 0; // Tracks the current position in `fullTextToSpeak` for wordSpan indexing
+
+            // 1. Add Sanskrit Section (label and text)
+            if (hasSanskritVerse) {
+                const sanskritInfoSpoken = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
+                fullTextToSpeak += sanskritInfoSpoken;
+                // No need to adjust currentAbsoluteOffset here, as wrapWordsInSpans will start from this offset
+                // and we'll update it after the segment.
+
+                if (sanskritVerseElement) {
+                    const formattedSanskritText = formatTextForSpeech(sanskritVerse);
+                    wrapWordsInSpans(formattedSanskritText, sanskritVerseElement, currentAbsoluteOffset);
+                    fullTextToSpeak += formattedSanskritText;
+                    currentAbsoluteOffset = fullTextToSpeak.length; // Update absolute offset after adding text
+                }
+            } else if (sanskritVerseElement) {
+                sanskritVerseElement.textContent = sanskritVerse || 'సంస్కృత శ్లోకం అందుబాటులో లేదు.';
+            }
+
+            // Add a separator space between sections for natural speech flow
+            if (fullTextToSpeak.length > 0 && !fullTextToSpeak.endsWith(' ')) {
+                fullTextToSpeak += ' ';
+                currentAbsoluteOffset += 1;
+            }
 
 
-             // Wrap Merged Shlokam/Bhavartham words (using Bhavartham content)
-             const shlokamBhavarthamLabelText = `శ్లోకం భావార్థం. `; // Use the new label for TTS index calculation
-             currentSpanIndex = fullTextToSpeak.indexOf(shlokamBhavarthamLabelText) + shlokamBhavarthamLabelText.length;
-             currentSpanIndex = wrapWordsInSpans(polishedTeluguMeaning, shlokamBhavarthamElement, currentSpanIndex);
+            // 2. Add Merged Shlokam/Bhavartham Section
+            const shlokamBhavarthamLabelSpoken = `శ్లోకం భావార్థం. `;
+            fullTextToSpeak += shlokamBhavarthamLabelSpoken;
+            currentAbsoluteOffset += shlokamBhavarthamLabelSpoken.length;
+
+            if (shlokamBhavarthamElement) {
+                const formattedMeaningText = formatTextForSpeech(polishedTeluguMeaning);
+                wrapWordsInSpans(formattedMeaningText, shlokamBhavarthamElement, currentAbsoluteOffset);
+                fullTextToSpeak += formattedMeaningText;
+                currentAbsoluteOffset = fullTextToSpeak.length;
+            }
+
+            // Add a separator space between sections
+            if (fullTextToSpeak.length > 0 && !fullTextToSpeak.endsWith(' ')) {
+                fullTextToSpeak += ' ';
+                currentAbsoluteOffset += 1;
+            }
+
+            // 3. Add Sandesham Section
+            const sandeshamLabelSpoken = `సందేశం. `;
+            fullTextToSpeak += sandeshamLabelSpoken;
+            currentAbsoluteOffset += sandeshamLabelSpoken.length;
+
+            if (sandeshamElement) {
+                const formattedDescriptionText = formatTextForSpeech(teluguDescription);
+                wrapWordsInSpans(formattedDescriptionText, sandeshamElement, currentAbsoluteOffset);
+                fullTextToSpeak += formattedDescriptionText;
+                currentAbsoluteOffset = fullTextToSpeak.length;
+            }
+
+            // Trim any final trailing space
+            fullTextToSpeak = fullTextToSpeak.trim();
 
 
-             // Wrap Sandesham words
-             const sandeshamLabelText = `సందేశం. `;
-             currentSpanIndex = fullTextToSpeak.indexOf(sandeshamLabelText) + sandeshamLabelText.length;
-             currentSpanIndex = wrapWordsInSpans(teluguDescription, sandeshamElement, currentSpanIndex);
-
-
-            // --- Audio Mute/Unmute Logic ---
+            // --- Phase 3: Attach Event Listeners and Finalize UI ---
+            // Audio Mute/Unmute Logic
             const playAllAudioButton = verseDisplay.querySelector('#playAllAudio');
             if (playAllAudioButton) {
-                 // Update icon initially based on mute state
-                 updateAudioButtonIcon();
-
-                 playAllAudioButton.addEventListener('click', () => {
-                     toggleMute(); // Toggle mute state first
-                     if (!isAudioMuted) {
-                         // If unmuted (or toggled from muted to unmuted), start speaking
-                         if (fullTextToSpeak && fullTextToSpeak.trim() !== '') {
-                              speakText(fullTextToSpeak.trim(), 'te-IN');
-                         } else {
-                             console.warn("No text to speak on play button click.");
-                             // showMessage('వచనం అందుబాటులో లేదు.', 'info'); // Don't show message here
-                         }
-                     } else {
-                         // If muted (or toggled from unmuted to muted), stop speaking
-                         if (synth.speaking) {
-                             synth.cancel();
-                             clearHighlight();
-                         }
-                     }
-                 });
+                updateAudioButtonIcon(); // Set initial icon state
+                playAllAudioButton.addEventListener('click', () => {
+                    toggleMute(); // Toggle mute state
+                    if (!isAudioMuted) { // If audio is now ON
+                        if (fullTextToSpeak && fullTextToSpeak.trim() !== '') {
+                            speakText(fullTextToSpeak.trim(), 'te-IN');
+                        } else {
+                            console.warn("No text to speak on play button click.");
+                        }
+                    } else { // If audio is now OFF (muted)
+                        if (synth.speaking) {
+                            synth.cancel(); // Stop any ongoing speech
+                            clearHighlight();
+                        }
+                    }
+                });
             } else {
-                 console.error("Audio button not found after displayVerse.");
+                console.error("Audio button not found after displayVerse.");
             }
 
-            // --- Favorite Button Logic ---
+            // Favorite Button Logic
             const favoriteVerseBtn = verseDisplay.querySelector('#favoriteVerseBtn');
             if (favoriteVerseBtn) {
-                 // Check if the current verse is already favorited and update icon
-                 const currentVerseKey = `${verseData.chapter}-${verseData.verse}`;
-                 updateFavoriteButtonIcon(favorites.includes(currentVerseKey)); // Update icon based on status
+                const currentVerseKey = `${verseData.chapter}-${verseData.verse}`;
+                // Set initial icon state based on whether it's favorited
+                updateFavoriteButtonIcon(favorites.includes(currentVerseKey));
 
-                 favoriteVerseBtn.addEventListener('click', () => {
-                     const chapter = verseDisplay.dataset.chapter;
-                     const verse = verseDisplay.dataset.verse;
-                     const verseKey = `${chapter}-${verse}`;
+                favoriteVerseBtn.addEventListener('click', () => {
+                    const chapter = verseDisplay.dataset.chapter;
+                    const verse = verseDisplay.dataset.verse;
+                    const verseKey = `${chapter}-${verse}`;
 
-                     if (favorites.includes(verseKey)) {
-                         // Remove from favorites
-                         favorites = favorites.filter(favKey => favKey !== verseKey);
-                         showMessage(`అధ్యాయం ${chapter}, శ్లోకం ${verse} ఇష్టమైన వాటి నుండి తీసివేయబడింది.`, 'info'); // Removed from favorites
-                     } else {
-                         // Add to favorites
-                         favorites.push(verseKey);
-                         showMessage(`అధ్యాయం ${chapter}, శ్లోకం ${verse} ఇష్టమైన వాటికి జోడించబడింది.`, 'info'); // Added to favorites
-                     }
-                     // Save updated favorites to localStorage
-                     localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
-                     updateFavoriteButtonIcon(favorites.includes(verseKey)); // Update icon after adding/removing
-                     updateFavoritesListUI(); // Update the list in the side menu
-                 });
+                    if (favorites.includes(verseKey)) {
+                        // Remove from favorites
+                        favorites = favorites.filter(favKey => favKey !== verseKey);
+                        showMessage(`అధ్యాయం ${chapter}, శ్లోకం ${verse} ఇష్టమైన వాటి నుండి తీసివేయబడింది.`, 'success');
+                    } else {
+                        // Add to favorites
+                        favorites.push(verseKey);
+                        showMessage(`అధ్యాయం ${chapter}, శ్లోకం ${verse} ఇష్టమైన వాటికి జోడించబడింది.`, 'success');
+                    }
+                    // Save updated favorites to localStorage
+                    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+                    // Update icon after adding/removing
+                    updateFavoriteButtonIcon(favorites.includes(verseKey));
+                    updateFavoritesListUI(); // Update the list in the side menu
+                });
             } else {
-                 console.error("Favorite button not found after displayVerse.");
+                console.error("Favorite button not found after displayVerse.");
             }
 
+            // Final console logs for debugging
+            console.log("Full text to speak:", fullTextToSpeak);
+            console.log("Word spans for highlighting:", wordSpans);
+            // You can also uncomment this to inspect individual word spans and their indices
+            // wordSpans.forEach(w => console.log(w.text, w.startIndex, w.endIndex, `(Char: ${fullTextToSpeak.substring(w.startIndex, w.startIndex + 10)}...)`));
 
-            // --- Auto-play TTS ---
-            // Check if TTS is available and enabled (though we want it default,
-            // some environments might disable it or require user interaction first)
-            // Auto-play only if audio is NOT muted initially AND there is text to speak
+
+            // Auto-play TTS
             if (synth && fullTextToSpeak && fullTextToSpeak.trim() !== '' && !isAudioMuted) {
-                 // A small delay might be needed on some mobile browsers for TTS to initialize fully
-                 setTimeout(() => {
-                     speakText(fullTextToSpeak.trim(), 'te-IN'); // Auto-play the concatenated text, trim again just in case
-                 }, 100); // Small delay
+                setTimeout(() => {
+                    speakText(fullTextToSpeak.trim(), 'te-IN');
+                }, 100);
             } else if (fullTextToSpeak.trim() === '') {
-                 console.warn("No text to speak.");
-                 // showMessage('వచనం అందుబాటులో లేదు.', 'info'); // Don't show message if no text, just don't speak
+                console.warn("No text to speak.");
             }
-
 
             // Trigger confetti effect after displaying the verse
             triggerConfetti();
@@ -1353,28 +1658,25 @@
 
         // Function to fetch a verse from API or cache
         async function fetchVerse(chapter, verse) {
+            hideMessage(); // Hide any old messages when starting a new fetch
             const cacheKey = `${chapter}-${verse}`;
-            const cachedData = verseCache[cacheKey]; // Read from the global verseCache variable
+            const cachedData = verseCache[cacheKey];
 
-            // 1. Check local cache first
             if (cachedData) {
                 console.log(`Serving Chapter ${chapter}, Verse ${verse} from cache.`);
                 displayVerse(cachedData);
-                 // No need to fetch from API if found in cache
                 return;
             }
 
-            // 2. If not in cache, fetch from API
-            // Check if online before attempting to fetch
             if (!navigator.onLine) {
-                 showMessage(`మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`, 'error'); // You are offline and verse X:Y is not available in cache.
+                 showMessage(`మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`, 'error');
                  verseDisplay.classList.add('hidden');
-                 return; // Stop here if offline and not in cache
+                 return;
             }
 
-            showMessage('శ్లోకం పొందుతోంది...'); // Getting verse...
+            showMessage('శ్లోకం పొందుతోంది...'); // Getting verse... (now uses new showMessage)
             try {
-                console.log(`Attempting to fetch from API: ${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`); // Log the fetch URL
+                console.log(`Attempting to fetch from API: ${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
                 const response = await fetch(`${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
 
                 if (!response.ok) {
@@ -1396,18 +1698,21 @@
 
                 const data = await response.json();
 
-                // Cache the fetched data in the global variable and localStorage
                 verseCache[cacheKey] = data;
                 localStorage.setItem(CACHE_KEY, JSON.stringify(verseCache));
                 console.log(`Fetched Chapter ${chapter}, Verse ${verse} from API and cached.`);
-                console.log('Fetched data:', data); // Log the fetched data
+                console.log('Fetched data:', data);
 
-                displayVerse(data); // This will now also trigger auto-TTS
+                displayVerse(data);
 
             } catch (error) {
                 console.error('Error fetching verse:', error);
+                // Log more specific error details
+                console.error('Error name:', error.name);
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
+
                 let displayMessage = `శ్లోకం పొందడంలో లోపం: ${error.message}`;
-                // Check if the error is likely due to being offline
                 if (error.message.includes('Failed to fetch') || navigator.onLine === false) {
                      displayMessage = `మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`;
                      console.log("Likely offline error, displaying specific message.");
@@ -1415,39 +1720,34 @@
                      console.error('Raw error object:', error);
                      displayMessage = `శ్లోకం పొందడంలో లోపం. వివరాల కోసం కన్సోల్ చూడండి.`;
                 }
-                showMessage(displayMessage, 'error');
+                showMessage(displayMessage, 'error'); // Use 'error' type which won't auto-hide
                 verseDisplay.classList.add('hidden');
             }
         }
 
         // Function to fetch a random verse
         async function fetchRandomVerse() {
-             // Check if offline
+             hideMessage(); // Hide any old messages
              if (!navigator.onLine) {
                  const cachedVerseKeys = Object.keys(verseCache);
                  if (cachedVerseKeys.length > 0) {
-                     // Select a random key from the cached verses
                      const randomKey = cachedVerseKeys[Math.floor(Math.random() * cachedVerseKeys.length)];
                      const [chapter, verse] = randomKey.split('-').map(Number);
                      console.log(`Fetching random verse from cache: Chapter ${chapter}, Verse ${verse}`);
-                     displayVerse(verseCache[randomKey]); // Display directly from cache
-                     // Auto-TTS is handled by displayVerse
+                     displayVerse(verseCache[randomKey]);
                  } else {
-                     // No verses in cache and offline
-                     showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు కాష్‌లో శ్లోకాలు అందుబాటులో లేవు.', 'error'); // You are offline and no verses are available in cache.
+                     showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు కాష్‌లో శ్లోకాలు అందుబాటులో లేవు.', 'error');
                      verseDisplay.classList.add('hidden');
                  }
              } else {
-                 // If online, fetch a random verse from the API (original logic)
                  const maxChapter = 18;
                  const randomChapter = Math.floor(Math.random() * maxChapter) + 1;
                  const maxVerse = CHAPTER_VERSE_COUNTS[randomChapter] || 78;
                  const randomVerse = Math.floor(Math.random() * maxVerse) + 1;
 
                  console.log(`Fetching random verse from API: Chapter ${randomChapter}, Verse ${randomVerse}`);
-                 fetchVerse(randomChapter, randomVerse); // fetchVerse handles caching
+                 fetchVerse(randomChapter, randomVerse);
              }
-             // Close the side menu after fetching a verse
              closeSideMenu();
         }
 
@@ -1557,6 +1857,17 @@
              // The CSS transition handles the height change
         });
 
+        // Event listener for clicking on the feedback section header to toggle the form
+        feedbackSection.addEventListener('click', () => {
+             feedbackSection.classList.toggle('expanded');
+             // The CSS transition handles the height change
+        });
+
+        // Event listener for clicking on the LLM Features section header to toggle the buttons
+        llmFeaturesSection.addEventListener('click', () => {
+             llmFeaturesSection.classList.toggle('expanded');
+        });
+
 
         // Event listener for clicking on a favorite verse in the list
         favoritesUl.addEventListener('click', (event) => {
@@ -1570,39 +1881,258 @@
              }
         });
 
+        // Event listener for Feedback Submit Button
+        submitFeedbackBtn.addEventListener('click', () => {
+            const feedbackType = feedbackTypeSelect.value;
+            const chapter = feedbackChapterInput.value;
+            const verse = feedbackVerseInput.value;
+            const message = feedbackMessageInput.value.trim();
+            const name = feedbackNameInput.value.trim();
+            const email = feedbackEmailInput.value.trim();
+
+            if (!feedbackType) {
+                showMessage('దయచేసి ఫీడ్‌బ్యాక్ రకాన్ని ఎంచుకోండి.', 'error'); // Please select feedback type.
+                return;
+            }
+            if (!message) {
+                showMessage('దయచేసి మీ సూచన/సవరణను వ్రాయండి.', 'error'); // Please write your suggestion/correction.
+                return;
+            }
+
+            const feedbackData = {
+                type: feedbackType,
+                chapter: chapter || null, // Include chapter if available
+                verse: verse || null, // Include verse if available
+                message: message,
+                name: name || null,
+                email: email || null
+            };
+
+            console.log("Feedback data to be sent (API call mocked):", feedbackData);
+            // --- TO-DO: Implement actual API call here ---
+            // Example:
+            /*
+            fetch(`${API_BASE_URL}/submit-feedback`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(feedbackData),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Feedback submitted successfully:', data);
+                showMessage('మీ సూచన విజయవంతంగా సమర్పించబడింది!', 'success'); // Your suggestion submitted successfully!
+                // Clear the form
+                feedbackTypeSelect.value = '';
+                feedbackMessageInput.value = '';
+                feedbackNameInput.value = '';
+                feedbackEmailInput.value = '';
+                // No need to clear chapter/verse as they auto-fill based on current verse
+                closeSideMenu();
+            })
+            .catch((error) => {
+                console.error('Error submitting feedback:', error);
+                showMessage('ఫీడ్‌బ్యాక్ సమర్పించడంలో లోపం. దయచేసి మళ్ళీ ప్రయత్నించండి.', 'error'); // Error submitting feedback. Please try again.
+            });
+            */
+            // For now, just show a success message and clear the form
+            showMessage('మీ సూచన విజయవంతంగా సమర్పించబడింది!', 'success');
+            feedbackTypeSelect.value = '';
+            feedbackMessageInput.value = '';
+            feedbackNameInput.value = '';
+            feedbackEmailInput.value = '';
+            // chapter and verse inputs are readonly and auto-filled, no need to clear.
+            closeSideMenu();
+        });
+
+
+        // --- Gemini API Integration ---
+        const API_KEY = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+
+        async function callGeminiAPI(prompt, targetResponseArea, loadingSpinner) {
+            targetResponseArea.textContent = ''; // Clear previous response
+            loadingSpinner.classList.remove('hidden'); // Show spinner
+
+            const currentVerseData = {
+                chapter: verseDisplay.dataset.chapter,
+                verse: verseDisplay.dataset.verse,
+                sanskritVerse: verseDisplay.dataset.sanskritVerse,
+                teluguMeaning: verseDisplay.dataset.teluguMeaning,
+                teluguDescription: verseDisplay.dataset.teluguDescription
+            };
+
+            if (!currentVerseData.chapter || !currentVerseData.verse) {
+                showMessage('శ్లోకం ఎంచుకోబడలేదు. దయచేసి ముందుగా ఒక శ్లోకాన్ని పొందండి.', 'error');
+                loadingSpinner.classList.add('hidden');
+                return;
+            }
+
+            let chatHistory = [];
+            chatHistory.push({
+                role: "user",
+                parts: [{ text: prompt }]
+            });
+
+            const payload = { contents: chatHistory };
+
+            try {
+                const response = await fetch(GEMINI_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error: ${response.status} - ${errorData.error.message || JSON.stringify(errorData)}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    targetResponseArea.textContent = text;
+                } else {
+                    targetResponseArea.textContent = 'సమాధానం పొందడంలో లోపం. దయచేసి మళ్ళీ ప్రయత్నించండి.';
+                    console.error('Gemini API response structure unexpected:', result);
+                }
+            } catch (error) {
+                console.error('Error calling Gemini API:', error);
+                targetResponseArea.textContent = `సమాధానం పొందడంలో లోపం: ${error.message}. దయచేసి మీ ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి లేదా తర్వాత మళ్ళీ ప్రయత్నించండి.`;
+                showMessage(`LLM లోపం: ${error.message}`, 'error');
+            } finally {
+                loadingSpinner.classList.add('hidden'); // Hide spinner
+            }
+        }
+
+        // Deep Dive Button Logic
+        deepDiveBtn.addEventListener('click', async () => {
+            openModal(deepDiveModalOverlay);
+            deepDiveResponseArea.textContent = 'వివరణను లోడ్ చేస్తోంది...';
+
+            const currentVerseData = {
+                chapter: verseDisplay.dataset.chapter,
+                verse: verseDisplay.dataset.verse,
+                sanskritVerse: verseDisplay.dataset.sanskritVerse,
+                teluguMeaning: verseDisplay.dataset.teluguMeaning,
+                teluguDescription: verseDisplay.dataset.teluguDescription
+            };
+
+            if (!currentVerseData.chapter) {
+                deepDiveResponseArea.textContent = 'శ్లోకం ఎంచుకోబడలేదు. దయచేసి ముందుగా ఒక శ్లోకాన్ని పొందండి.';
+                return;
+            }
+
+            const prompt = `భగవద్గీతలోని ఈ శ్లోకం యొక్క లోతైన వివరణను, దాని ప్రాముఖ్యతను మరియు ఆధునిక జీవితంలో దాని అన్వయాన్ని తెలుగులో అందించండి.
+            అధ్యాయం: ${currentVerseData.chapter}, శ్లోకం: ${currentVerseData.verse}
+            సంస్కృత శ్లోకం: ${currentVerseData.sanskritVerse}
+            తెలుగు భావార్థం: ${currentVerseData.teluguMeaning}
+            సందేశం: ${currentVerseData.teluguDescription}
+            `;
+
+            await callGeminiAPI(prompt, deepDiveResponseArea, deepDiveLoadingSpinner);
+        });
+
+        // Ask Question Button Logic
+        askQuestionBtn.addEventListener('click', () => {
+            openModal(askQuestionModalOverlay);
+            qaInput.value = ''; // Clear previous input
+            qaResponseArea.textContent = ''; // Clear previous response
+        });
+
+        qaSubmitBtn.addEventListener('click', async () => {
+            const question = qaInput.value.trim();
+            if (!question) {
+                showMessage('దయచేసి మీ ప్రశ్నను టైప్ చేయండి.', 'error');
+                return;
+            }
+
+            qaResponseArea.textContent = 'సమాధానం కోసం చూస్తోంది...';
+            qaLoadingSpinner.classList.remove('hidden');
+
+            const currentVerseData = {
+                chapter: verseDisplay.dataset.chapter,
+                verse: verseDisplay.dataset.verse,
+                sanskritVerse: verseDisplay.dataset.sanskritVerse,
+                teluguMeaning: verseDisplay.dataset.teluguMeaning,
+                teluguDescription: verseDisplay.dataset.teluguDescription
+            };
+
+            if (!currentVerseData.chapter) {
+                qaResponseArea.textContent = 'శ్లోకం ఎంచుకోబడలేదు. దయచేసి ముందుగా ఒక శ్లోకాన్ని పొందండి.';
+                qaLoadingSpinner.classList.add('hidden');
+                return;
+            }
+
+            const prompt = `భగవద్గీతలోని ఈ శ్లోకం ఆధారంగా, ఈ ప్రశ్నకు తెలుగులో సమాధానం ఇవ్వండి: "${question}"
+            అధ్యాయం: ${currentVerseData.chapter}, శ్లోకం: ${currentVerseData.verse}
+            సంస్కృత శ్లోకం: ${currentVerseData.sanskritVerse}
+            తెలుగు భావార్థం: ${currentVerseData.teluguMeaning}
+            సందేశం: ${currentVerseData.teluguDescription}
+            `;
+
+            await callGeminiAPI(prompt, qaResponseArea, qaLoadingSpinner);
+        });
+
+
+        // Modal functions
+        function openModal(modalOverlay) {
+            modalOverlay.classList.add('visible');
+        }
+
+        function closeModal(modalOverlay) {
+            modalOverlay.classList.remove('visible');
+            // Stop any ongoing speech if modal is closed
+            if (synth.speaking) {
+                synth.cancel();
+                clearHighlight();
+            }
+        }
+
+        closeDeepDiveModalBtn.addEventListener('click', () => closeModal(deepDiveModalOverlay));
+        deepDiveModalOverlay.addEventListener('click', (e) => {
+            if (e.target === deepDiveModalOverlay) closeModal(deepDiveModalOverlay);
+        });
+
+        closeAskQuestionModalBtn.addEventListener('click', () => closeModal(askQuestionModalOverlay));
+        askQuestionModalOverlay.addEventListener('click', (e) => {
+            if (e.target === askQuestionModalOverlay) closeModal(askQuestionModalOverlay);
+        });
+
 
         // --- Swipe Functionality for Side Menu Hint ---
         let touchStartX = 0;
         const swipeThreshold = 50; // Minimum horizontal distance for a swipe
 
         sideMenuHint.addEventListener('touchstart', (e) => {
-            // Store the starting X position of the touch
             touchStartX = e.touches[0].clientX;
-             // Prevent default behavior only if it's clearly a horizontal swipe attempt
-             // This is tricky, so we'll handle it in touchmove
         });
 
         sideMenuHint.addEventListener('touchmove', (e) => {
-            if (touchStartX === 0) return; // If touchstart didn't fire correctly
+            if (touchStartX === 0) return;
 
             const touchMoveX = e.touches[0].clientX;
             const diffX = touchMoveX - touchStartX;
 
-            // Check if it's a swipe to the right and exceeds the threshold
             if (diffX > swipeThreshold) {
                 openSideMenu();
-                touchStartX = 0; // Reset touchStartX to prevent multiple triggers
-                 e.preventDefault(); // Prevent default scrolling/behavior
+                touchStartX = 0;
+                e.preventDefault();
             } else if (Math.abs(e.touches[0].clientY - e.changedTouches[0].clientY) > Math.abs(diffX)) {
-                 // If vertical movement is greater than horizontal, it's likely a scroll,
-                 // so reset touchStartX and allow default behavior.
                  touchStartX = 0;
             }
-             // If diffX is positive but less than threshold, or negative, do nothing yet.
         });
 
         sideMenuHint.addEventListener('touchend', (e) => {
-            // Reset touchStartX regardless of swipe outcome
             touchStartX = 0;
         });
 
@@ -1615,7 +2145,6 @@
              if (window.matchMedia("(orientation: landscape) and (max-width: 768px)").matches) {
                  sideMenuHint.style.display = 'none';
              } else {
-                 // Only show hint if menu is not open
                  if (!sideMenu.classList.contains('open')) {
                      sideMenuHint.style.display = 'block';
                  }
@@ -1632,140 +2161,109 @@
         function hideSplashScreen() {
              splashScreen.classList.add('hidden');
              mainContent.classList.add('visible');
-             // Optionally fetch a random verse after splash screen hides
              fetchRandomVerse(); // Fetch a random verse on load (will use cache if offline)
         }
 
         // Hide splash screen after a delay, ensuring content is loaded
         window.addEventListener('load', () => {
-            populateChapterDropdown(); // Populate dropdowns early
-            updateFavoritesListUI(); // Populate favorites list on load
+            populateChapterDropdown();
+            updateFavoritesListUI();
 
-            // Use a combination of load event and a timeout as a fallback
             setTimeout(hideSplashScreen, 2000); // Hide after 2 seconds
         });
 
 
         // --- Social Share Logic ---
-        // Update this logic to construct the share text from the displayed elements
         document.addEventListener('click', (event) => {
-             // Use event delegation to handle clicks on dynamically created share buttons
              if (event.target.closest('.share-button')) {
                  const button = event.target.closest('.share-button');
                  const platform = button.dataset.platform;
 
-                 // Get content from the displayed elements
-                 const sanskritInfoElement = verseDisplay.querySelector('.sanskrit-tile-info'); // Get info from Sanskrit tile
-                 const sanskritVerseElement = document.getElementById('sanskritVerse'); // Get text from Sanskrit verse div inside tile
-                 const shlokamBhavarthamElement = verseDisplay.querySelector('#shlokamBhavartham'); // Get text from merged card
-                 const sandeshamTextElement = document.getElementById('sandesham'); // Get text from sandesham card
+                 // Get the text content directly from the dataset attributes
+                 const chapter = verseDisplay.dataset.chapter;
+                 const verse = verseDisplay.dataset.verse;
+                 const sanskritVerseText = verseDisplay.dataset.sanskritVerse;
+                 const teluguMeaningText = verseDisplay.dataset.teluguMeaning;
+                 const teluguDescriptionText = verseDisplay.dataset.teluguDescription;
 
-                 // Ensure elements exist before getting textContent and trimming
-                 const sanskritInfoText = sanskritInfoElement ? sanskritInfoElement.textContent.trim() : '';
-                 const sanskritVerseText = sanskritVerseElement ? sanskritVerseElement.textContent.trim() : '';
-                 const shlokamBhavarthamText = shlokamBhavarthamElement ? shlokamBhavarthamElement.textContent.trim() : '';
-                 const sandeshamText = sandeshamTextElement ? sandeshamTextElement.textContent.trim() : '';
+                 let shareText = '';
 
-
-                 // Construct the share text based on the new format
-                 let shareText = ''; // Start with empty text as main heading is removed
-                 // Only include Sanskrit info and verse if they exist and are not the fallback message or empty
-                 if (sanskritVerseText && sanskritVerseText !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
-                      shareText += `${sanskritInfoText}\n${sanskritVerseText}\n\n`; // Include both info and verse
+                 // Use Emojis for visual appeal
+                 if (chapter && verse) {
+                     shareText += `📖 అధ్యాయం ${chapter}, శ్లోకం ${verse}:\n`;
                  }
 
-                  if (shlokamBhavarthamText && shlokamBhavarthamText !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') {
-                     shareText += `శ్లోకం భావార్థం:\n${shlokamBhavarthamText}\n\n`; // Used new label
-                 }
-                 if (sandeshamText && sandeshamText !== 'సందేశం అందుబాటులో లేదు.') {
-                      shareText += `సందేశం:\n${sandeshamText}\n\n`;
+                 if (sanskritVerseText && sanskritVerseText.trim() !== '' && sanskritVerseText !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
+                     shareText += `🕉️ ${sanskritVerseText.trim()}\n\n`;
                  }
 
-                 shareText += `Source: adabala.com - https://adabalap.github.io/Gita/`; // Concise source/link
+                 if (teluguMeaningText && teluguMeaningText.trim() !== '' && teluguMeaningText !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') {
+                     shareText += `💡 భావార్థం:\n${teluguMeaningText.trim()}\n\n`;
+                 }
+                 if (teluguDescriptionText && teluguDescriptionText.trim() !== '' && teluguDescriptionText !== 'సందేశం అందుబాటులో లేదు.') {
+                     shareText += `💬 సందేశం:\n${teluguDescriptionText.trim()}\n\n`;
+                 }
+
+                 // Crucially, remove the hyperlink
+                 shareText += `Source: adabala.com`;
 
 
                  if (navigator.share) {
-                     // Use Web Share API if available (for generic sharing)
-                     if (platform === 'generic') {
-                         navigator.share({
-                             title: 'శ్రీమద్భగవద్గీత శ్లోకం', // Title for the share dialog
-                             text: shareText, // The text content to share
-                             url: 'https://adabalap.github.io/Gita/' // The URL to share
-                         }).then(() => {
-                             console.log('Successfully shared via Web Share API');
-                         }).catch((error) => {
-                             console.error('Error sharing via Web Share API:', error);
-                             // Fallback for generic share if Web Share API fails
-                             copyToClipboard(shareText);
-                             showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'info'); // Verse copied! You can now share it anywhere.
-                         });
-                     } else {
-                          // For specific platforms, try Web Share API first, then fallback
-                          // Web Share API is the preferred method as it leverages native sharing.
-                          navigator.share({
-                             title: 'శ్రీమద్భగవద్గీత శ్లోకం',
-                             text: shareText,
-                             url: 'https://adabalap.github.io/Gita/'
-                          }).then(() => {
-                              console.log(`Successfully shared to ${platform} via Web Share API`);
-                          }).catch((error) => {
-                              console.error(`Error sharing to ${platform} via Web Share API:`, error);
-                              // Fallback to specific platform web intents if Web Share API fails
-                              handleSpecificPlatformShare(platform, shareText);
-                          });
-                     }
+                     // Use Web Share API if available for generic sharing
+                     navigator.share({
+                         title: 'శ్రీమద్భగవద్గీత శ్లోకం', // This title might be used by some platforms
+                         text: shareText,
+                         // url: 'https://adabalap.github.io/Gita/' // Removed URL as per request
+                     }).then(() => {
+                         console.log('Successfully shared via Web Share API');
+                     }).catch((error) => {
+                         console.error('Error sharing via Web Share API:', error);
+                         // Fallback to clipboard if Web Share API fails or is not preferred
+                         copyToClipboard(shareText);
+                         showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
+                     });
                  } else {
-                     // Fallback for browsers that don't support Web Share API
+                     // Fallback for browsers/platforms that don't support Web Share API
                      handleSpecificPlatformShare(platform, shareText);
                  }
              }
         });
 
 
-        // Fallback function for specific platform sharing (opens new tab)
-        // Note: Web Share API is generally more reliable for opening native apps
-        // compared to these web intents, which might open the web version or fail.
         function handleSpecificPlatformShare(platform, text) {
-             const url = encodeURIComponent(text);
+             const encodedText = encodeURIComponent(text);
              let shareUrl = '';
 
              switch (platform) {
                  case 'whatsapp':
-                     // WhatsApp Web Share URL
-                     shareUrl = `https://wa.me/?text=${url}`;
-                     // Alternative: whatsapp://send?text=${url} (might work better on some mobile devices, but less universally supported)
+                     shareUrl = `https://wa.me/?text=${encodedText}`;
                      break;
                  case 'facebook':
-                     // Facebook sharing is complex, often requires their SDK or a share dialog.
-                     // A simple text share link is not officially supported or reliable for native app.
-                     // This will likely open their web share dialog.
-                     shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://adabalap.github.io/Gita/')}&quote=${url}`;
+                     // Facebook sharer often requires a URL, but we'll try with just quote/hashtag if no URL is allowed.
+                     // For pure text, clipboard is the best fallback.
+                     shareUrl = `https://www.facebook.com/sharer/sharer.php?quote=${encodedText}`;
                      break;
                  case 'twitter':
-                     // Twitter Web Intent URL
-                     shareUrl = `https://twitter.com/intent/tweet?text=${url}`;
+                     shareUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
                      break;
                  case 'generic':
-                     // Fallback for generic share - copy to clipboard
                      copyToClipboard(text);
-                     showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'info'); // Verse copied! You can now share it anywhere.
-                     return; // Don't open a new window for copy
+                     showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
+                     return;
              }
 
              if (shareUrl) {
                  window.open(shareUrl, '_blank');
-             } else if (platform !== 'generic') {
-                 // If a specific platform link wasn't generated, suggest copying
+             } else {
+                 // Final fallback: copy to clipboard if no specific share URL could be generated
                  copyToClipboard(text);
-                 showMessage('ఈ ప్లాట్‌ఫారమ్‌కు నేరుగా భాగస్వామ్యం చేయడం సాధ్యం కాలేదు. శ్లోకం కాపీ చేయబడింది!', 'info'); // Direct sharing to this platform failed. Verse copied!
+                 showMessage('ఈ ప్లాట్‌ఫారమ్‌కు నేరుగా భాగస్వామ్యం చేయడం సాధ్యం కాలేదు. శ్లోకం కాపీ చేయబడింది!', 'info');
              }
         }
 
-        // Function to copy text to clipboard
         function copyToClipboard(text) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
-            // Styling to make the textarea invisible but selectable
             textarea.style.position = 'fixed';
             textarea.style.left = '-9999px';
             textarea.style.top = '0';
@@ -1774,6 +2272,7 @@
             textarea.select();
             try {
                 document.execCommand('copy');
+                console.log('Text copied to clipboard:', text); // Debugging
             } catch (err) {
                 console.error('Unable to copy to clipboard', err);
             }
@@ -1784,39 +2283,62 @@
         // --- PWA Service Worker Registration ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Register Service Worker with scope for /Gita/ subfolder
+                console.log('Attempting to register Service Worker...');
+                console.log('Current origin:', location.origin);
+                console.log('Current pathname:', location.pathname);
+                // The scope should match the directory where your PWA is served.
+                // For GitHub Pages, if your PWA is in a subfolder like /Gita/, the scope should be '/Gita/'.
+                // Ensure service-worker.js is directly inside your /Gita/ folder.
                 navigator.serviceWorker.register('/Gita/service-worker.js', { scope: '/Gita/' })
                     .then(registration => {
-                        console.log('Service Worker registered:', registration);
+                        console.log('Service Worker registered successfully:', registration);
                     })
                     .catch(error => {
-                        console.error('Service Worker registration failed:', error);
-                        console.error('Ensure service-worker.js is at the root of your /Gita/ subfolder on GitHub Pages.');
-                        console.error(error);
+                        console.error('Service Worker registration failed:');
+                        console.error('Error name:', error.name);
+                        console.error('Error message:', error.message);
+                        console.error('Error stack:', error.stack);
+                        console.error('Ensure service-worker.js is at the root of your /Gita/ subfolder on GitHub Pages and accessible via HTTPS.');
+                        // Provide more context to the user if the error is a SecurityError
+                        if (error.name === 'SecurityError') {
+                            showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: HTTPS అవసరం. మీ సైట్ HTTPS ద్వారా అందించబడుతుందని నిర్ధారించుకోండి.', 'error');
+                        } else if (error.name === 'NetworkError') {
+                            showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: నెట్‌వర్క్ సమస్య. ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'error');
+                        } else {
+                            showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది. వివరాల కోసం కన్సోల్‌ని తనిఖీ చేయండి.', 'error');
+                        }
                     });
             });
         }
 
-        // --- Offline Data Display from Cache ---
-        // This is handled implicitly by the fetchVerse function.
-        // When offline, the fetch() request will fail, but the Service Worker
-        // might intercept it and serve from the cache if the API response was cached.
-        // Additionally, the localStorage cache check at the beginning of fetchVerse
-        // allows displaying previously viewed verses even if the Service Worker cache is missed
-        // for the API request itself (though the Service Worker should ideally cache API responses too).
-        // To explicitly handle offline *initial* load for a specific verse (e.g., last viewed),
-        // you could add logic here on window.load to check localStorage and display if available.
-
         window.addEventListener('online', () => {
             console.log('App is online.');
-            // Optional: Re-fetch current verse or sync data if needed
+            showMessage('మీరు ఆన్‌లైన్‌లోకి తిరిగి వచ్చారు.', 'info'); // You are back online.
         });
 
         window.addEventListener('offline', () => {
             console.log('App is offline.');
-            // Optional: Display an offline message to the user
-            // The fetchVerse function now handles showing a specific offline message
-            // if the requested verse is not in the cache.
+            showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. కాష్ చేయబడిన కంటెంట్ మాత్రమే అందుబాటులో ఉండవచ్చు.', 'info'); // You are offline. Only cached content may be available.
+        });
+
+        // Check Phosphor Icons loading on DOMContentLoaded
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => { // Give a small delay for the script to execute
+                // Check if Phosphor Icons are available by trying to create an element with a phosphor class
+                const testIcon = document.createElement('i');
+                testIcon.className = 'ph ph-heart';
+                document.body.appendChild(testIcon); // Temporarily add to DOM to check computed style
+                const computedStyle = window.getComputedStyle(testIcon);
+                const isPhosphorLoaded = computedStyle.fontFamily.includes('Phosphor');
+                document.body.removeChild(testIcon); // Remove it
+
+                if (isPhosphorLoaded) {
+                    console.log('Phosphor Icons library appears to be loaded.');
+                } else {
+                    console.warn('Phosphor Icons library might not be loaded. Icons may not display correctly.');
+                    showMessage('ఐకాన్‌లు సరిగ్గా లోడ్ కాకపోవచ్చు. దయచేసి మీ ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'info', 5000);
+                }
+            }, 1000); // Delay check by 1 second
         });
 
 
