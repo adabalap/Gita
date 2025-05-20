@@ -965,7 +965,7 @@
         }
 
         // Function to wrap words in spans and build wordSpans array
-        function wrapWordsInSpans(text, containerElement, startIndexInFullText) {
+        function wrapWordsInSpans(text, containerElement, startIndexInFullText, isTeluguVerse = false) {
             const words = text.split(/\s+/); // Split by one or more whitespace characters
             let currentHtml = '';
             let currentIndex = startIndexInFullText;
@@ -983,6 +983,12 @@
                     span.textContent = word;
                     span.classList.add('verse-word'); // Add a class for styling/selection
 
+                    // Add specific class for Telugu verse words for potential styling
+                    if (isTeluguVerse) {
+                         span.classList.add('telugu-verse-word');
+                    }
+
+
                     // Store word info and span reference
                     wordSpans.push({
                         text: word,
@@ -996,7 +1002,7 @@
                 }
             });
 
-            containerElement.innerHTML = currentHtml; // Set the HTML of the container
+            containerElement.innerHTML += currentHtml; // Append the HTML to the container
             return currentIndex; // Return the ending index after this segment
         }
 
@@ -1194,14 +1200,11 @@
 
 
             // Add Combined Shlokam and Bhavartham Card
+            // The text content will be added via JavaScript below
             contentHTML += `
                 <div id="shlokamBhavarthamContainer" class="content-card shlokam-bhavartham">
                     <div class="verse-label shlokam-bhavartham"><i class="ph ph-book-open"></i> శ్లోకం భావార్థం:</div>
-                     <div id="teluguVerse" class="polished-telugu-verse-text mb-4">
-                         </div>
-                     <div id="teluguBhavartham" class="telugu-bhavartham-text">
-                         </div>
-                </div>
+                    </div>
             `;
             // Append Combined text to fullTextToSpeak and update index
             const combinedLabelText = `శ్లోకం భావార్థం. `;
@@ -1249,8 +1252,7 @@
             // Now populate the text content and wrap words in spans
             // Get the container elements *after* they have been added to the DOM
             const sanskritVerseElement = verseDisplay.querySelector('#sanskritVerse');
-            const teluguVerseElement = verseDisplay.querySelector('#teluguVerse'); // Now inside combined card
-            const teluguBhavarthamElement = verseDisplay.querySelector('#teluguBhavartham'); // Now inside combined card
+            const shlokamBhavarthamContainer = verseDisplay.querySelector('#shlokamBhavarthamContainer'); // Get the combined container
             const sandeshamElement = verseDisplay.querySelector('#sandesham');
 
             // Wrap words and build the wordSpans array
@@ -1259,7 +1261,7 @@
              // Wrap Sanskrit verse words
              if (sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
                  // Account for the label text added to fullTextToSpeak before the Sanskrit verse
-                 const sanskritLabelText = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
+                 const sanskritLabelText = `అధ్యాయం ${verseData.chapter}, శ్्लोకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
                  currentSpanIndex = sanskritLabelText.length;
                  currentSpanIndex = wrapWordsInSpans(sanskritVerse.trim(), sanskritVerseElement, currentSpanIndex);
              } else if (sanskritVerseElement) {
@@ -1267,16 +1269,23 @@
                  sanskritVerseElement.textContent = sanskritVerse || 'సంస్కృత శ్లోకం అందుబాటులో లేదు.';
              }
 
-             // Wrap Telugu verse words (inside combined card)
+             // Wrap Telugu verse words directly into the combined container
              const combinedLabelText = `శ్లోకం భావార్థం. `;
              currentSpanIndex = fullTextToSpeak.indexOf(combinedLabelText) + combinedLabelText.length;
-             currentSpanIndex = wrapWordsInSpans(polishedTeluguVerse, teluguVerseElement, currentSpanIndex);
 
-             // Wrap Bhavartham words (inside combined card)
-             // Note: The Bhavartham text directly follows the Telugu verse text in the combined tile,
-             // but we need to account for the space added by wrapWordsInSpans between words.
-             // The currentSpanIndex returned by the previous wrapWordsInSpans call is the correct starting point.
-             currentSpanIndex = wrapWordsInSpans(polishedTeluguMeaning, teluguBhavarthamElement, currentSpanIndex);
+             // Add Telugu Verse text
+             const teluguVerseSpanIndex = wrapWordsInSpans(polishedTeluguVerse, shlokamBhavarthamContainer, currentSpanIndex, true); // Pass true for isTeluguVerse
+             currentSpanIndex = teluguVerseSpanIndex; // Update index
+
+             // Add a line break between Shlokam and Bhavartham within the same container
+             const br = document.createElement('br');
+             shlokamBhavarthamContainer.appendChild(br);
+             const br2 = document.createElement('br'); // Add a second br for more space
+             shlokamBhavarthamContainer.appendChild(br2);
+
+
+             // Add Telugu Bhavartham words directly into the combined container
+             currentSpanIndex = wrapWordsInSpans(polishedTeluguMeaning, shlokamBhavarthamContainer, currentSpanIndex); // Use the updated index
 
 
              // Wrap Sandesham words
@@ -1675,15 +1684,13 @@
                  // Get content from the displayed elements
                  const sanskritInfoElement = verseDisplay.querySelector('.sanskrit-tile-info'); // Get info from Sanskrit tile
                  const sanskritVerseElement = document.getElementById('sanskritVerse'); // Get text from Sanskrit verse div inside tile
-                 const teluguVerseElement = verseDisplay.querySelector('#teluguVerse'); // Get text from combined shlokam/bhavartham card
-                 const teluguBhavarthamTextElement = verseDisplay.querySelector('#teluguBhavartham'); // Get text from combined shlokam/bhavartham card
+                 const shlokamBhavarthamContainer = verseDisplay.querySelector('#shlokamBhavarthamContainer'); // Get combined container
                  const sandeshamTextElement = document.getElementById('sandesham'); // Get text from sandesham card
 
-                 // Ensure elements exist before getting textContent and trimming
+                 // Get text content directly from the combined container (will include both parts)
+                 const shlokamBhavarthamText = shlokamBhavarthamContainer ? shlokamBhavarthamContainer.textContent.trim() : '';
                  const sanskritInfoText = sanskritInfoElement ? sanskritInfoElement.textContent.trim() : '';
                  const sanskritVerseText = sanskritVerseElement ? sanskritVerseElement.textContent.trim() : '';
-                 const teluguVerseText = teluguVerseElement ? teluguVerseElement.textContent.trim() : '';
-                 const teluguBhavarthamText = teluguBhavarthamTextElement ? teluguBhavarthamTextElement.textContent.trim() : '';
                  const sandeshamText = sandeshamTextElement ? sandeshamTextElement.textContent.trim() : '';
 
 
@@ -1694,16 +1701,15 @@
                       shareText += `${sanskritInfoText}\n${sanskritVerseText}\n\n`; // Include both info and verse
                  }
 
-                  // Combine Shlokam and Bhavartham for sharing
-                 if ((teluguVerseText && teluguVerseText !== 'తెలుగు శ్లోకం అందుబాటులో లేదు.') || (teluguBhavarthamText && teluguBhavarthamText !== 'తెలుగు భావార్థం అందుబాటులో లేదు.')) {
-                     shareText += `శ్లోకం భావార్థం:\n`;
-                     if (teluguVerseText && teluguVerseText !== 'తెలుగు శ్లోకం అందుబాటులో లేదు.') {
-                          shareText += `${teluguVerseText}\n`;
-                     }
-                     if (teluguBhavarthamText && teluguBhavarthamText !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') {
-                          shareText += `${teluguBhavarthamText}\n`;
-                     }
-                     shareText += `\n`; // Add a newline after the combined section
+                 // Add the combined Shlokam Bhavartham text
+                 if (shlokamBhavarthamText && shlokamBhavarthamText !== 'శ్లోకం భావార్థం: తెలుగు శ్లోకం అందుబాటులో లేదు. తెలుగు భావార్థం అందుబాటులో లేదు.') {
+                      // Remove the label from the text content if it's there
+                      const labelToRemove = 'శ్లోకం భావార్థం:';
+                      let cleanedShlokamBhavarthamText = shlokamBhavarthamText;
+                      if (cleanedShlokamBhavarthamText.startsWith(labelToRemove)) {
+                          cleanedShlokamBhavarthamText = cleanedShlokamBhavarthamText.substring(labelToRemove.length).trim();
+                      }
+                      shareText += `శ్లోకం భావార్థం:\n${cleanedShlokamBhavarthamText}\n\n`;
                  }
 
 
