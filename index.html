@@ -218,7 +218,7 @@
              color: #1d4ed8; /* Blue color for Sandesham label */
          }
 
-         /* Styling for Audio Buttons - Refined Positioning */
+         /* Styling for Audio Buttons */
          .audio-button {
              background: none;
              border: none;
@@ -235,13 +235,42 @@
              top: 0.5rem; /* Adjust top position */
              right: 0.5rem; /* Adjust right position */
              z-index: 10; /* Ensure it's above other tile content */
-             /* Added transform to fine-tune vertical alignment relative to its position */
-             transform: translateY(-10%); /* Adjust vertically */
          }
 
          .audio-button:hover {
              color: #4338ca; /* Darker indigo on hover */
          }
+
+         /* Styling for Favorite Button */
+         .favorite-button {
+             background: none;
+             border: none;
+             cursor: pointer;
+             font-size: 1.8rem; /* Larger icon size */
+             padding: 0.5rem; /* Increased padding */
+             color: #f59e0b; /* Amber color for heart outline */
+             transition: color 0.2s ease-in-out;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             /* Positioned absolutely within the Sanskrit tile */
+             position: absolute;
+             top: 0.5rem; /* Adjust top position */
+             left: 0.5rem; /* Adjust left position */
+             z-index: 10; /* Ensure it's above other tile content */
+         }
+
+         .favorite-button:hover {
+             color: #d97706; /* Darker amber on hover */
+         }
+
+         .favorite-button.favorited {
+             color: #ef4444; /* Red color when favorited */
+         }
+         .favorite-button.favorited:hover {
+             color: #dc2626; /* Darker red on hover */
+         }
+
 
          /* Styling for the new content cards/tiles */
          .content-card {
@@ -625,14 +654,72 @@
              border-radius: 3px; /* Slightly rounded corners for highlight */
          }
 
-         /* Styling for the app version display in the side menu */
-         #appVersionDisplay {
-             margin-top: auto; /* Push to the bottom */
-             padding-top: 1rem;
-             border-top: 1px solid #e5e7eb;
-             font-size: 0.8rem;
-             color: #6b7280;
+         /* Styling for Favorites Section (Collapsible) */
+         #favoritesSection {
+             margin-top: 2rem;
+             padding-top: 1.5rem;
+             border-top: 1px solid #d1d5db;
+             cursor: pointer; /* Indicate it's clickable */
+         }
+
+         #favoritesSection h2 {
+             font-size: 1.3rem;
+             font-weight: bold;
+             margin-bottom: 0.5rem; /* Reduced margin */
+             color: #374151;
+             font-family: 'Roboto', sans-serif;
              text-align: center;
+             display: flex; /* Use flexbox for icon and text */
+             justify-content: center; /* Center content */
+             align-items: center;
+             gap: 0.5rem; /* Space between icon and text */
+         }
+
+         #favoritesSection h2 i {
+             transition: transform 0.2s ease-in-out; /* Animation for the icon */
+         }
+
+         #favoritesSection.expanded h2 i {
+             transform: rotate(90deg); /* Rotate icon when expanded */
+         }
+
+         #favoritesList {
+             max-height: 0; /* Initially hidden */
+             overflow: hidden;
+             transition: max-height 0.3s ease-in-out; /* Smooth expand/collapse */
+             padding-top: 0; /* Remove padding when collapsed */
+             margin-top: 0; /* Remove margin when collapsed */
+         }
+
+         #favoritesSection.expanded #favoritesList {
+             max-height: 300px; /* Adjust as needed for max height when expanded */
+             /* You might need to calculate a better max-height based on content */
+             padding-top: 0.5rem; /* Add padding when expanded */
+             margin-top: 0.5rem; /* Add margin when expanded */
+         }
+
+
+         #favoritesList ul {
+             list-style: none;
+             padding: 0;
+             margin: 0;
+         }
+
+         #favoritesList li {
+             background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+             border: 1px solid #d1d5db;
+             border-radius: 0.5rem;
+             padding: 0.8rem;
+             margin-bottom: 0.5rem;
+             cursor: pointer;
+             transition: background-color 0.2s ease-in-out;
+             font-size: 1.1rem;
+             color: #4f46e5; /* Indigo color */
+             font-weight: bold;
+         }
+
+         #favoritesList li:hover {
+             background-color: rgba(243, 244, 246, 0.8); /* Lighter gray on hover */
          }
 
 
@@ -679,6 +766,11 @@
                  right: 0.3rem;
                  font-size: 1.6rem;
              }
+             .favorite-button { /* Adjust favorite button position in landscape */
+                 top: 0.3rem;
+                 left: 0.3rem;
+                 font-size: 1.6rem;
+             }
              .card {
                  padding: 1.5rem;
              }
@@ -706,6 +798,13 @@
                  height: 80px; /* Shorter hint in landscape */
                  /* Disable pulse animation in landscape to be less distracting */
                  animation: none;
+             }
+             #favoritesSection h2 {
+                 font-size: 1.2rem;
+             }
+             #favoritesList li {
+                 font-size: 1rem;
+                 padding: 0.6rem;
              }
 
 
@@ -740,7 +839,16 @@
                  <i class="ph ph-shuffle"></i> యాదృచ్ఛిక శ్లోకం పొందండి
             </button>
         </div>
-        <div id="appVersionDisplay"></div>
+
+        <div id="favoritesSection">
+             <h2>
+                 <i class="ph ph-caret-right"></i> ఇష్టమైన శ్లోకాలు
+             </h2>
+             <div id="favoritesList">
+                <ul id="favoritesUl">
+                    <li>ఇష్టమైన శ్లోకాలు లేవు.</li> </ul>
+             </div>
+        </div>
     </div>
 
     <div class="side-menu-hint" id="sideMenuHint" title="మెనూ తెరవడానికి స్వైప్ చేయండి"></div>
@@ -776,7 +884,9 @@
         const sideMenu = document.getElementById('sideMenu');
         const sideMenuOverlay = document.getElementById('sideMenuOverlay');
         const sideMenuHint = document.getElementById('sideMenuHint');
-        const appVersionDisplay = document.getElementById('appVersionDisplay'); // Get the version display element
+        const favoritesSection = document.getElementById('favoritesSection'); // Reference to the favorites section
+        const favoritesList = document.getElementById('favoritesList'); // Reference to the favorites list container
+        const favoritesUl = document.getElementById('favoritesUl');
 
 
         // Base URL for your Flask API
@@ -786,6 +896,10 @@
         // Simple local cache using localStorage
         let verseCache = JSON.parse(localStorage.getItem('bhagavathGitaCache')) || {};
         const CACHE_KEY = 'bhagavathGitaCache'; // Key for localStorage
+        const FAVORITES_KEY = 'bhagavathGitaFavorites'; // Key for localStorage favorites
+
+        // Load favorites from localStorage on startup
+        let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
 
         // Define the number of verses in each chapter (same as backend)
         const CHAPTER_VERSE_COUNTS = {
@@ -799,7 +913,7 @@
         let currentUtterance = null; // To keep track of the current speech
         let wordSpans = []; // Array to store references to word spans and their text/index info
         let currentHighlightSpan = null; // To keep track of the currently highlighted span
-        let isMuted = false; // State for mute/unmute
+        let isAudioMuted = true; // Audio mute state, default to true (muted)
 
         // Function to show messages
         function showMessage(msg, type = 'info', area = messageArea) {
@@ -856,20 +970,17 @@
         }
 
         // Function to wrap words in spans and build wordSpans array
-        // This function now takes the text to wrap, the container, and the *start index in the full spoken text*
-        function wrapWordsInSpans(textToWrap, containerElement, startIndexInFullSpokenText) {
-            const words = textToWrap.split(/\s+/); // Split by one or more whitespace characters
+        function wrapWordsInSpans(text, containerElement, startIndexInFullText) {
+            const words = text.split(/\s+/); // Split by one or more whitespace characters
             let currentHtml = '';
-            let currentSpokenIndex = startIndexInFullSpokenText; // Index in the full spoken text
+            let currentIndex = startIndexInFullText;
 
             words.forEach((word, index) => {
                 if (word) { // Avoid creating spans for empty strings from multiple spaces
-                    // Add a space before the word in HTML if it's not the first word in this segment
-                    if (index > 0) {
+                    // Add a space before the word if it's not the first word and not the very beginning of the full text
+                    if (index > 0 || startIndexInFullText > 0) {
                          currentHtml += ' ';
-                         // We don't increment currentSpokenIndex for the space here because
-                         // the onboundary event gives the start of the word itself in the spoken text.
-                         // The mapping relies on finding the word in the spoken string.
+                         currentIndex += 1; // Account for the space
                     }
 
                     // Create a span for the word
@@ -880,25 +991,18 @@
                     // Store word info and span reference
                     wordSpans.push({
                         text: word,
-                        // Store the approximate start index in the full spoken text string
-                        // This is an approximation and might need fine-tuning based on TTS behavior
-                        startIndex: currentSpokenIndex,
-                        endIndex: currentSpokenIndex + word.length, // Approximate end index
+                        startIndex: currentIndex,
+                        endIndex: currentIndex + word.length,
                         span: span // Store reference to the actual span element
                     });
 
                     currentHtml += span.outerHTML; // Add the span HTML
-                    currentSpokenIndex += word.length; // Increment index by word length
-
-                    // Add 1 for the space that will follow this word in the spoken text (if not the last word)
-                    if (index < words.length - 1) {
-                         currentSpokenIndex += 1; // Account for the space *after* the word
-                    }
+                    currentIndex += word.length; // Update index
                 }
             });
 
             containerElement.innerHTML = currentHtml; // Set the HTML of the container
-            return currentSpokenIndex; // Return the ending index in the full spoken text after this segment
+            return currentIndex; // Return the ending index after this segment
         }
 
 
@@ -910,20 +1014,8 @@
                 clearHighlight();
             }
 
-            if (isMuted) {
-                 console.log("Speech is muted. Not speaking.");
-                 // Ensure icon is correct if speech was attempted while muted
-                 const audioButton = verseDisplay.querySelector('#playAllAudio');
-                 if (audioButton) {
-                     const icon = audioButton.querySelector('i');
-                     icon.classList.remove('ph-speaker-high');
-                     icon.classList.add('ph-speaker-slash');
-                     audioButton.title = 'అన్‌మ్యూట్ చేయండి';
-                 }
-                 return; // Don't speak if muted
-            }
-
-            if (text && text.trim() !== '') {
+            // Only speak if audio is not muted
+            if (text && !isAudioMuted) {
                 currentUtterance = new SpeechSynthesisUtterance(text);
                 currentUtterance.lang = lang; // Set language (Telugu for te-IN, Sanskrit might need a different approach or voice)
 
@@ -931,40 +1023,26 @@
                 currentUtterance.onboundary = (event) => {
                     if (event.name === 'word') {
                         const charIndex = event.charIndex;
-                        // Find the word span whose *spoken text index range* contains this charIndex
-                        // This is the core mapping from spoken text index to displayed word span
-                        const targetWordInfo = wordSpans.find(wordInfo => {
-                             // A simple check: see if the spoken text at charIndex starts with the word's text
-                             // This is more robust than relying purely on calculated indices
-                             const spokenSegment = text.substring(charIndex);
-                             // Clean the spoken segment and word text for comparison (remove punctuation, normalize space)
-                             const cleanSpokenSegment = spokenSegment.replace(/[\s.,!?;:]+/g, ' ').trim();
-                             const cleanWordText = wordInfo.text.replace(/[\s.,!?;:]+/g, ' ').trim();
+                        // Find the word span that contains this character index
+                        const targetWord = wordSpans.find(wordInfo =>
+                            charIndex >= wordInfo.startIndex && charIndex < wordInfo.endIndex
+                        );
 
-                             // Check if the cleaned spoken segment starts with the cleaned word text
-                             // Also check if the charIndex falls within the approximate range stored
-                             return cleanSpokenSegment.startsWith(cleanWordText) &&
-                                    charIndex >= wordInfo.startIndex && charIndex < wordInfo.endIndex + (wordInfo.text.length * 0.5); // Add a buffer for approximation
-                        });
-
-
-                        if (targetWordInfo) {
+                        if (targetWord) {
                             clearHighlight(); // Remove previous highlight
-                            currentHighlightSpan = targetWordInfo.span;
+                            currentHighlightSpan = targetWord.span;
                             currentHighlightSpan.classList.add('highlighted-word');
 
                             // Scroll the word into view
-                            targetWordInfo.span.scrollIntoView({
+                            targetWord.span.scrollIntoView({
                                 behavior: 'smooth', // Smooth scrolling
                                 block: 'center' // Center the word in the viewport
                             });
                         } else {
-                             // Handle cases where charIndex might not perfectly match (e.g., punctuation, TTS variations)
-                             // This can happen if the simple startsWith check fails or indices are off.
-                             // We can try a fallback: find the word span whose text is nearest to the spoken word at charIndex.
-                             // Or, log a warning and skip highlighting for this word.
-                             console.warn('Could not find word span for charIndex:', charIndex, 'Spoken text snippet:', text.substring(charIndex, charIndex + 20) + '...');
-                             // Optional: Add more sophisticated fuzzy matching or index correction here if needed.
+                             // Handle cases where charIndex might not perfectly match (e.g., punctuation)
+                             // Find the nearest span or log a warning
+                             console.warn('Could not find word span for charIndex:', charIndex);
+                             // Optional: Implement fallback logic to find nearest word
                         }
                     }
                 };
@@ -972,51 +1050,24 @@
                 // Event listener for end of speech
                 currentUtterance.onend = () => {
                     clearHighlight(); // Clear highlight when speech ends
-                     console.log("Speech ended.");
-                     // After speech ends, if not muted, revert icon to high speaker
-                     const audioButton = verseDisplay.querySelector('#playAllAudio');
-                     if (audioButton && !isMuted) {
-                         const icon = audioButton.querySelector('i');
-                         icon.classList.remove('ph-speaker-slash');
-                         icon.classList.add('ph-speaker-high');
-                         audioButton.title = 'అన్నీ వినండి / ఆపు';
-                     }
                 };
 
                 // Event listener for errors
                  currentUtterance.onerror = (event) => {
                      console.error('SpeechSynthesisUtterance error:', event.error);
-                     showMessage(`వచనాన్ని చదవడంలో లోపం: ${event.error}`, 'error'); // Error reading text
+                     // Show error message only if not intentionally cancelled (e.g. by muting)
+                     if (event.error !== 'cancelled') {
+                        showMessage(`వచనాన్ని చదవడంలో లోపం: ${event.error}`, 'error'); // Error reading text
+                     }
                      clearHighlight(); // Clear highlight on error
                  };
 
-                // Before speaking, update the icon to indicate speaking is starting (high speaker)
-                 const audioButton = verseDisplay.querySelector('#playAllAudio');
-                 if (audioButton) {
-                     const icon = audioButton.querySelector('i');
-                     icon.classList.remove('ph-speaker-slash');
-                     icon.classList.add('ph-speaker-high');
-                     audioButton.title = 'అన్నీ వినండి / ఆపు'; // Or 'ఆపు'
-                 }
-
 
                 synth.speak(currentUtterance);
+            } else if (isAudioMuted) {
+                 console.log("Audio is muted, not speaking.");
             } else {
-                 console.warn("No text provided to speakText function or text is empty.");
-                 // If there's no text to speak, ensure the icon is not stuck in a playing state
-                 const audioButton = verseDisplay.querySelector('#playAllAudio');
-                 if (audioButton) {
-                     const icon = audioButton.querySelector('i');
-                     if (!isMuted) { // If not muted, should show high speaker
-                         icon.classList.remove('ph-speaker-slash');
-                         icon.classList.add('ph-speaker-high');
-                         audioButton.title = 'అన్నీ వినండి / ఆపు';
-                     } else { // If muted, should show slash speaker
-                         icon.classList.remove('ph-speaker-high');
-                         icon.classList.add('ph-speaker-slash');
-                         audioButton.title = 'అన్‌మ్యూట్ చేయండి';
-                     }
-                 }
+                 console.warn("No text provided to speakText function.");
             }
         }
 
@@ -1026,39 +1077,62 @@
                 currentHighlightSpan.classList.remove('highlighted-word');
                 currentHighlightSpan = null;
             }
-             // Also remove highlight from all spans just in case
-             document.querySelectorAll('.verse-word.highlighted-word').forEach(span => {
+            // Also remove highlight from all other spans just in case
+            document.querySelectorAll('.verse-word.highlighted-word').forEach(span => {
                  span.classList.remove('highlighted-word');
-             });
+            });
         }
 
-        // Function to toggle mute state and update icon
-        function toggleMute() {
-            isMuted = !isMuted;
+        // Function to update the audio button icon based on mute state
+        function updateAudioButtonIcon() {
             const audioButton = verseDisplay.querySelector('#playAllAudio');
             if (audioButton) {
-                 const icon = audioButton.querySelector('i');
-                 if (isMuted) {
-                     synth.cancel(); // Stop speech immediately when muting
-                     clearHighlight(); // Clear highlight on mute
-                     // Update icon to muted state
-                     icon.classList.remove('ph-speaker-high');
-                     icon.classList.add('ph-speaker-slash');
-                     audioButton.title = 'అన్‌మ్యూట్ చేయండి'; // Update title
-                     console.log("Muted.");
-                 } else {
-                     // Update icon to unmuted state
-                     icon.classList.remove('ph-speaker-slash');
-                     icon.classList.add('ph-speaker-high');
-                     audioButton.title = 'అన్నీ వినండి / ఆపు'; // Update title
-                     console.log("Unmuted.");
-                     // Note: Unmuting doesn't automatically resume speech.
-                     // The user needs to click the button again to start speaking.
-                     // If speech was stopped due to muting, clicking again will restart it.
-                 }
-            } else {
-                 console.warn("Audio button not found when toggling mute.");
+                const icon = audioButton.querySelector('i');
+                if (icon) {
+                    if (isAudioMuted) {
+                        icon.classList.remove('ph-speaker-high');
+                        icon.classList.add('ph-speaker-slash');
+                        audioButton.title = 'ఆడియో ఆన్ చేయండి'; // Turn audio on
+                    } else {
+                        icon.classList.remove('ph-speaker-slash');
+                        icon.classList.add('ph-speaker-high');
+                        audioButton.title = 'ఆడియో ఆఫ్ చేయండి / ఆపు'; // Turn audio off / Stop
+                    }
+                }
             }
+        }
+
+        // Function to toggle mute state
+        function toggleMute() {
+             isAudioMuted = !isAudioMuted;
+             updateAudioButtonIcon();
+             if (isAudioMuted && synth.speaking) {
+                 synth.cancel(); // Stop speech if muted while speaking
+                 clearHighlight(); // Clear highlight when stopping speech
+             }
+             // Optional: Save mute state to localStorage
+             // localStorage.setItem('bhagavathGitaMuteState', isAudioMuted);
+        }
+
+        // Function to update the favorite button icon based on favorite status
+        function updateFavoriteButtonIcon(isFavorited) {
+             const favoriteVerseBtn = verseDisplay.querySelector('#favoriteVerseBtn');
+             if (favoriteVerseBtn) {
+                 const icon = favoriteVerseBtn.querySelector('i');
+                 if (icon) {
+                     if (isFavorited) {
+                         favoriteVerseBtn.classList.add('favorited');
+                         favoriteVerseBtn.title = 'ఇష్టమైన వాటి నుండి తీసివేయండి'; // Remove from favorites
+                         icon.classList.remove('ph-heart');
+                         icon.classList.add('ph-heart-fill');
+                     } else {
+                         favoriteVerseBtn.classList.remove('favorited');
+                         favoriteVerseBtn.title = 'ఇష్టమైనదిగా గుర్తించండి'; // Mark as favorite
+                         icon.classList.remove('ph-heart-fill');
+                         icon.classList.add('ph-heart');
+                     }
+                 }
+             }
         }
 
 
@@ -1071,6 +1145,11 @@
             // Clear previous content
             verseDisplay.innerHTML = '';
 
+            // Store current verse data temporarily for favorite/share actions
+            verseDisplay.dataset.chapter = verseData.chapter;
+            verseDisplay.dataset.verse = verseData.verse;
+
+
             // Construct the new display structure
             // Use polished versions if available, otherwise fallback to original fetched
             const sanskritVerse = verseData.sanskrit_verse_telugu_script; // Get Sanskrit verse (can be null)
@@ -1078,21 +1157,9 @@
             const polishedTeluguMeaning = verseData.polished_telugu_meaning || verseData.telugu_meaning || 'తెలుగు భావార్థం అందుబాటులో లేదు.';
             const teluguDescription = verseData.telugu_description || 'సందేశం అందుబాటులో లేదు.';
 
-            // Build the full text to speak (including labels and pauses)
+            // Build the full text to speak and the word spans mapping
             let fullTextToSpeak = '';
-            if (sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
-                 fullTextToSpeak += `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. ${sanskritVerse.trim()}. `;
-            }
-            if (polishedTeluguVerse && polishedTeluguVerse !== 'తెలుగు శ్లోకం అందుబాటులో లేదు.') {
-                 fullTextToSpeak += `తెలుగు శ్లోకం. ${polishedTeluguVerse}. `;
-            }
-            if (polishedTeluguMeaning && polishedTeluguMeaning !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') {
-                 fullTextToSpeak += `భావార్థం. ${polishedTeluguMeaning}. `;
-            }
-             if (teluguDescription && teluguDescription !== 'సందేశం అందుబాటులో లేదు.') {
-                fullTextToSpeak += `సందేశం. ${teluguDescription}. `;
-            }
-
+            let currentTextIndex = 0; // Track index in the fullTextToSpeak string
 
             let contentHTML = ``; // Start with empty HTML as main heading is removed
 
@@ -1105,12 +1172,31 @@
                          </div>
                          <div id="sanskritVerse" class="sanskrit-verse-text">
                              </div>
-                         <button class="audio-button" id="playAllAudio" title="${isMuted ? 'అన్‌మ్యూట్ చేయండి' : 'అన్నీ వినండి / ఆపు'}">
-                             <i class="ph ${isMuted ? 'ph-speaker-slash' : 'ph-speaker-high'}"></i>
+                         <button class="audio-button" id="playAllAudio" title="ఆడియో ఆన్ చేయండి">
+                             <i class="ph ph-speaker-slash"></i>
+                         </button>
+                          <button class="favorite-button" id="favoriteVerseBtn" title="ఇష్టమైనదిగా గుర్తించండి">
+                             <i class="ph ph-heart"></i>
                          </button>
                     </div>
                  `;
+                 // Append Sanskrit text to fullTextToSpeak and update index
+                 const sanskritInfoText = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
+                 fullTextToSpeak += sanskritInfoText;
+                 currentTextIndex += sanskritInfoText.length;
+            } else {
+                 // If no Sanskrit verse, still add favorite button to the main card area
+                  contentHTML += `
+                     <div style="position: relative; min-height: 40px; margin-bottom: 1rem;"> <button class="favorite-button" id="favoriteVerseBtn" title="ఇష్టమైనదిగా గుర్తించండి" style="top: 0.5rem; left: 0.5rem;">
+                             <i class="ph ph-heart"></i>
+                         </button>
+                         <button class="audio-button" id="playAllAudio" title="ఆడియో ఆన్ చేయండి" style="top: 0.5rem; right: 0.5rem;">
+                             <i class="ph ph-speaker-slash"></i>
+                         </button>
+                     </div>
+                  `;
             }
+
 
             // Add Shlokam Card
             contentHTML += `
@@ -1120,6 +1206,11 @@
                          </div>
                 </div>
             `;
+            // Append Shlokam text to fullTextToSpeak and update index
+            const teluguVerseLabel = `తెలుగు శ్లోకం. `;
+            fullTextToSpeak += teluguVerseLabel;
+            currentTextIndex += teluguVerseLabel.length;
+
 
             // Add Bhavartham Card
             contentHTML += `
@@ -1129,6 +1220,11 @@
                          </div>
                 </div>
             `;
+             // Append Bhavartham text to fullTextToSpeak and update index
+            const teluguBhavarthamLabel = `భావార్థం. `;
+            fullTextToSpeak += teluguBhavarthamLabel;
+            currentTextIndex += teluguBhavarthamLabel.length;
+
 
             // Add Sandesham Card
             contentHTML += `
@@ -1138,6 +1234,10 @@
                          </div>
                 </div>
             `;
+             // Append Sandesham text to fullTextToSpeak and update index
+            const sandeshamLabel = `సందేశం. `;
+            fullTextToSpeak += sandeshamLabel;
+            currentTextIndex += sandeshamLabel.length;
 
 
             contentHTML += `
@@ -1170,128 +1270,109 @@
             const teluguBhavarthamElement = verseDisplay.querySelector('#teluguBhavartham');
             const sandeshamElement = verseDisplay.querySelector('#sandesham');
 
-            // Keep track of the current index in the fullTextToSpeak string for word wrapping
-            let currentSpokenIndex = 0;
+            // Wrap words and build the wordSpans array
+            let currentSpanIndex = 0; // Keep track of the index in the fullTextToSpeak string *for the actual text content*
 
-            // Wrap Sanskrit verse words
-             if (sanskritVerseElement && sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
-                 const sanskritInfoText = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
-                 currentSpokenIndex += sanskritInfoText.length; // Account for the label text
-                 currentSpokenIndex = wrapWordsInSpans(sanskritVerse.trim(), sanskritVerseElement, currentSpokenIndex);
-                 currentSpokenIndex += 2; // Account for the ". " added after the Sanskrit verse in fullTextToSpeak
+             // Wrap Sanskrit verse words
+             if (sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
+                 // Account for the label text added to fullTextToSpeak before the Sanskrit verse
+                 const sanskritLabelText = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
+                 currentSpanIndex = sanskritLabelText.length;
+                 currentSpanIndex = wrapWordsInSpans(sanskritVerse.trim(), sanskritVerseElement, currentSpanIndex);
              } else if (sanskritVerseElement) {
-                 // If Sanskrit verse is not available, set the fallback text directly without wrapping
-                 sanskritVerseElement.textContent = sanskritVerse || 'సంస్కృత శ्लोకం అందుబాటులో లేదు.';
+                 // If Sanskrit verse is not available, set the fallback text directly
+                 sanskritVerseElement.textContent = sanskritVerse || 'సంస్కృత శ్లోకం అందుబాటులో లేదు.';
              }
 
 
              // Wrap Telugu verse words
-             if (teluguVerseElement) {
-                 const teluguVerseLabelText = `తెలుగు శ్లోకం. `;
-                 currentSpokenIndex += teluguVerseLabelText.length; // Account for the label text
-                 currentSpokenIndex = wrapWordsInSpans(polishedTeluguVerse, teluguVerseElement, currentSpokenIndex);
-                 currentSpokenIndex += 2; // Account for the ". " added after the Telugu verse in fullTextToSpeak
-             }
+             const teluguVerseLabelText = `తెలుగు శ్లోకం. `;
+             currentSpanIndex = fullTextToSpeak.indexOf(teluguVerseLabelText) + teluguVerseLabelText.length;
+             currentSpanIndex = wrapWordsInSpans(polishedTeluguVerse, teluguVerseElement, currentSpanIndex);
 
 
              // Wrap Bhavartham words
-             if (teluguBhavarthamElement) {
-                 const teluguBhavarthamLabelText = `భావార్థం. `;
-                 currentSpokenIndex += teluguBhavarthamLabelText.length; // Account for the label text
-                 currentSpokenIndex = wrapWordsInSpans(polishedTeluguMeaning, teluguBhavarthamElement, currentSpokenIndex);
-                 currentSpokenIndex += 2; // Account for the ". " added after the Bhavartham in fullTextToSpeak
-             }
-
+             const teluguBhavarthamLabelText = `భావార్థం. `;
+             currentSpanIndex = fullTextToSpeak.indexOf(teluguBhavarthamLabelText) + teluguBhavarthamLabelText.length;
+             currentSpanIndex = wrapWordsInSpans(polishedTeluguMeaning, teluguBhavarthamElement, currentSpanIndex);
 
              // Wrap Sandesham words
-             if (sandeshamElement) {
-                 const sandeshamLabelText = `సందేశం. `;
-                 currentSpokenIndex += sandeshamLabelText.length; // Account for the label text
-                 currentSpokenIndex = wrapWordsInSpans(teluguDescription, sandeshamElement, currentSpokenIndex);
-                 currentSpokenIndex += 2; // Account for the ". " added after the Sandesham in fullTextToSpeak
-             }
+             const sandeshamLabelText = `సందేశం. `;
+             currentSpanIndex = fullTextToSpeak.indexOf(sandeshamLabelText) + sandeshamLabelText.length;
+             currentSpanIndex = wrapWordsInSpans(teluguDescription, sandeshamElement, currentSpanIndex);
+
+
+            // --- Audio Mute/Unmute Logic ---
+            const playAllAudioButton = verseDisplay.querySelector('#playAllAudio');
+            if (playAllAudioButton) {
+                 // Update icon initially based on mute state
+                 updateAudioButtonIcon();
+
+                 playAllAudioButton.addEventListener('click', () => {
+                     toggleMute(); // Toggle mute state first
+                     if (!isAudioMuted) {
+                         // If unmuted (or toggled from muted to unmuted), start speaking
+                         if (fullTextToSpeak && fullTextToSpeak.trim() !== '') {
+                              speakText(fullTextToSpeak.trim(), 'te-IN');
+                         } else {
+                             console.warn("No text to speak on play button click.");
+                             // showMessage('వచనం అందుబాటులో లేదు.', 'info'); // Don't show message here
+                         }
+                     } else {
+                         // If muted (or toggled from unmuted to muted), stop speaking
+                         if (synth.speaking) {
+                             synth.cancel();
+                             clearHighlight();
+                         }
+                     }
+                 });
+            } else {
+                 console.error("Audio button not found after displayVerse.");
+            }
+
+            // --- Favorite Button Logic ---
+            const favoriteVerseBtn = verseDisplay.querySelector('#favoriteVerseBtn');
+            if (favoriteVerseBtn) {
+                 // Check if the current verse is already favorited and update icon
+                 const currentVerseKey = `${verseData.chapter}-${verseData.verse}`;
+                 updateFavoriteButtonIcon(favorites.includes(currentVerseKey)); // Update icon based on status
+
+                 favoriteVerseBtn.addEventListener('click', () => {
+                     const chapter = verseDisplay.dataset.chapter;
+                     const verse = verseDisplay.dataset.verse;
+                     const verseKey = `${chapter}-${verse}`;
+
+                     if (favorites.includes(verseKey)) {
+                         // Remove from favorites
+                         favorites = favorites.filter(favKey => favKey !== verseKey);
+                         showMessage(`అధ్యాయం ${chapter}, శ్లోకం ${verse} ఇష్టమైన వాటి నుండి తీసివేయబడింది.`, 'info'); // Removed from favorites
+                     } else {
+                         // Add to favorites
+                         favorites.push(verseKey);
+                         showMessage(`అధ్యాయం ${chapter}, శ్లోకం ${verse} ఇష్టమైన వాటికి జోడించబడింది.`, 'info'); // Added to favorites
+                     }
+                     // Save updated favorites to localStorage
+                     localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+                     updateFavoriteButtonIcon(favorites.includes(verseKey)); // Update icon after adding/removing
+                     updateFavoritesListUI(); // Update the list in the side menu
+                 });
+            } else {
+                 console.error("Favorite button not found after displayVerse.");
+            }
 
 
             // --- Auto-play TTS ---
             // Check if TTS is available and enabled (though we want it default,
             // some environments might disable it or require user interaction first)
-            // Only auto-play if not muted
-            if (synth && fullTextToSpeak && fullTextToSpeak.trim() !== '' && !isMuted) {
-                 console.log("Auto-playing speech.");
+            // Auto-play only if audio is NOT muted initially AND there is text to speak
+            if (synth && fullTextToSpeak && fullTextToSpeak.trim() !== '' && !isAudioMuted) {
                  // A small delay might be needed on some mobile browsers for TTS to initialize fully
                  setTimeout(() => {
                      speakText(fullTextToSpeak.trim(), 'te-IN'); // Auto-play the concatenated text, trim again just in case
                  }, 100); // Small delay
             } else if (fullTextToSpeak.trim() === '') {
                  console.warn("No text to speak.");
-                 showMessage('వచనం అందుబాటులో లేదు.', 'info'); // No text available.
-            } else if (isMuted) {
-                 console.log("App is muted, not auto-playing speech.");
-            }
-
-
-            // Add event listener to the single play all audio button (now also acts as stop/restart/mute/unmute)
-            const playAllAudioButton = verseDisplay.querySelector('#playAllAudio');
-            if (playAllAudioButton) {
-                // Remove any existing listener to prevent duplicates before adding a new one
-                const old_element = playAllAudioButton;
-                const new_element = old_element.cloneNode(true); // Clone with all children (the icon)
-                old_element.parentNode.replaceChild(new_element, old_element);
-                const updatedPlayAllAudioButton = verseDisplay.querySelector('#playAllAudio'); // Get the new element
-
-                updatedPlayAllAudioButton.addEventListener('click', () => {
-                    console.log("Audio button clicked. Current mute state:", isMuted, "Speaking:", synth.speaking);
-                    const icon = updatedPlayAllAudioButton.querySelector('i'); // Get the icon element
-
-                    if (synth.speaking) {
-                        // If currently speaking, this click acts as STOP
-                        console.log("Stopping speech.");
-                        synth.cancel(); // Stop speech immediately
-                        clearHighlight(); // Clear highlight immediately on stop
-                        // Icon should reflect the current mute state after stopping
-                         if (isMuted) {
-                             icon.classList.remove('ph-speaker-high');
-                             icon.classList.add('ph-speaker-slash');
-                             updatedPlayAllAudioButton.title = 'అన్‌మ్యూట్ చేయండి';
-                         } else {
-                             icon.classList.remove('ph-speaker-slash');
-                             icon.classList.add('ph-speaker-high'); // Stay as high speaker if not muted
-                             updatedPlayAllAudioButton.title = 'అన్నీ వినండి / ఆపు'; // Stay as Play/Stop title
-                         }
-                    } else {
-                        // If not speaking, this click acts as a Play/Mute Toggle
-                        if (isMuted) {
-                             // Was muted, now unmuting and playing
-                             console.log("Unmuting and starting speech.");
-                             isMuted = false; // Update state
-                             // Update icon to unmuted state
-                             icon.classList.remove('ph-speaker-slash');
-                             icon.classList.add('ph-speaker-high');
-                             updatedPlayAllAudioButton.title = 'అన్నీ వినండి / ఆపు'; // Update title
-
-                             // Start speech
-                             if (fullTextToSpeak && fullTextToSpeak.trim() !== '') {
-                                 speakText(fullTextToSpeak.trim(), 'te-IN');
-                             } else {
-                                 console.warn("No text to speak after unmuting.");
-                                 showMessage('వచనం అందుబాటులో లేదు.', 'info');
-                             }
-                        } else {
-                             // Was unmuted and not speaking, now muting
-                             console.log("Muting.");
-                             isMuted = true; // Update state
-                             // Update icon to muted state
-                             icon.classList.remove('ph-speaker-high');
-                             icon.classList.add('ph-speaker-slash');
-                             updatedPlayAllAudioButton.title = 'అన్‌మ్యూట్ చేయండి'; // Update title
-                             // No need to cancel synth here as it's not speaking, but clear highlight just in case.
-                             clearHighlight();
-                        }
-                    }
-                });
-
-            } else {
-                console.warn("Play all audio button not found after displayVerse.");
+                 // showMessage('వచనం అందుబాటులో లేదు.', 'info'); // Don't show message if no text, just don't speak
             }
 
 
@@ -1426,11 +1507,43 @@
             }
         }
 
+        // Function to update the favorites list UI in the side menu
+        function updateFavoritesListUI() {
+             favoritesUl.innerHTML = ''; // Clear current list
+
+             if (favorites.length === 0) {
+                 const li = document.createElement('li');
+                 li.textContent = 'ఇష్టమైన శ్లోకాలు లేవు.'; // No favorite verses.
+                 favoritesUl.appendChild(li);
+             } else {
+                 // Sort favorites by chapter and then verse
+                 favorites.sort((a, b) => {
+                     const [aChap, aVerse] = a.split('-').map(Number);
+                     const [bChap, bVerse] = b.split('-').map(Number);
+                     if (aChap !== bChap) {
+                         return aChap - bChap;
+                     }
+                     return aVerse - bVerse;
+                 });
+
+                 favorites.forEach(verseKey => {
+                     const [chapter, verse] = verseKey.split('-');
+                     const li = document.createElement('li');
+                     li.textContent = `అధ్యాయం ${chapter}, శ్లోకం ${verse}`;
+                     li.dataset.chapter = chapter; // Store data attributes for fetching
+                     li.dataset.verse = verse;
+                     favoritesUl.appendChild(li);
+                 });
+             }
+        }
+
+
         // --- Side Menu Logic ---
         function openSideMenu() {
             sideMenu.classList.add('open');
             sideMenuOverlay.classList.add('visible');
              sideMenuHint.style.display = 'none'; // Hide hint when menu is open
+             updateFavoritesListUI(); // Update favorites list whenever menu opens
         }
 
         function closeSideMenu() {
@@ -1466,6 +1579,26 @@
         });
 
         sideMenuOverlay.addEventListener('click', closeSideMenu); // Close menu when clicking overlay
+
+        // Event listener for clicking on the favorites section header to toggle the list
+        favoritesSection.addEventListener('click', () => {
+             favoritesSection.classList.toggle('expanded');
+             // The CSS transition handles the height change
+        });
+
+
+        // Event listener for clicking on a favorite verse in the list
+        favoritesUl.addEventListener('click', (event) => {
+             const targetLi = event.target.closest('li');
+             // Ensure the click was on an actual verse item, not the "No favorites" message
+             if (targetLi && targetLi.dataset.chapter && targetLi.dataset.verse) {
+                 const chapter = parseInt(targetLi.dataset.chapter);
+                 const verse = parseInt(targetLi.dataset.verse);
+                 fetchVerse(chapter, verse); // Fetch and display the selected favorite verse
+                 closeSideMenu(); // Close the menu
+             }
+        });
+
 
         // --- Swipe Functionality for Side Menu Hint ---
         let touchStartX = 0;
@@ -1535,7 +1668,7 @@
         // Hide splash screen after a delay, ensuring content is loaded
         window.addEventListener('load', () => {
             populateChapterDropdown(); // Populate dropdowns early
-            displayAppVersion(); // Display app version on load
+            updateFavoritesListUI(); // Populate favorites list on load
 
             // Use a combination of load event and a timeout as a fallback
             setTimeout(hideSplashScreen, 2000); // Hide after 2 seconds
@@ -1717,61 +1850,8 @@
             console.log('App is offline.');
             // Optional: Display an offline message to the user
             // The fetchVerse function now handles showing a specific offline message
-            // if the requested verse is in the cache.
+            // if the requested verse is not in the cache.
         });
-
-        // --- App Version Display ---
-        function displayAppVersion() {
-            // This is where you will get the version from your build process.
-            // For GitHub Pages releases, you can use a GitHub Action to:
-            // 1. Get the release tag (e.g., from GITHUB_REF environment variable like 'refs/tags/v1.0.0').
-            // 2. Extract the version number (e.g., 'v1.0.0').
-            // 3. Inject this version number into your index.html or a separate JS file.
-            //    A simple way is to replace a placeholder string in index.html during the build/deploy step.
-            //    Example GitHub Action step (using sed, requires bash):
-            //    - name: Inject App Version
-            //      run: sed -i "s|__APP_VERSION__|${{ github.ref_name }}|g" index.html
-            //      env:
-            //        GITHUB_REF_NAME: ${{ github.ref_name }}
-
-            // In your HTML, you would have a placeholder like:
-            // <div id="appVersionDisplay">Version: __APP_VERSION__</div>
-
-            // And here in the script, you would read that placeholder text.
-            // If you use the sed example above, the HTML will be updated directly.
-            // If you set a global JS variable in the build, you would read it here:
-            // const appVersion = window.APP_VERSION || 'N/A';
-            // appVersionDisplay.textContent = `Version: ${appVersion}`;
-
-            // For now, let's use a simple placeholder text that you can manually update
-            // or that your GitHub Action will replace.
-            const versionPlaceholder = appVersionDisplay.textContent || '';
-            if (versionPlaceholder.includes('__APP_VERSION__')) {
-                // If the placeholder is still there, set a default or instruction
-                appVersionDisplay.textContent = 'App Version: (Build process needs to inject version)';
-            } else if (versionPlaceholder.trim() === '') {
-                 // If the div is empty, set a default or instruction
-                 appVersionDisplay.textContent = 'App Version: (Version placeholder missing)';
-            } else {
-                 // If the placeholder was replaced by the build process, the text is already correct.
-                 // You might want to prepend "App Version: " if your build process only injects the number.
-                 if (!versionPlaceholder.startsWith('App Version:')) {
-                      appVersionDisplay.textContent = `App Version: ${versionPlaceholder.trim()}`;
-                 }
-            }
-
-            // Example of how you might set a global variable in your build process (e.g., in a separate JS file loaded before this script):
-            // window.APP_VERSION = "${{ github.ref_name }}"; // This line would be injected by GitHub Actions
-
-            // If using the global variable method:
-            // const appVersion = window.APP_VERSION || 'N/A';
-            // appVersionDisplay.textContent = `App Version: ${appVersion}`;
-
-             // Let's add a default text if no version is injected
-             if (appVersionDisplay.textContent.includes('__APP_VERSION__') || appVersionDisplay.textContent.trim() === '' || appVersionDisplay.textContent.includes('(Version placeholder missing)')) {
-                  appVersionDisplay.textContent = `App Version: Development Build`; // Default text
-             }
-        }
 
 
     </script>
