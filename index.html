@@ -239,7 +239,7 @@
              cursor: pointer;
              font-size: 1.8rem; /* Larger icon size */
              padding: 0.5rem; /* Increased padding */
-             color: #f59e0b; /* Amber color for heart outline */
+             color: #1d4ed8; /* Blue color for heart outline - NEW DEFAULT */
              transition: color 0.2s ease-in-out;
              display: flex;
              align-items: center;
@@ -252,7 +252,7 @@
          }
 
          .favorite-button:hover {
-             color: #d97706; /* Darker amber on hover */
+             color: #2563eb; /* Darker blue on hover - NEW HOVER */
          }
 
          .favorite-button.favorited {
@@ -678,14 +678,14 @@
          }
 
          /* Styling for Favorites Section (Collapsible) */
-         #favoritesSection, #feedbackSection, #llmFeaturesSection { /* Apply to all collapsible sections */
+         #favoritesSection { /* Apply to all collapsible sections */
              margin-top: 2rem;
              padding-top: 1.5rem;
              border-top: 1px solid #d1d5db;
              cursor: pointer; /* Indicate it's clickable */
          }
 
-         #favoritesSection h2, #feedbackSection h2, #llmFeaturesSection h2 { /* Apply to all collapsible section headers */
+         #favoritesSection h2 { /* Apply to all collapsible section headers */
              font-size: 1.3rem;
              font-weight: bold;
              margin-bottom: 0.5rem; /* Reduced margin */
@@ -698,15 +698,15 @@
              gap: 0.5rem; /* Space between icon and text */
          }
 
-         #favoritesSection h2 i, #feedbackSection h2 i, #llmFeaturesSection h2 i {
+         #favoritesSection h2 i {
              transition: transform 0.2s ease-in-out; /* Animation for the icon */
          }
 
-         #favoritesSection.expanded h2 i, #feedbackSection.expanded h2 i, #llmFeaturesSection.expanded h2 i {
+         #favoritesSection.expanded h2 i {
              transform: rotate(90deg); /* Rotate icon when expanded */
          }
 
-         #favoritesList, #feedbackFormContainer, #llmFeaturesContainer { /* Apply to all collapsible list/form containers */
+         #favoritesList { /* Apply to all collapsible list/form containers */
              max-height: 0; /* Initially hidden */
              overflow: hidden;
              transition: max-height 0.3s ease-in-out; /* Smooth expand/collapse */
@@ -714,7 +714,7 @@
              margin-top: 0; /* Remove margin when collapsed */
          }
 
-         #favoritesSection.expanded #favoritesList, #feedbackSection.expanded #feedbackFormContainer, #llmFeaturesSection.expanded #llmFeaturesContainer {
+         #favoritesSection.expanded #favoritesList {
              max-height: 300px; /* Adjust as needed for max height when expanded */
              padding-top: 0.5rem; /* Add padding when expanded */
              margin-top: 0.5rem; /* Add margin when expanded */
@@ -746,126 +746,7 @@
          }
 
          /* Specific styles for Feedback Form */
-         #feedbackFormContainer .input-group {
-             margin-bottom: 0.75rem; /* Slightly reduced margin for form elements */
-         }
-         #feedbackFormContainer .btn {
-             margin-top: 1rem; /* Space above submit button */
-         }
-
-         /* LLM Modals */
-         .llm-modal-overlay {
-             position: fixed;
-             top: 0;
-             left: 0;
-             width: 100%;
-             height: 100%;
-             background-color: rgba(0, 0, 0, 0.7);
-             z-index: 40; /* Above side menu */
-             display: flex;
-             justify-content: center;
-             align-items: center;
-             opacity: 0;
-             visibility: hidden;
-             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-         }
-         .llm-modal-overlay.visible {
-             opacity: 1;
-             visibility: visible;
-         }
-
-         .llm-modal-content {
-             background-color: rgba(255, 255, 255, 0.95);
-             backdrop-filter: blur(10px);
-             border-radius: 1rem;
-             padding: 1.5rem;
-             width: 90%;
-             max-width: 600px;
-             max-height: 80vh; /* Limit height */
-             overflow-y: auto; /* Scrollable content */
-             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-             position: relative;
-             display: flex;
-             flex-direction: column;
-         }
-
-         .llm-modal-content h3 {
-             font-size: 1.5rem;
-             font-weight: bold;
-             margin-bottom: 1rem;
-             color: #4f46e5;
-             text-align: center;
-         }
-
-         .llm-modal-content .close-button {
-             position: absolute;
-             top: 0.75rem;
-             right: 0.75rem;
-             background: none;
-             border: none;
-             font-size: 1.5rem;
-             cursor: pointer;
-             color: #6b7280;
-         }
-         .llm-modal-content .close-button:hover {
-             color: #374151;
-         }
-
-         .llm-response-area {
-             background-color: rgba(249, 250, 251, 0.8);
-             border: 1px solid rgba(209, 213, 219, 0.7);
-             border-radius: 0.5rem;
-             padding: 1rem;
-             min-height: 100px;
-             white-space: pre-wrap; /* Preserve formatting */
-             font-size: 1rem;
-             line-height: 1.6;
-             color: #374151;
-             overflow-y: auto;
-             flex-grow: 1; /* Allow it to take available space */
-         }
-
-         .llm-loading-spinner {
-             display: flex;
-             justify-content: center;
-             align-items: center;
-             padding: 1rem;
-             color: #4f46e5;
-             font-size: 2rem;
-             animation: spin 1s linear infinite;
-         }
-
-         @keyframes spin {
-             0% { transform: rotate(0deg); }
-             100% { transform: rotate(360deg); }
-         }
-
-         /* Q&A specific styles */
-         #qaInput {
-             width: 100%;
-             padding: 0.75rem;
-             border: 1px solid #d1d5db;
-             border-radius: 0.5rem;
-             margin-top: 1rem;
-             margin-bottom: 0.75rem;
-             font-size: 1rem;
-         }
-         #qaSubmitBtn {
-             width: 100%;
-             margin-bottom: 1rem;
-         }
-         #qaResponse {
-             min-height: 80px;
-             background-color: rgba(249, 250, 251, 0.8);
-             border: 1px solid rgba(209, 213, 219, 0.7);
-             border-radius: 0.5rem;
-             padding: 1rem;
-             white-space: pre-wrap;
-             font-size: 1rem;
-             line-height: 1.6;
-             color: #374151;
-             overflow-y: auto;
-         }
+         /* Removed as feedback section is removed */
 
 
         /* --- Landscape Optimization for small screens --- */
@@ -938,16 +819,12 @@
                  /* Disable pulse animation in landscape to be less distracting */
                  animation: none;
              }
-             #favoritesSection h2, #feedbackSection h2, #llmFeaturesSection h2 {
+             #favoritesSection h2 {
                  font-size: 1.2rem;
              }
              #favoritesList li {
                  font-size: 1rem;
                  padding: 0.6rem;
-             }
-             .llm-modal-content {
-                 max-height: 90vh; /* More height in landscape */
-                 padding: 1rem;
              }
 
         }
@@ -992,58 +869,6 @@
              </div>
         </div>
 
-        <div id="feedbackSection">
-            <h2>
-                <i class="ph ph-caret-right"></i> మీ సూచనలు / సవరణలు
-            </h2>
-            <div id="feedbackFormContainer">
-                <div class="input-group">
-                    <label for="feedbackTypeSelect" class="sr-only">ఫీడ్‌బ్యాక్ రకం</label>
-                    <select id="feedbackTypeSelect" class="font-roboto">
-                        <option value="">ఫీడ్‌బ్యాక్ రకం ఎంచుకోండి</option>
-                        <option value="shloka_correction">శ్లోకం దిద్దుబాటు</option>
-                        <option value="bhavartham_correction">భావార్థం దిద్దుబాటు</option>
-                        <option value="sandesham_correction">సందేశం దిద్దుబాటు</option>
-                        <option value="general_suggestion">సాధారణ సూచన</option>
-                        <option value="other">ఇతర</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="feedbackChapter" class="sr-only">అధ్యాయం (ఆటో-ఫిల్ చేయబడింది)</label>
-                    <input type="text" id="feedbackChapter" placeholder="అధ్యాయం" class="font-roboto" readonly>
-                    <label for="feedbackVerse" class="sr-only">శ్లోకం (ఆటో-ఫిల్ చేయబడింది)</label>
-                    <input type="text" id="feedbackVerse" placeholder="శ్లోకం" class="font-roboto" readonly>
-                </div>
-                <div class="input-group">
-                    <label for="feedbackMessageInput" class="sr-only">మీ సూచన/సవరణ</label>
-                    <textarea id="feedbackMessageInput" rows="4" placeholder="మీ సూచన/సవరణ ఇక్కడ వ్రాయండి..." class="font-roboto"></textarea>
-                </div>
-                <div class="input-group">
-                    <label for="feedbackNameInput" class="sr-only">మీ పేరు (ఐచ్ఛికం)</label>
-                    <input type="text" id="feedbackNameInput" placeholder="మీ పేరు (ఐచ్ఛికం)" class="font-roboto">
-                    <label for="feedbackEmailInput" class="sr-only">మీ ఇమెయిల్ (ఐచ్ఛికం)</label>
-                    <input type="email" id="feedbackEmailInput" placeholder="మీ ఇమెయిల్ (ఐచ్ఛికం)" class="font-roboto">
-                </div>
-                <button class="btn btn-primary w-full font-roboto" id="submitFeedbackBtn">
-                    <i class="ph ph-paper-plane-tilt"></i> సూచనను సమర్పించండి
-                </button>
-            </div>
-        </div>
-
-        <div id="llmFeaturesSection">
-            <h2>
-                <i class="ph ph-caret-right"></i> LLM ఫీచర్‌లు ✨
-            </h2>
-            <div id="llmFeaturesContainer">
-                <button class="btn btn-secondary w-full mb-3 font-roboto" id="deepDiveBtn">
-                    <i class="ph ph-sparkle"></i> శ్లోక వివరణ పొందండి
-                </button>
-                <button class="btn btn-secondary w-full font-roboto" id="askQuestionBtn">
-                    <i class="ph ph-question"></i> శ్లోకం గురించి అడగండి
-                </button>
-            </div>
-        </div>
-
     </div>
 
      <div class="side-menu-hint" id="sideMenuHint" title="మెనూ తెరవడానికి స్వైప్ చేయండి"></div>
@@ -1064,35 +889,6 @@
     <footer>
         &copy; 2025 <a href="https://adabala.com" target="_blank">adabala.com</a>. All rights reserved.
     </footer>
-
-    <div class="llm-modal-overlay" id="deepDiveModalOverlay">
-        <div class="llm-modal-content">
-            <button class="close-button" id="closeDeepDiveModal">&times;</button>
-            <h3>శ్లోక వివరణ ✨</h3>
-            <div id="deepDiveResponse" class="llm-response-area">
-                </div>
-            <div id="deepDiveLoading" class="llm-loading-spinner hidden">
-                <i class="ph ph-spinner"></i>
-            </div>
-        </div>
-    </div>
-
-    <div class="llm-modal-overlay" id="askQuestionModalOverlay">
-        <div class="llm-modal-content">
-            <button class="close-button" id="closeAskQuestionModal">&times;</button>
-            <h3>మీ ప్రశ్న ✨</h3>
-            <textarea id="qaInput" placeholder="శ్లోకం గురించి మీ ప్రశ్నను ఇక్కడ టైప్ చేయండి..."></textarea>
-            <button class="btn btn-primary font-roboto" id="qaSubmitBtn">
-                <i class="ph ph-paper-plane-tilt"></i> సమాధానం పొందండి
-            </button>
-            <div id="qaResponse" class="llm-response-area">
-                </div>
-            <div id="qaLoading" class="llm-loading-spinner hidden">
-                <i class="ph ph-spinner"></i>
-            </div>
-        </div>
-    </div>
-
 
     <script>
         const splashScreen = document.getElementById('splashScreen');
@@ -1115,35 +911,16 @@
         const favoritesList = document.getElementById('favoritesList');
         const favoritesUl = document.getElementById('favoritesUl');
 
-        // Feedback elements
-        const feedbackSection = document.getElementById('feedbackSection');
-        const feedbackFormContainer = document.getElementById('feedbackFormContainer');
-        const feedbackTypeSelect = document.getElementById('feedbackTypeSelect');
-        const feedbackChapterInput = document.getElementById('feedbackChapter');
-        const feedbackVerseInput = document.getElementById('feedbackVerse');
-        const feedbackMessageInput = document.getElementById('feedbackMessageInput');
-        const feedbackNameInput = document.getElementById('feedbackNameInput');
-        const feedbackEmailInput = document.getElementById('feedbackEmailInput');
-        const submitFeedbackBtn = document.getElementById('submitFeedbackBtn');
-
-        // LLM Feature elements
-        const llmFeaturesSection = document.getElementById('llmFeaturesSection');
-        const deepDiveBtn = document.getElementById('deepDiveBtn');
-        const askQuestionBtn = document.getElementById('askQuestionBtn');
-
-        // Deep Dive Modal elements
-        const deepDiveModalOverlay = document.getElementById('deepDiveModalOverlay');
-        const closeDeepDiveModalBtn = document.getElementById('closeDeepDiveModal');
-        const deepDiveResponseArea = document.getElementById('deepDiveResponse');
-        const deepDiveLoadingSpinner = document.getElementById('deepDiveLoading');
-
-        // Ask Question Modal elements
-        const askQuestionModalOverlay = document.getElementById('askQuestionModalOverlay');
-        const closeAskQuestionModalBtn = document.getElementById('closeAskQuestionModal');
-        const qaInput = document.getElementById('qaInput');
-        const qaSubmitBtn = document.getElementById('qaSubmitBtn');
-        const qaResponseArea = document.getElementById('qaResponse');
-        const qaLoadingSpinner = document.getElementById('qaLoading');
+        // Feedback elements (Removed from HTML, but keeping references for clarity if needed later)
+        // const feedbackSection = document.getElementById('feedbackSection'); // REMOVED
+        // const feedbackFormContainer = document.getElementById('feedbackFormContainer'); // REMOVED
+        // const feedbackTypeSelect = document.getElementById('feedbackTypeSelect'); // REMOVED
+        // const feedbackChapterInput = document.getElementById('feedbackChapter'); // REMOVED
+        // const feedbackVerseInput = document.getElementById('feedbackVerse'); // REMOVED
+        // const feedbackMessageInput = document.getElementById('feedbackMessageInput'); // REMOVED
+        // const feedbackNameInput = document.getElementById('feedbackNameInput'); // REMOVED
+        // const feedbackEmailInput = document.getElementById('feedbackEmailInput'); // REMOVED
+        // const submitFeedbackBtn = document.getElementById('submitFeedbackBtn'); // REMOVED
 
 
         // Base URL for your Flask API
@@ -1431,9 +1208,9 @@
             verseDisplay.dataset.teluguDescription = verseData.telugu_description || '';
 
 
-            // Pre-fill feedback form with current chapter and verse
-            feedbackChapterInput.value = verseData.chapter;
-            feedbackVerseInput.value = verseData.verse;
+            // Pre-fill feedback form with current chapter and verse (references removed, but keeping logic for now)
+            // if (feedbackChapterInput) feedbackChapterInput.value = verseData.chapter;
+            // if (feedbackVerseInput) feedbackVerseInput.value = verseData.verse;
 
             // Get the raw text content for each part
             const sanskritVerse = verseData.sanskrit_verse_telugu_script;
@@ -1477,7 +1254,7 @@
 
             contentHTML += `
                 <div id="shlokamBhavarthamContainer" class="content-card shlokam-bhavartham">
-                    <div class="verse-label shlokam-bhavartham"><i class="ph ph-lightbulb"></i> శ్లోకం భావార్థం:</div>
+                    <div class="verse-label shlokam-bhavartham"><i class="ph ph-book-open"></i> శ్లోకం భావార్థం:</div>
                     <div id="shlokamBhavartham" class="shlokam-bhavartham-text">
                         </div>
                 </div>
@@ -1857,18 +1634,6 @@
              // The CSS transition handles the height change
         });
 
-        // Event listener for clicking on the feedback section header to toggle the form
-        feedbackSection.addEventListener('click', () => {
-             feedbackSection.classList.toggle('expanded');
-             // The CSS transition handles the height change
-        });
-
-        // Event listener for clicking on the LLM Features section header to toggle the buttons
-        llmFeaturesSection.addEventListener('click', () => {
-             llmFeaturesSection.classList.toggle('expanded');
-        });
-
-
         // Event listener for clicking on a favorite verse in the list
         favoritesUl.addEventListener('click', (event) => {
              const targetLi = event.target.closest('li');
@@ -1881,232 +1646,8 @@
              }
         });
 
-        // Event listener for Feedback Submit Button
-        submitFeedbackBtn.addEventListener('click', () => {
-            const feedbackType = feedbackTypeSelect.value;
-            const chapter = feedbackChapterInput.value;
-            const verse = feedbackVerseInput.value;
-            const message = feedbackMessageInput.value.trim();
-            const name = feedbackNameInput.value.trim();
-            const email = feedbackEmailInput.value.trim();
-
-            if (!feedbackType) {
-                showMessage('దయచేసి ఫీడ్‌బ్యాక్ రకాన్ని ఎంచుకోండి.', 'error'); // Please select feedback type.
-                return;
-            }
-            if (!message) {
-                showMessage('దయచేసి మీ సూచన/సవరణను వ్రాయండి.', 'error'); // Please write your suggestion/correction.
-                return;
-            }
-
-            const feedbackData = {
-                type: feedbackType,
-                chapter: chapter || null, // Include chapter if available
-                verse: verse || null, // Include verse if available
-                message: message,
-                name: name || null,
-                email: email || null
-            };
-
-            console.log("Feedback data to be sent (API call mocked):", feedbackData);
-            // --- TO-DO: Implement actual API call here ---
-            // Example:
-            /*
-            fetch(`${API_BASE_URL}/submit-feedback`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(feedbackData),
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Feedback submitted successfully:', data);
-                showMessage('మీ సూచన విజయవంతంగా సమర్పించబడింది!', 'success'); // Your suggestion submitted successfully!
-                // Clear the form
-                feedbackTypeSelect.value = '';
-                feedbackMessageInput.value = '';
-                feedbackNameInput.value = '';
-                feedbackEmailInput.value = '';
-                // No need to clear chapter/verse as they auto-fill based on current verse
-                closeSideMenu();
-            })
-            .catch((error) => {
-                console.error('Error submitting feedback:', error);
-                showMessage('ఫీడ్‌బ్యాక్ సమర్పించడంలో లోపం. దయచేసి మళ్ళీ ప్రయత్నించండి.', 'error'); // Error submitting feedback. Please try again.
-            });
-            */
-            // For now, just show a success message and clear the form
-            showMessage('మీ సూచన విజయవంతంగా సమర్పించబడింది!', 'success');
-            feedbackTypeSelect.value = '';
-            feedbackMessageInput.value = '';
-            feedbackNameInput.value = '';
-            feedbackEmailInput.value = '';
-            // chapter and verse inputs are readonly and auto-filled, no need to clear.
-            closeSideMenu();
-        });
-
-
-        // --- Gemini API Integration ---
-        const API_KEY = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
-        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
-
-        async function callGeminiAPI(prompt, targetResponseArea, loadingSpinner) {
-            targetResponseArea.textContent = ''; // Clear previous response
-            loadingSpinner.classList.remove('hidden'); // Show spinner
-
-            const currentVerseData = {
-                chapter: verseDisplay.dataset.chapter,
-                verse: verseDisplay.dataset.verse,
-                sanskritVerse: verseDisplay.dataset.sanskritVerse,
-                teluguMeaning: verseDisplay.dataset.teluguMeaning,
-                teluguDescription: verseDisplay.dataset.teluguDescription
-            };
-
-            if (!currentVerseData.chapter || !currentVerseData.verse) {
-                showMessage('శ్లోకం ఎంచుకోబడలేదు. దయచేసి ముందుగా ఒక శ్లోకాన్ని పొందండి.', 'error');
-                loadingSpinner.classList.add('hidden');
-                return;
-            }
-
-            let chatHistory = [];
-            chatHistory.push({
-                role: "user",
-                parts: [{ text: prompt }]
-            });
-
-            const payload = { contents: chatHistory };
-
-            try {
-                const response = await fetch(GEMINI_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`API Error: ${response.status} - ${errorData.error.message || JSON.stringify(errorData)}`);
-                }
-
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    targetResponseArea.textContent = text;
-                } else {
-                    targetResponseArea.textContent = 'సమాధానం పొందడంలో లోపం. దయచేసి మళ్ళీ ప్రయత్నించండి.';
-                    console.error('Gemini API response structure unexpected:', result);
-                }
-            } catch (error) {
-                console.error('Error calling Gemini API:', error);
-                targetResponseArea.textContent = `సమాధానం పొందడంలో లోపం: ${error.message}. దయచేసి మీ ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి లేదా తర్వాత మళ్ళీ ప్రయత్నించండి.`;
-                showMessage(`LLM లోపం: ${error.message}`, 'error');
-            } finally {
-                loadingSpinner.classList.add('hidden'); // Hide spinner
-            }
-        }
-
-        // Deep Dive Button Logic
-        deepDiveBtn.addEventListener('click', async () => {
-            openModal(deepDiveModalOverlay);
-            deepDiveResponseArea.textContent = 'వివరణను లోడ్ చేస్తోంది...';
-
-            const currentVerseData = {
-                chapter: verseDisplay.dataset.chapter,
-                verse: verseDisplay.dataset.verse,
-                sanskritVerse: verseDisplay.dataset.sanskritVerse,
-                teluguMeaning: verseDisplay.dataset.teluguMeaning,
-                teluguDescription: verseDisplay.dataset.teluguDescription
-            };
-
-            if (!currentVerseData.chapter) {
-                deepDiveResponseArea.textContent = 'శ్లోకం ఎంచుకోబడలేదు. దయచేసి ముందుగా ఒక శ్లోకాన్ని పొందండి.';
-                return;
-            }
-
-            const prompt = `భగవద్గీతలోని ఈ శ్లోకం యొక్క లోతైన వివరణను, దాని ప్రాముఖ్యతను మరియు ఆధునిక జీవితంలో దాని అన్వయాన్ని తెలుగులో అందించండి.
-            అధ్యాయం: ${currentVerseData.chapter}, శ్లోకం: ${currentVerseData.verse}
-            సంస్కృత శ్లోకం: ${currentVerseData.sanskritVerse}
-            తెలుగు భావార్థం: ${currentVerseData.teluguMeaning}
-            సందేశం: ${currentVerseData.teluguDescription}
-            `;
-
-            await callGeminiAPI(prompt, deepDiveResponseArea, deepDiveLoadingSpinner);
-        });
-
-        // Ask Question Button Logic
-        askQuestionBtn.addEventListener('click', () => {
-            openModal(askQuestionModalOverlay);
-            qaInput.value = ''; // Clear previous input
-            qaResponseArea.textContent = ''; // Clear previous response
-        });
-
-        qaSubmitBtn.addEventListener('click', async () => {
-            const question = qaInput.value.trim();
-            if (!question) {
-                showMessage('దయచేసి మీ ప్రశ్నను టైప్ చేయండి.', 'error');
-                return;
-            }
-
-            qaResponseArea.textContent = 'సమాధానం కోసం చూస్తోంది...';
-            qaLoadingSpinner.classList.remove('hidden');
-
-            const currentVerseData = {
-                chapter: verseDisplay.dataset.chapter,
-                verse: verseDisplay.dataset.verse,
-                sanskritVerse: verseDisplay.dataset.sanskritVerse,
-                teluguMeaning: verseDisplay.dataset.teluguMeaning,
-                teluguDescription: verseDisplay.dataset.teluguDescription
-            };
-
-            if (!currentVerseData.chapter) {
-                qaResponseArea.textContent = 'శ్లోకం ఎంచుకోబడలేదు. దయచేసి ముందుగా ఒక శ్లోకాన్ని పొందండి.';
-                qaLoadingSpinner.classList.add('hidden');
-                return;
-            }
-
-            const prompt = `భగవద్గీతలోని ఈ శ్లోకం ఆధారంగా, ఈ ప్రశ్నకు తెలుగులో సమాధానం ఇవ్వండి: "${question}"
-            అధ్యాయం: ${currentVerseData.chapter}, శ్లోకం: ${currentVerseData.verse}
-            సంస్కృత శ్లోకం: ${currentVerseData.sanskritVerse}
-            తెలుగు భావార్థం: ${currentVerseData.teluguMeaning}
-            సందేశం: ${currentVerseData.teluguDescription}
-            `;
-
-            await callGeminiAPI(prompt, qaResponseArea, qaLoadingSpinner);
-        });
-
-
-        // Modal functions
-        function openModal(modalOverlay) {
-            modalOverlay.classList.add('visible');
-        }
-
-        function closeModal(modalOverlay) {
-            modalOverlay.classList.remove('visible');
-            // Stop any ongoing speech if modal is closed
-            if (synth.speaking) {
-                synth.cancel();
-                clearHighlight();
-            }
-        }
-
-        closeDeepDiveModalBtn.addEventListener('click', () => closeModal(deepDiveModalOverlay));
-        deepDiveModalOverlay.addEventListener('click', (e) => {
-            if (e.target === deepDiveModalOverlay) closeModal(deepDiveModalOverlay);
-        });
-
-        closeAskQuestionModalBtn.addEventListener('click', () => closeModal(askQuestionModalOverlay));
-        askQuestionModalOverlay.addEventListener('click', (e) => {
-            if (e.target === askQuestionModalOverlay) closeModal(askQuestionModalOverlay);
-        });
+        // Feedback submit button logic removed as section is removed.
+        // submitFeedbackBtn.addEventListener('click', () => { ... });
 
 
         // --- Swipe Functionality for Side Menu Hint ---
@@ -2187,6 +1728,9 @@
                  const teluguDescriptionText = verseDisplay.dataset.teluguDescription;
 
                  let shareText = '';
+
+                 // Add a clear title to the shared message
+                 shareText += `✨ శ్రీమద్భగవద్గీత శ్లోకం ✨\n\n`;
 
                  // Use Emojis for visual appeal
                  if (chapter && verse) {
@@ -2329,13 +1873,16 @@
                 testIcon.className = 'ph ph-heart';
                 document.body.appendChild(testIcon); // Temporarily add to DOM to check computed style
                 const computedStyle = window.getComputedStyle(testIcon);
-                const isPhosphorLoaded = computedStyle.fontFamily.includes('Phosphor');
+                // Check if the font-family includes 'Phosphor' and if the width/height are non-zero
+                const isPhosphorLoaded = computedStyle.fontFamily.includes('Phosphor') &&
+                                         parseInt(computedStyle.width) > 0 &&
+                                         parseInt(computedStyle.height) > 0;
                 document.body.removeChild(testIcon); // Remove it
 
                 if (isPhosphorLoaded) {
-                    console.log('Phosphor Icons library appears to be loaded.');
+                    console.log('Phosphor Icons library appears to be loaded and rendering.');
                 } else {
-                    console.warn('Phosphor Icons library might not be loaded. Icons may not display correctly.');
+                    console.warn('Phosphor Icons library might not be loaded or rendering correctly. Icons may not display.');
                     showMessage('ఐకాన్‌లు సరిగ్గా లోడ్ కాకపోవచ్చు. దయచేసి మీ ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'info', 5000);
                 }
             }, 1000); // Delay check by 1 second
