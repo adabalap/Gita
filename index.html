@@ -781,7 +781,7 @@
                  font-size: 1.3rem;
              }
              .sandesham-text {
-                 font-size: 1rem;
+                 font-size: 1.0rem; /* Adjusted for landscape */
              }
              .audio-button {
                  top: 0.3rem;
@@ -1166,19 +1166,19 @@
         function updateFavoriteButtonIcon(isFavorited) {
              const favoriteVerseBtn = verseDisplay.querySelector('#favoriteVerseBtn');
              if (favoriteVerseBtn) {
-                 const icon = favoriteVerseBtn.querySelector('i');
-                 if (icon) {
-                     if (isFavorited) {
-                         favoriteVerseBtn.classList.add('favorited');
-                         favoriteVerseBtn.title = 'ఇష్టమైన వాటి నుండి తీసివేయండి'; // Remove from favorites
-                         icon.classList.remove('ph-heart');
-                         icon.classList.add('ph-heart-fill');
-                     } else {
-                         favoriteVerseBtn.classList.remove('favorited');
-                         favoriteVerseBtn.title = 'ఇష్టమైనదిగా గుర్తించండి'; // Mark as favorite
-                         icon.classList.remove('ph-heart-fill');
-                         icon.classList.add('ph-heart');
-                     }
+                 const outlinedIcon = favoriteVerseBtn.querySelector('.ph-heart');
+                 const filledIcon = favoriteVerseBtn.querySelector('.ph-heart-fill');
+
+                 if (isFavorited) {
+                     favoriteVerseBtn.classList.add('favorited');
+                     favoriteVerseBtn.title = 'ఇష్టమైన వాటి నుండి తీసివేయండి'; // Remove from favorites
+                     if (outlinedIcon) outlinedIcon.classList.add('hidden');
+                     if (filledIcon) filledIcon.classList.remove('hidden');
+                 } else {
+                     favoriteVerseBtn.classList.remove('favorited');
+                     favoriteVerseBtn.title = 'ఇష్టమైనదిగా గుర్తించండి'; // Mark as favorite
+                     if (outlinedIcon) outlinedIcon.classList.remove('hidden');
+                     if (filledIcon) filledIcon.classList.add('hidden');
                  }
                  console.log("Favorite button updated. Is favorited:", isFavorited); // Debugging line
              } else {
@@ -1235,6 +1235,7 @@
                         </button>
                         <button class="favorite-button" id="favoriteVerseBtn" title="ఇష్టమైనదిగా గుర్తించండి">
                             <i class="ph ph-heart"></i>
+                            <i class="ph ph-heart-fill hidden"></i>
                         </button>
                     </div>
                 `;
@@ -1244,6 +1245,7 @@
                     <div style="position: relative; min-height: 40px; margin-bottom: 1rem;">
                         <button class="favorite-button" id="favoriteVerseBtn" title="ఇష్టమైనదిగా గుర్తించండి" style="top: 0.5rem; left: 0.5rem;">
                             <i class="ph ph-heart"></i>
+                            <i class="ph ph-heart-fill hidden"></i>
                         </button>
                         <button class="audio-button" id="playAllAudio" title="ఆడియో ఆన్ చేయండి" style="top: 0.5rem; right: 0.5rem;">
                             <i class="ph ph-speaker-slash"></i>
@@ -1696,7 +1698,6 @@
         window.addEventListener('orientationchange', handleOrientationChange);
         // Also check on load
         window.addEventListener('load', handleOrientationChange);
-
 
         // --- Splash Screen Logic ---
         function hideSplashScreen() {
