@@ -1,0 +1,102 @@
+name: Deploy PWA with Dynamic Version
+
+on:
+  push:
+    branches:
+      - main # Adjust this to your primary branch (e.g., master, gh-pages)
+  release:
+    types: [published] # This workflow will run when you publish a new GitHub Release
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: # Add permissions at the job level
+      contents: write # Grant write permission to the GITHUB_TOKEN for pushing to gh-pages
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18' # Use a stable Node.js version suitable for your project
+
+      - name: Get version from tag or commit SHA
+        id: get_version
+        run: |
+          # Check if the workflow was triggered by a release
+          if [ "${{ github.event_name }}" == "release" ]; then
+            VERSION=${{ github.event.release.tag_name }}
+          else
+            # Otherwise, use the short commit SHA
+            VERSION=$(git rev-parse --short HEAD)
+          fi
+          echo "Determined version: $VERSION"
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV # Store the version in an environment variable
+
+      - name: Install dependencies (if package.json exists)
+        # This step is conditional and will only run if package.json is found
+        run: |
+          if [ -f package.json ]; then
+            npm install
+          else
+            echo "No package.json found, skipping npm install."
+          fi
+
+      - name: Set homepage in package.json for GitHub Pages (if applicable)
+        # This is crucial for PWAs deployed to subpaths on GitHub Pages (e.g., username.github.io/repo-name/)
+        # It ensures correct asset paths in the built application.
+        run: |
+          REPO_NAME=$(echo "${{ github.repository }}" | awk -F '/' '{print $2}')
+          if [ -f package.json ]; then
+            # Check if homepage already exists and update it, otherwise add it
+            if grep -q '"homepage":' package.json; then
+              sed -i 's|"homepage": ".*"|"homepage": "https://${{ github.repository_owner }}.github.io/'"$REPO_NAME"'"|' package.json
+            else
+              # Add homepage if it doesn't exist. This might need adjustment based on package.json structure.
+              # A more robust solution might use a JSON parsing tool.
+              sed -i '/}$/i \ \ "homepage": "https://${{ github.repository_owner }}.github.io/'"$REPO_NAME"'",' package.json
+            fi
+            echo "Updated homepage in package.json to: https://${{ github.repository_owner }}.github.io/$REPO_NAME"
+          else
+            echo "No package.json found, skipping homepage update."
+          fi
+
+      - name: Build project (if applicable)
+        # Add your project's build command here, e.g., 'npm run build' or 'yarn build'
+        # This step is essential if your PWA requires compilation (e.g., React, Vue, TypeScript)
+        run: |
+          if [ -f package.json ] && grep -q '"build":' package.json; then
+            npm run build
+          else
+            echo "No build script found or package.json missing, skipping build step."
+          fi
+        env:
+          # Set NODE_ENV to production for optimized builds
+          NODE_ENV: production
+
+      - name: Update version in index.html
+        run: |
+          # Use sed to replace the placeholder with the actual version
+          # Ensure 'index.html' is the correct path to your file relative to the repo root
+          # This command will look for index.html in the current working directory,
+          # which after a build step might be the build output directory.
+          # Adjust path if your index.html is not directly in the root of the publish_dir.
+          sed -i "s|__RELEASE_VERSION__|${{ env.RELEASE_VERSION }}|" index.html
+          echo "Updated index.html with version: ${{ env.RELEASE_VERSION }}"
+          # Optional: Display the modified file content for debugging
+          # cat index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # This should be the directory where your PWA files are located after any build steps.
+          # If your PWA files (like index.html, service-worker.js, etc.) are in the root of your repo, use './'.
+          # If they are in a subfolder (e.g., 'Gita'), use 'Gita'.
+          # If you have a build step that outputs to 'build' or 'dist', set publish_dir to that.
+          publish_dir: ./ # Adjust this path if your PWA is in a subfolder (e.g., 'Gita') or a build output directory (e.g., 'build', 'dist')
+          # If your PWA is hosted in a subpath like 'yourusername.github.io/Gita/', you might need:
+          # publish_branch: gh-pages # or your chosen GitHub Pages branch
+          # cname: # Your custom domain if applicable
+          # destination_dir: # Set if you publish to a subdirectory within gh-pages branch
