@@ -33,6 +33,8 @@
             background-position: center;
             background-attachment: fixed; /* Keep background fixed while scrolling */
             overflow-x: hidden; /* Prevent horizontal scrollbar when menu is open */
+            /* Added for a more divine/vibing feel */
+            filter: sepia(0.3) brightness(1.05); /* Apply a subtle sepia and brightness filter to the background image */
         }
 
         /* Apply Roboto to headings and UI elements */
@@ -48,7 +50,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.6); /* Slightly more transparent background overlay */
+            background-color: rgba(255, 255, 255, 0.5); /* Slightly more transparent background overlay for better visibility of the divine background */
             z-index: -1; /* Place behind content */
         }
 
@@ -829,6 +831,25 @@
 
         }
 
+        /* Styling for navigation buttons */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between; /* Space out buttons */
+            gap: 1rem; /* Gap between buttons */
+            margin-top: 2rem; /* Space above navigation buttons */
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(229, 231, 235, 0.7);
+            backdrop-filter: blur(3px);
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+
+        .navigation-buttons .btn {
+            flex: 1; /* Allow buttons to grow and take equal space */
+            min-width: 120px; /* Minimum width for buttons */
+        }
 
     </style>
 </head>
@@ -880,6 +901,15 @@
         <div id="verseDisplay" class="card hidden">
             </div>
 
+        <div class="navigation-buttons" id="navigationButtons">
+            <button class="btn btn-primary font-roboto" id="prevVerseBtn">
+                <i class="ph ph-arrow-left"></i> మునుపటి శ్లోకం
+            </button>
+            <button class="btn btn-primary font-roboto" id="nextVerseBtn">
+                తదుపరి శ్లోకం <i class="ph ph-arrow-right"></i>
+            </button>
+        </div>
+
     </div>
 
     <div id="messageArea" class="message-area hidden"></div>
@@ -911,16 +941,9 @@
         const favoritesList = document.getElementById('favoritesList');
         const favoritesUl = document.getElementById('favoritesUl');
 
-        // Feedback elements (Removed from HTML, but keeping references for clarity if needed later)
-        // const feedbackSection = document.getElementById('feedbackSection'); // REMOVED
-        // const feedbackFormContainer = document.getElementById('feedbackFormContainer'); // REMOVED
-        // const feedbackTypeSelect = document.getElementById('feedbackTypeSelect'); // REMOVED
-        // const feedbackChapterInput = document.getElementById('feedbackChapter'); // REMOVED
-        // const feedbackVerseInput = document.getElementById('feedbackVerse'); // REMOVED
-        // const feedbackMessageInput = document.getElementById('feedbackMessageInput'); // REMOVED
-        // const feedbackNameInput = document.getElementById('feedbackNameInput'); // REMOVED
-        // const feedbackEmailInput = document.getElementById('feedbackEmailInput'); // REMOVED
-        // const submitFeedbackBtn = document.getElementById('submitFeedbackBtn'); // REMOVED
+        // Navigation buttons
+        const prevVerseBtn = document.getElementById('prevVerseBtn');
+        const nextVerseBtn = document.getElementById('nextVerseBtn');
 
 
         // Base URL for your Flask API
@@ -1749,27 +1772,27 @@
                      shareText += `💬 సందేశం:\n${teluguDescriptionText.trim()}\n\n`;
                  }
 
-                 // Crucially, remove the hyperlink
                  shareText += `Source: adabala.com`;
 
-
-                 if (navigator.share) {
-                     // Use Web Share API if available for generic sharing
-                     navigator.share({
-                         title: 'శ్రీమద్భగవద్గీత శ్లోకం', // This title might be used by some platforms
-                         text: shareText,
-                         // url: 'https://adabalap.github.io/Gita/' // Removed URL as per request
-                     }).then(() => {
-                         console.log('Successfully shared via Web Share API');
-                     }).catch((error) => {
-                         console.error('Error sharing via Web Share API:', error);
-                         // Fallback to clipboard if Web Share API fails or is not preferred
+                 // Handle specific platforms directly
+                 if (platform === 'whatsapp' || platform === 'facebook' || platform === 'twitter') {
+                     handleSpecificPlatformShare(platform, shareText);
+                 } else if (platform === 'generic') {
+                     if (navigator.share) {
+                         navigator.share({
+                             title: 'శ్రీమద్భగవద్గీత శ్లోకం',
+                             text: shareText,
+                         }).then(() => {
+                             console.log('Successfully shared via Web Share API');
+                         }).catch((error) => {
+                             console.error('Error sharing via Web Share API:', error);
+                             copyToClipboard(shareText);
+                             showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
+                         });
+                     } else {
                          copyToClipboard(shareText);
                          showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
-                     });
-                 } else {
-                     // Fallback for browsers/platforms that don't support Web Share API
-                     handleSpecificPlatformShare(platform, shareText);
+                     }
                  }
              }
         });
@@ -1791,16 +1814,15 @@
                  case 'twitter':
                      shareUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
                      break;
-                 case 'generic':
-                     copyToClipboard(text);
-                     showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
-                     return;
+                 // 'generic' case is handled in the main click listener
              }
 
              if (shareUrl) {
                  window.open(shareUrl, '_blank');
              } else {
-                 // Final fallback: copy to clipboard if no specific share URL could be generated
+                 // This else block should ideally not be hit for whatsapp/facebook/twitter
+                 // as shareUrl will always be set in the switch for those platforms.
+                 // It's a safeguard.
                  copyToClipboard(text);
                  showMessage('ఈ ప్లాట్‌ఫారమ్‌కు నేరుగా భాగస్వామ్యం చేయడం సాధ్యం కాలేదు. శ్లోకం కాపీ చేయబడింది!', 'info');
              }
@@ -1889,6 +1911,52 @@
             }, 1000); // Delay check by 1 second
         });
 
+        // Function to navigate to the previous verse
+        function goToPreviousVerse() {
+            let currentChapter = parseInt(verseDisplay.dataset.chapter);
+            let currentVerse = parseInt(verseDisplay.dataset.verse);
+
+            if (isNaN(currentChapter) || isNaN(currentVerse)) {
+                showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
+                return;
+            }
+
+            if (currentVerse > 1) {
+                fetchVerse(currentChapter, currentVerse - 1);
+            } else if (currentChapter > 1) {
+                const prevChapter = currentChapter - 1;
+                const lastVerseOfPrevChapter = CHAPTER_VERSE_COUNTS[prevChapter];
+                fetchVerse(prevChapter, lastVerseOfPrevChapter);
+            } else {
+                showMessage('ఇది మొదటి అధ్యాయంలోని మొదటి శ్లోకం.', 'info');
+            }
+        }
+
+        // Function to navigate to the next verse
+        function goToNextVerse() {
+            let currentChapter = parseInt(verseDisplay.dataset.chapter);
+            let currentVerse = parseInt(verseDisplay.dataset.verse);
+
+            if (isNaN(currentChapter) || isNaN(currentVerse)) {
+                showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
+                return;
+            }
+
+            const maxVerseInCurrentChapter = CHAPTER_VERSE_COUNTS[currentChapter];
+
+            if (currentVerse < maxVerseInCurrentChapter) {
+                fetchVerse(currentChapter, currentVerse + 1);
+            } else if (currentChapter < 18) { // Assuming 18 chapters in total
+                const nextChapter = currentChapter + 1;
+                fetchVerse(nextChapter, 1); // Go to the first verse of the next chapter
+            } else {
+                showMessage('ఇది చివరి అధ్యాయంలోని చివరి శ్లోకం.', 'info');
+            }
+        }
+
+        // Add event listeners for navigation buttons
+        prevVerseBtn.addEventListener('click', goToPreviousVerse);
+        nextVerseBtn.addEventListener('click', goToNextVerse);
 
     </script>
 </body>
