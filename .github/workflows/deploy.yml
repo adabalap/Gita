@@ -10,6 +10,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions: # Add permissions at the job level
+      contents: write # Grant write permission to the GITHUB_TOKEN for pushing to gh-pages
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -52,7 +54,6 @@ jobs:
               sed -i 's|"homepage": ".*"|"homepage": "https://${{ github.repository_owner }}.github.io/'"$REPO_NAME"'"|' package.json
             else
               # Add homepage if it doesn't exist. This might need adjustment based on package.json structure.
-              # This assumes the last line before the closing brace is a dependency or similar.
               # A more robust solution might use a JSON parsing tool.
               sed -i '/}$/i \ \ "homepage": "https://${{ github.repository_owner }}.github.io/'"$REPO_NAME"'",' package.json
             fi
