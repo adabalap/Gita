@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>శ్రీమద్భగవద్గీత</title>
+
+    <meta name="theme-color" content="#4f46e5"/>
+    <link rel="apple-touch-icon" href="/Gita/icons/icon-192x192.png">
+    <link rel="manifest" href="/Gita/manifest.json">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mandali&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        body {
+            font-family: 'Mandali', sans-serif; /* Apply Mandali for main text */
+            background-color: #eef2ff; /* Lighter blue fallback background */
+            color: #374151; /* Darker gray text */
+            line-height: 1.6;
+            min-height: 100vh; /* Ensure body takes at least full viewport height */
+            display: flex;
+            flex-direction: column;
+            /* Divine Background for Main Content - Path updated for /Gita/ */
+            /* Ensure you have this image or replace with a placeholder/color */
+            background-image: url('/Gita/images/divine-background.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Keep background fixed while scrolling */
+            overflow-x: hidden; /* Prevent horizontal scrollbar when menu is open */
+            /* Added for a more divine/vibing feel */
+            filter: sepia(0.3) brightness(1.05); /* Apply a subtle sepia and brightness filter to the background image */
+        }
+
+        /* Apply Roboto to headings and UI elements */
+        h1, h2, h3, button, select, input, .font-roboto {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Overlay for background image to improve text readability */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.5); /* Slightly more transparent background overlay for better visibility of the divine background */
+            z-index: -1; /* Place behind content */
+        }
+
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #6b46c1; /* Purple fallback */
+             /* Classic Bhagavad Gita Image for Splash Screen - Path updated for /Gita/ */
+             /* Ensure you have this image or replace with a placeholder/color */
+            background-image: url('/Gita/images/splash-image.jpeg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem; /* Slightly larger font */
+            z-index: 100;
+            transition: opacity 0.8s ease-in-out; /* Smoother transition */
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6); /* More prominent shadow */
+        }
+        .splash-screen h1 {
+            font-size: 3rem; /* Larger title on splash */
+            margin-bottom: 0.5rem;
+        }
+        .splash-screen p {
+             font-size: 1.5rem;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none; /* Disable interaction when hidden */
+        }
+
+        .main-content {
+            opacity: 0; /* Initially hidden */
+            transition: opacity 0.8s ease-in-out; /* Smoother transition */
+            flex-grow: 1; /* Allow main content to take available space */
+            /* Reduced top padding for better space utilization */
+            padding-top: 1rem; /* Adjusted from p-4/p-8 */
+            padding-left: 1rem; /* Keep horizontal padding */
+            padding-right: 1rem; /* Keep horizontal padding */
+            padding-bottom: 1rem; /* Keep bottom padding */
+        }
+
+        /* Adjust padding for larger screens */
+        @media (min-width: 768px) { /* md breakpoint */
+             .main-content {
+                 padding-top: 2rem; /* Restore larger top padding on larger screens */
+                 padding-left: 2rem;
+                 padding-right: 2rem;
+                 padding-bottom: 2rem;
+             }
+        }
+
+
+        .main-content.visible {
+            opacity: 1; /* Becomes visible */
+        }
+
+        /* Styling for the main app heading - Enhanced with Gradient */
+        #appHeading {
+            font-size: 2.5rem; /* Adjusted size */
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1.5rem; /* Reduced margin */
+            font-family: 'Roboto', sans-serif;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            /* Peacock Color Gradient */
+            background: linear-gradient(to right, #008080, #4682b4, #008080); /* Teal, Steel Blue, Teal */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* Fallback for browsers that don't support text clipping */
+            /* backdrop-filter added for transparency */
+            backdrop-filter: blur(3px); /* Frosted glass effect */
+            background-color: rgba(255, 255, 255, 0.7); /* Slightly more transparent white */
+            padding: 1rem; /* Add padding for a better floating effect */
+            border-radius: 0.75rem; /* Match card radius */
+        }
+
+
+        /* Styling for Sanskrit Verse Text */
+        .sanskrit-verse-text {
+            color: #059669; /* Green color for Sanskrit verse */
+            font-size: 1.3rem; /* Adjusted: Smaller font */
+            font-weight: bold;
+            line-height: 1.8; /* Improved line spacing */
+            white-space: pre-wrap; /* Preserve whitespace and allow wrapping */
+            text-align: center; /* Center Sanskrit verse */
+            padding: 0 0.5rem; /* Add horizontal padding inside tile */
+        }
+
+         /* Styling for the Sanskrit Verse Tile */
+         #sanskritVerseTile {
+            /* Vibrant and Divine Styling */
+            /* Transparency and blur */
+            background: linear-gradient(to bottom right, rgba(255, 251, 235, 0.7), rgba(254, 243, 199, 0.7));
+            backdrop-filter: blur(3px); /* Frosted glass effect */
+            border: 1px solid rgba(252, 211, 77, 0.7); /* More subtle gold border */
+            border-radius: 0.75rem; /* Rounded corners */
+            margin-top: 1rem; /* Space above the tile */
+            margin-bottom: 1rem; /* Space below the tile */
+            padding: 1.5rem; /* Increased padding for a more substantial feel */
+            text-align: center; /* Center the tile content */
+            display: flex; /* Use flexbox to arrange items vertically */
+            flex-direction: column;
+            align-items: center; /* Center items horizontally within the tile */
+            box-shadow: 0 6px 12px rgba(252, 211, 77, 0.2); /* Lighter shadow */
+            position: relative; /* Needed for absolute positioning of audio icon */
+         }
+
+         /* Styling for the Chapter/Verse info inside the Sanskrit Tile */
+         .sanskrit-tile-info {
+            font-size: 1rem; /* Slightly larger font */
+            color: #92400e; /* Darker orange/brown color */
+            margin-bottom: 0.8rem; /* Increased space below info */
+            text-align: center; /* Center the info */
+            font-family: 'Roboto', sans-serif; /* Use Roboto for info */
+            font-weight: bold; /* Make info bold */
+         }
+
+
+        /* Styling for Merged Shlokam/Bhavartham Tile */
+        .shlokam-bhavartham-text {
+             color: #d97706; /* Orange color for meaning (primary content) */
+             font-size: 1.3rem; /* Slightly larger meaning font */
+             line-height: 1.7;
+        }
+
+         /* Styling for Sandesham (Description) */
+        .sandesham-text {
+            color: #1d4ed8; /* Blue color for description */
+            font-size: 1.1rem; /* Slightly larger description font */
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        /* Styling for labels */
+        .verse-label {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            display: flex; /* Use flexbox for icon and text */
+            align-items: center; /* Align items vertically */
+            gap: 0.5rem; /* Space between icon and text */
+        }
+
+        /* Specific colors for labels */
+        .verse-label.shlokam-bhavartham {
+             color: #d97706; /* Orange for Merged label */
+        }
+         .verse-label.sandesham {
+             color: #1d4ed8; /* Blue color for Sandesham label */
+         }
+
+         /* Styling for Audio Buttons */
+         .audio-button {
+             background: none;
+             border: none;
+             cursor: pointer;
+             font-size: 1.8rem; /* Larger icon size */
+             padding: 0.5rem; /* Increased padding */
+             color: #4f46e5; /* Indigo color */
+             transition: color 0.2s ease-in-out;
+             display: flex; /* Use flexbox for centering icon */
+             align-items: center;
+             justify-content: center;
+             /* Positioned absolutely within the Sanskrit tile */
+             position: absolute;
+             top: 0.5rem; /* Adjust top position */
+             right: 0.5rem; /* Adjust right position */
+             z-index: 10; /* Ensure it's above other tile content */
+         }
+
+         .audio-button:hover {
+             color: #4338ca; /* Darker indigo on hover */
+         }
+
+         /* Styling for Favorite Button */
+         .favorite-button {
+             background: none;
+             border: none;
+             cursor: pointer;
+             font-size: 1.8rem; /* Larger icon size */
+             padding: 0.5rem; /* Increased padding */
+             color: #1d4ed8; /* Blue color for heart outline - NEW DEFAULT */
+             transition: color 0.2s ease-in-out;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             /* Positioned absolutely within the Sanskrit tile */
+             position: absolute;
+             top: 0.5rem; /* Adjust top position */
+             left: 0.5rem; /* Adjust left position */
+             z-index: 10; /* Ensure it's above other tile content */
+         }
+
+         .favorite-button:hover {
+             color: #2563eb; /* Darker blue on hover - NEW HOVER */
+         }
+
+         .favorite-button.favorited {
+             color: #ef4444; /* Red color when favorited */
+         }
+         .favorite-button.favorited:hover {
+             color: #dc2626; /* Darker red on hover */
+         }
+
+         /* Ensure icon visibility within buttons */
+         .audio-button i, .favorite-button i, .share-button i, .btn i {
+             display: inline-block; /* Ensure it's not hidden by default */
+             min-width: 1em; /* Give it some width */
+             min-height: 1em; /* Give it some height */
+             line-height: 1; /* Ensure line height doesn't affect vertical alignment */
+         }
+
+
+         /* Styling for the new content cards/tiles */
+         .content-card {
+             background-color: rgba(255, 255, 255, 0.6); /* More transparent white background for nested cards */
+             backdrop-filter: blur(2px); /* Frosted glass effect */
+             border-radius: 0.75rem; /* Slightly less rounded than main card */
+             padding: 1.5rem; /* Padding inside cards */
+             margin-top: 0.8rem; /* Space above each card - Reduced slightly */
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.07); /* Lighter shadow */
+             border: 1px solid rgba(229, 231, 235, 0.6); /* More subtle border */
+         }
+
+         /* Specific styles for different content cards */
+         .content-card.shlokam-bhavartham {
+             border-left: 5px solid #d97706; /* Orange border on the left */
+         }
+          .content-card.sandesham {
+             border-left: 5px solid #1d4ed8; /* Blue border on the left */
+         }
+
+
+        .card { /* Main verseDisplay card */
+            background-color: rgba(255, 255, 255, 0.65); /* More transparent white background for the main card */
+            backdrop-filter: blur(3px); /* Frosted glass effect */
+            border-radius: 1rem; /* More rounded corners */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Slightly lighter shadow */
+            padding: 2rem; /* Increased padding */
+            margin-bottom: 2rem; /* Increased margin */
+            border: 1px solid rgba(229, 231, 235, 0.7); /* More subtle border */
+        }
+        .controls { /* Targeting the controls div */
+             background-color: rgba(255, 255, 255, 0.65); /* More transparent for controls */
+             backdrop-filter: blur(3px); /* Frosted glass effect */
+             border-radius: 0.75rem; /* Rounded corners */
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); /* Slightly lighter shadow */
+             padding: 1.5rem; /* Padding */
+             margin-bottom: 1.5rem; /* Margin below */
+             border: 1px solid rgba(229, 231, 235, 0.7); /* More subtle border */
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.75rem; /* Increased gap */
+            margin-bottom: 1.5rem; /* Increased margin */
+            flex-direction: column; /* Stack vertically by default */
+        }
+
+        @media (min-width: 640px) { /* Tailwind's 'sm' breakpoint */
+            .input-group {
+                flex-direction: row; /* Arrange horizontally on larger screens */
+            }
+             .input-group select {
+                flex-grow: 1;
+            }
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea { /* Added textarea */
+            flex-grow: 1;
+            padding: 0.9rem; /* Increased padding */
+            border: 1px solid rgba(209, 213, 219, 0.7); /* More subtle border */
+            border-radius: 0.5rem; /* More rounded input corners */
+            background-color: rgba(249, 250, 251, 0.8); /* Slightly transparent input background */
+            height: 48px; /* Increased height for inputs/selects */
+            font-size: 1rem; /* Standard font size */
+        }
+        .input-group textarea {
+            min-height: 100px; /* Specific height for textarea */
+            resize: vertical; /* Allow vertical resizing */
+        }
+
+         .input-group select {
+             appearance: none;
+             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.362%22%20height%3D%22292.362%22%3E%3Cpath%20fill%3D%22%231f2937%22%20d%3D%22M287.9.953a14.618%2014.618%200%200%200-21.04%200l-118.9%20118.8-118.9-118.8a14.618%2014.618%200%200%200-21.04%200%2014.618%2014.618%200%200%200%200%2021.04l129.4%20129.4a14.618%2014.618%200%200%200%2021.04%200l129.4-129.4a14.618%2014.618%200%200%200%200-21.04z%22%2F%3E%3C%2Fsvg%3E");
+             background-repeat: no-repeat;
+             background-position: right 0.9rem center; /* Adjusted position */
+             background-size: 0.7em auto; /* Slightly larger arrow */
+             padding-right: 3rem; /* Increased padding for arrow */
+         }
+
+
+        .btn {
+            padding: 1rem 2rem; /* Increased padding */
+            border-radius: 0.75rem; /* More rounded buttons */
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* More prominent button shadow */
+            display: flex; /* Use flexbox for icon and text alignment */
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem; /* Space between icon and text */
+            font-size: 1.1rem; /* Slightly larger font size */
+        }
+        .btn:hover {
+             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Hover shadow effect */
+        }
+        .btn-primary {
+            background-color: #4f46e5; /* Indigo */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca; /* Darker indigo */
+        }
+         .btn-secondary {
+            background-color: #10b981; /* Emerald */
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #059669; /* Darker emerald */
+        }
+        /* Message Area */
+        .message-area {
+            position: fixed; /* Fixed position */
+            bottom: 1rem; /* At the bottom */
+            left: 50%;
+            transform: translateX(-50%); /* Center horizontally */
+            width: calc(100% - 2rem); /* Full width minus padding */
+            max-width: 400px; /* Max width for readability */
+            z-index: 90; /* Above most content, below splash screen */
+            padding: 0.8rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: medium;
+            font-size: 0.95rem;
+            text-align: center;
+            opacity: 0; /* Hidden by default */
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 1px solid;
+            color: #333; /* Default text color */
+        }
+        .message-area.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .message-area.error {
+            background-color: rgba(254, 226, 226, 0.8); /* Red background with higher transparency */
+            color: #991b1b; /* Dark red text */
+            border-color: rgba(248, 113, 113, 0.8);
+        }
+         .message-area.info {
+            background-color: rgba(219, 234, 254, 0.8); /* Blue background with higher transparency */
+            color: #1e40af; /* Dark blue text */
+            border-color: rgba(147, 197, 253, 0.8);
+        }
+        /* New: success message style for toast */
+        .message-area.success {
+            background-color: rgba(209, 250, 229, 0.8); /* Light green with transparency */
+            color: #065f46; /* Dark green text */
+            border-color: rgba(74, 222, 128, 0.8);
+        }
+
+
+        /* Confetti/Flower Effect Styling */
+         .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allow interaction with elements below */
+            overflow: hidden; /* Prevent confetti from overflowing */
+            z-index: 99; /* Below splash screen */
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ff0; /* Default color (yellow) */
+            border-radius: 50%;
+            animation: fall linear;
+            opacity: 0; /* Start hidden */
+        }
+
+        /* Define different colors for confetti */
+        .confetti:nth-child(3n+1) { background-color: #f00; } /* Red */
+        .confetti:nth-child(3n+2) { background-color: #0f0; } /* Green */
+        .confetti:nth-child(3n+3) { background-color: #00f; } /* Blue */
+        .confetti:nth-child(5n+1) { background-color: #ff00ff; } /* Magenta */
+        .confetti:nth-child(5n+2) { background-color: #00ffff; } /* Cyan */
+        .confetti:nth-child(5n+3) { background-color: #ffa500; } /* Orange */
+
+
+        /* Animation for falling confetti */
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Social Share Styling */
+        .share-container {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(209, 213, 219, 0.7); /* Subtle border */
+            text-align: center;
+        }
+
+        .share-container p {
+            font-size: 1.1rem;
+            color: #4b5563;
+            margin-bottom: 1rem;
+        }
+
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem; /* Reduced gap between icons */
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+             /* Align icons to the top of the container */
+            align-items: flex-start;
+        }
+
+        .share-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center; /* Center icon within the button */
+            width: 40px; /* Fixed width for a small circle */
+            height: 40px; /* Fixed height for a small circle */
+            padding: 0; /* Remove padding */
+            border-radius: 50%; /* Make it round */
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+            font-size: 1.2rem; /* Icon size */
+            color: white; /* Icon color */
+        }
+
+        .share-button i {
+            margin-right: 0; /* Remove margin next to icon */
+        }
+
+        .share-button.whatsapp {
+            background-color: #25d366; /* WhatsApp Green */
+        }
+        .share-button.whatsapp:hover {
+            background-color: #128c7e;
+        }
+
+        .share-button.facebook {
+            background-color: #1877f2; /* Facebook Blue */
+        }
+        .share-button.facebook:hover {
+            background-color: #0b65c2;
+        }
+
+        .share-button.twitter {
+            background-color: #1da1f2; /* Twitter Blue */
+        }
+        .share-button.twitter:hover {
+            background-color: #0c85d0;
+        }
+
+        /* Instagram sharing is typically done via Web Share API or deep linking,
+           direct web share buttons are less common/reliable. We'll rely on Web Share API
+           or a generic copy-to-clipboard for Instagram. */
+        .share-button.generic {
+             background-color: #6b7280; /* Gray */
+        }
+         .share-button.generic:hover {
+             background-color: #4b5563;
+         }
+
+
+        /* Footer Styling */
+        footer {
+            margin-top: auto; /* Push footer to the bottom */
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6b7280; /* Gray text */
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+            border-top: 1px solid rgba(209, 213, 219, 0.7); /* More subtle border */
+            backdrop-filter: blur(3px); /* Frosted glass effect */
+        }
+
+        footer a {
+            color: #4f46e5; /* Indigo link color */
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Side Menu Styling --- */
+        .side-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+            z-index: 20; /* Above main content, below menu */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+
+        .side-menu-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -80%; /* Start off-screen */
+            width: 80%; /* Menu width */
+            max-width: 300px; /* Max width for larger screens */
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque for readability but still hints background */
+            backdrop-filter: blur(8px); /* Stronger blur for background behind menu */
+            z-index: 30; /* Above overlay */
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15); /* Slightly lighter shadow */
+            transition: left 0.3s ease-in-out; /* Slide transition */
+            padding: 1.5rem; /* Padding inside the menu */
+            overflow-y: auto; /* Enable scrolling if content overflows */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-menu.open {
+            left: 0; /* Slide in */
+        }
+
+        /* Style for the side menu heading */
+        .side-menu h2 {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #374151;
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+        }
+
+         /* Style for the controls inside the side menu */
+         .side-menu .controls {
+             padding: 0; /* Remove padding as it's already on the menu */
+             margin-bottom: 0; /* Remove bottom margin */
+             box-shadow: none; /* Remove shadow */
+             border: none; /* Remove border */
+             background-color: transparent; /* Transparent background */
+         }
+
+         /* Style for input groups inside the side menu */
+         .side-menu .input-group {
+             margin-bottom: 1rem; /* Reduced margin */
+             gap: 0.5rem; /* Reduced gap */
+         }
+
+         /* Style for buttons inside the side menu */
+         .side-menu .btn {
+             padding: 0.8rem 1.5rem; /* Reduced padding */
+             font-size: 1rem; /* Reduced font size */
+             gap: 0.4rem; /* Reduced gap */
+         }
+
+         /* Subtle hint for the side menu - Enhanced Aesthetics (Peacock Feather inspired) */
+         .side-menu-hint {
+             position: fixed;
+             top: 50%;
+             left: 0;
+             transform: translateY(-50%);
+             width: 15px; /* Wider bar */
+             height: 120px; /* Significantly taller */
+             /* Peacock Feather Gradient */
+             background: linear-gradient(to bottom, #008080, #4682b4, #008080); /* Teal, Steel Blue, Teal */
+             z-index: 10; /* Below main content */
+             border-top-right-radius: 15px; /* More rounded */
+             border-bottom-right-radius: 15px; /* More rounded */
+             transition: width 0.3s ease-in-out, background 0.3s ease-in-out; /* Transition background too */
+             cursor: grab; /* Indicate it's draggable */
+             box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3); /* More prominent shadow */
+         }
+
+         .side-menu-hint:hover {
+             width: 20px; /* Wider on hover */
+             background: linear-gradient(to bottom, #006666, #3a6b94, #006666); /* Slightly darker gradient on hover */
+         }
+
+         /* Add a pulse animation to the hint */
+         @keyframes pulse-hint {
+             0% { opacity: 0.7; transform: translateY(-50%) scale(1); }
+             50% { opacity: 1; transform: translateY(-50%) scale(1.05); }
+             100% { opacity: 0.7; transform: translateY(-50%) scale(1); }
+         }
+
+         .side-menu-hint {
+             animation: pulse-hint 2s infinite ease-in-out; /* Apply pulse animation */
+         }
+
+         /* Styling for highlighted words */
+         .highlighted-word {
+             background-color: rgba(255, 255, 0, 0.5); /* Semi-transparent yellow highlight */
+             padding: 0 2px; /* Add a little padding around the highlight */
+             border-radius: 3px; /* Slightly rounded corners for highlight */
+         }
+
+         /* Styling for Favorites Section (Collapsible) */
+         #favoritesSection { /* Apply to all collapsible sections */
+             margin-top: 2rem;
+             padding-top: 1.5rem;
+             border-top: 1px solid #d1d5db;
+             cursor: pointer; /* Indicate it's clickable */
+         }
+
+         #favoritesSection h2 { /* Apply to all collapsible section headers */
+             font-size: 1.3rem;
+             font-weight: bold;
+             margin-bottom: 0.5rem; /* Reduced margin */
+             color: #374151;
+             font-family: 'Roboto', sans-serif;
+             text-align: center;
+             display: flex; /* Use flexbox for icon and text */
+             justify-content: center; /* Center content */
+             align-items: center;
+             gap: 0.5rem; /* Space between icon and text */
+         }
+
+         #favoritesSection h2 i {
+             transition: transform 0.2s ease-in-out; /* Animation for the icon */
+         }
+
+         #favoritesSection.expanded h2 i {
+             transform: rotate(90deg); /* Rotate icon when expanded */
+         }
+
+         #favoritesList { /* Apply to all collapsible list/form containers */
+             max-height: 0; /* Initially hidden */
+             overflow: hidden;
+             transition: max-height 0.3s ease-in-out; /* Smooth expand/collapse */
+             padding-top: 0; /* Remove padding when collapsed */
+             margin-top: 0; /* Remove margin when collapsed */
+         }
+
+         #favoritesSection.expanded #favoritesList {
+             max-height: 300px; /* Adjust as needed for max height when expanded */
+             padding-top: 0.5rem; /* Add padding when expanded */
+             margin-top: 0.5rem; /* Add margin when expanded */
+             overflow-y: auto; /* Enable scrolling for the list itself */
+         }
+
+
+         #favoritesList ul {
+             list-style: none;
+             padding: 0;
+             margin: 0;
+         }
+
+         #favoritesList li {
+             background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+             border: 1px solid rgba(209, 213, 219, 0.7);
+             border-radius: 0.5rem;
+             padding: 0.8rem;
+             margin-bottom: 0.5rem;
+             cursor: pointer;
+             transition: background-color 0.2s ease-in-out;
+             font-size: 1.1rem;
+             color: #4f46e5; /* Indigo color */
+             font-weight: bold;
+         }
+
+         #favoritesList li:hover {
+             background-color: rgba(243, 244, 246, 0.85); /* Lighter gray on hover */
+         }
+
+         /* Specific styles for Feedback Form */
+         /* Removed as feedback section is removed */
+
+
+        /* --- Landscape Optimization for small screens --- */
+        @media (orientation: landscape) and (max-width: 768px) {
+            #appHeading {
+                font-size: 2rem; /* Slightly smaller */
+                margin-bottom: 1rem;
+            }
+            #sanskritVerseTile {
+                 margin-top: 0.8rem;
+                 margin-bottom: 0.8rem;
+                 padding: 0.8rem;
+            }
+             .sanskrit-verse-text {
+                 font-size: 1.2rem;
+             }
+             .sanskrit-tile-info {
+                 font-size: 0.7rem;
+                 margin-bottom: 0.2rem;
+             }
+            .verse-label {
+                margin-top: 0.6rem;
+                margin-bottom: 0.3rem;
+                 font-size: 1rem;
+            }
+            .content-card {
+                margin-top: 0.6rem;
+                padding: 1rem;
+                 border-left-width: 3px;
+            }
+             .shlokam-bhavartham-text {
+                 font-size: 1.3rem;
+             }
+             .sandesham-text {
+                 font-size: 1.0rem; /* Adjusted for landscape */
+             }
+             .audio-button {
+                 top: 0.3rem;
+                 right: 0.3rem;
+                 font-size: 1.6rem;
+             }
+             .favorite-button { /* Adjust favorite button position in landscape */
+                 top: 0.3rem;
+                 left: 0.3rem;
+                 font-size: 1.6rem;
+             }
+             .card {
+                 padding: 1.5rem;
+             }
+             .share-container {
+                 margin-top: 1.5rem;
+                 padding-top: 1rem;
+             }
+              .share-container p {
+                 font-size: 1rem;
+             }
+             .share-buttons {
+                 gap: 0.5rem;
+             }
+              .share-button {
+                 width: 35px;
+                 height: 35px;
+                 font-size: 1.1rem;
+             }
+             .side-menu {
+                 width: 90%; /* Wider menu in landscape */
+             }
+             .side-menu-hint {
+                 height: 80px; /* Shorter hint in landscape */
+                 /* Disable pulse animation in landscape to be less distracting */
+                 animation: none;
+             }
+             #favoritesSection h2 {
+                 font-size: 1.2rem;
+             }
+             #favoritesList li {
+                 font-size: 1rem;
+                 padding: 0.6rem;
+             }
+
+        }
+
+        /* Styling for navigation buttons */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between; /* Space out buttons */
+            gap: 1rem; /* Gap between buttons */
+            margin-top: 2rem; /* Space above navigation buttons */
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(229, 231, 235, 0.7);
+            backdrop-filter: blur(3px);
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+
+        .navigation-buttons .btn {
+            flex: 1; /* Allow buttons to grow and take equal space */
+            min-width: 120px; /* Minimum width for buttons */
+        }
+
+        /* Style for the release version text */
+        .release-version {
+            margin-top: auto; /* Pushes it to the bottom of the flex container */
+            padding-top: 1rem;
+            border-top: 1px solid #d1d5db;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-family: 'Roboto', sans-serif;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="splash-screen" id="splashScreen">
+        <h1>శ్రీమద్భగవద్గీత</h1>
+        <p>తెలుగులో</p>
+        </div>
+
+    <div class="side-menu-overlay" id="sideMenuOverlay"></div>
+
+    <div class="side-menu" id="sideMenu">
+         <h2>ఒక శ్లోకం పొందండి</h2>
+         <div class="controls"> <div class="input-group">
+                <select id="chapterSelect" class="focus:ring-blue-500 focus:border-blue-500 font-roboto">
+                    <option value="">అధ్యాయం ఎంచుకోండి</option>
+                </select>
+                <select id="verseSelect" class="focus:ring-blue-500 focus:border-blue-500 font-roboto" disabled>
+                    <option value="">శ్లోకం ఎంచుకోండి</option>
+                </select>
+            </div>
+            <button class="btn btn-primary w-full mb-3 font-roboto" id="fetchSpecificVerseBtn">
+                 <i class="ph ph-book-open"></i> నిర్దిష్ట శ్లోకం పొందండి
+            </button>
+            <button class="btn btn-secondary w-full font-roboto" id="fetchRandomVerseBtn">
+                 <i class="ph ph-shuffle"></i> యాదృచ్ఛిక శ్లోకం పొందండి
+            </button>
+        </div>
+
+        <div id="favoritesSection">
+             <h2>
+                 <i class="ph ph-caret-right"></i> ఇష్టమైన శ్లోకాలు
+             </h2>
+             <div id="favoritesList">
+                <ul id="favoritesUl">
+                    <li>ఇష్టమైన శ్లోకాలు లేవు.</li> </ul>
+             </div>
+        </div>
+
+        <div class="release-version">
+            Version: 36b1557
+        </div>
+
+    </div>
+
+     <div class="side-menu-hint" id="sideMenuHint" title="మెనూ తెరవడానికి స్వైప్ చేయండి"></div>
+
+
+    <div class="main-content container mx-auto p-4 md:p-8" id="mainContent">
+        <h1 id="appHeading">శ్రీమద్భగవద్గీత</h1>
+
+        <div id="verseDisplay" class="card hidden">
+            </div>
+
+        <div class="navigation-buttons" id="navigationButtons">
+            <button class="btn btn-primary font-roboto" id="prevVerseBtn">
+                <i class="ph ph-arrow-left"></i> మునుపటి శ్లోకం
+            </button>
+            <button class="btn btn-primary font-roboto" id="nextVerseBtn">
+                తదుపరి శ్లోకం <i class="ph ph-arrow-right"></i>
+            </button>
+        </div>
+
+    </div>
+
+    <div id="messageArea" class="message-area hidden"></div>
+
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <footer>
+        &copy; 2025 <a href="https://adabala.com" target="_blank">adabala.com</a>. All rights reserved.
+    </footer>
+
+    <script>
+        const splashScreen = document.getElementById('splashScreen');
+        const mainContent = document.getElementById('mainContent');
+        const verseDisplay = document.getElementById('verseDisplay');
+        const chapterSelect = document.getElementById('chapterSelect');
+        const verseSelect = document.getElementById('verseSelect');
+        const fetchSpecificVerseBtn = document.getElementById('fetchSpecificVerseBtn');
+        const fetchRandomVerseBtn = document = document.getElementById('fetchRandomVerseBtn');
+        const messageArea = document.getElementById('messageArea'); // This is now the centralized toast/error area
+
+        const confettiContainer = document.getElementById('confettiContainer');
+
+        const sideMenu = document.getElementById('sideMenu');
+        const sideMenuOverlay = document.getElementById('sideMenuOverlay');
+        const sideMenuHint = document.getElementById('sideMenuHint');
+
+        // Favorites elements
+        const favoritesSection = document.getElementById('favoritesSection');
+        const favoritesList = document.getElementById('favoritesList');
+        const favoritesUl = document.getElementById('favoritesUl');
+
+        // Navigation buttons
+        const prevVerseBtn = document.getElementById('prevVerseBtn');
+        const nextVerseBtn = document.getElementById('nextVerseBtn');
+
+
+        // Base URL for your Flask API
+        // Ensure this is HTTPS if your PWA is on HTTPS (like GitHub Pages)
+        const API_BASE_URL = 'https://gita.adabala.com'; // UPDATE THIS IF YOUR API URL CHANGES
+
+        // Simple local cache using localStorage
+        let verseCache = JSON.parse(localStorage.getItem('bhagavathGitaCache')) || {};
+        const CACHE_KEY = 'bhagavathGitaCache'; // Key for localStorage
+        const FAVORITES_KEY = 'bhagavathGitaFavorites'; // Key for localStorage favorites
+
+        // Load favorites from localStorage on startup
+        let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+
+        // Define the number of verses in each chapter (same as backend)
+        const CHAPTER_VERSE_COUNTS = {
+            1: 46, 2: 72, 3: 43, 4: 42, 5: 29, 6: 47,
+            7: 30, 8: 28, 9: 34, 10: 42, 11: 55, 12: 20,
+            13: 35, 14: 27, 15: 20, 16: 24, 17: 28, 18: 78,
+        };
+
+        // Initialize Speech Synthesis
+        const synth = window.speechSynthesis;
+        let currentUtterance = null; // To keep track of the current speech
+        let wordSpans = []; // Array to store references to word spans and their text/index info
+        let currentHighlightSpan = null; // To keep track of the currently highlighted span
+        let isAudioMuted = true; // Audio mute state, default to true (muted)
+
+        // Function to show messages (now handles toast behavior)
+        function showMessage(msg, type = 'info', duration = 3000) { // duration for info/success
+            messageArea.textContent = msg;
+            messageArea.className = `message-area ${type} show`; // Add 'show' class
+
+            // Clear any existing timeout for auto-hide
+            if (messageArea.hideTimeout) {
+                clearTimeout(messageArea.hideTimeout);
+            }
+
+            if (type === 'info' || type === 'success') {
+                messageArea.hideTimeout = setTimeout(() => {
+                    messageArea.classList.remove('show');
+                }, duration);
+            }
+            // Error messages will not auto-hide, they stay until explicitly hidden or new message appears
+        }
+
+        // Function to hide messages (for errors or if needed explicitly)
+        function hideMessage() {
+            messageArea.classList.remove('show');
+            if (messageArea.hideTimeout) {
+                clearTimeout(messageArea.hideTimeout);
+            }
+        }
+
+        // Function to trigger confetti/flower effect
+        function triggerConfetti() {
+            const numConfetti = 50; // Number of confetti pieces
+            const colors = ['#ff0', '#f00', '#0f0', '#0f0', '#ff00ff', '#00ffff', '#ffa500']; // Confetti colors (added more green)
+            const emojis = ['🌸', '🌼', '🌺', '🌻', '🌹', '🌷']; // Flower emojis (optional)
+            const animationDuration = '3s'; // Duration for one fall animation
+
+            // Clear any existing confetti
+            confettiContainer.innerHTML = '';
+
+            for (let i = 0; i < numConfetti; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+
+                // Randomly choose between a colored circle or an emoji
+                if (Math.random() > 0.4 && emojis.length > 0) { // Slightly increased chance of emoji
+                     confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                     confetti.style.backgroundColor = 'transparent'; // No background for emoji
+                     confetti.style.fontSize = `${Math.random() * 20 + 10}px`; // Random size for emoji
+                     confetti.style.width = 'auto'; // Adjust width for emoji
+                     confetti.style.height = 'auto'; // Adjust height for emoji
+                } else {
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                }
+
+
+                confetti.style.left = `${Math.random() * 100}vw`; // Random horizontal position
+                // Set animation duration and delay
+                confetti.style.animationDuration = animationDuration;
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`; // Random delay for staggered effect
+                confetti.style.opacity = 1; // Make visible when animation starts
+
+
+                confettiContainer.appendChild(confetti);
+
+                // Remove confetti after animation finishes
+                confetti.addEventListener('animationend', () => {
+                    confetti.remove();
+                });
+            }
+        }
+
+        // Function to wrap words in spans and populate the global wordSpans array
+        // This function now only handles the DOM manipulation and populating wordSpans relative to the full spoken text
+        function wrapWordsInSpans(textToWrap, containerElement, currentAbsoluteOffset) {
+            if (!containerElement) {
+                console.warn("Container element for wrapWordsInSpans is null or undefined.");
+                return;
+            }
+            containerElement.innerHTML = ''; // Clear previous content in the DOM element
+
+            // Split text by any whitespace and filter out empty strings
+            const words = textToWrap.split(/\s+/).filter(word => word.length > 0);
+            let currentRelativeOffsetInSegment = 0; // Tracks index within the `textToWrap` segment
+
+            words.forEach((word, index) => {
+                // If not the first word in this segment, add a space (which is also spoken and needs to be accounted for)
+                if (index > 0) {
+                    const spaceNode = document.createTextNode(' ');
+                    containerElement.appendChild(spaceNode);
+                    currentRelativeOffsetInSegment += 1; // Account for the space in our index tracking
+                }
+
+                const span = document.createElement('span');
+                span.textContent = word;
+                span.classList.add('verse-word');
+
+                // Add this word's info to the global wordSpans array
+                wordSpans.push({
+                    text: word,
+                    startIndex: currentAbsoluteOffset + currentRelativeOffsetInSegment, // Absolute start in fullTextToSpeak
+                    endIndex: currentAbsoluteOffset + currentRelativeOffsetInSegment + word.length, // Absolute end in fullTextToSpeak
+                    span: span // Reference to the actual DOM element
+                });
+
+                containerElement.appendChild(span);
+                currentRelativeOffsetInSegment += word.length; // Advance relative index by word length
+            });
+        }
+
+        // Function to speak text and handle highlighting
+        function speakText(text, lang = 'te-IN') {
+            // Stop any ongoing speech before starting new speech and clear highlight
+            if (synth.speaking) {
+                synth.cancel();
+                clearHighlight();
+            }
+
+            // Only speak if audio is not muted and there is text to speak
+            if (text && text.trim() !== '' && !isAudioMuted) {
+                currentUtterance = new SpeechSynthesisUtterance(text);
+                currentUtterance.lang = lang; // Set language (Telugu for te-IN)
+
+                // Event listener for word boundaries
+                currentUtterance.onboundary = (event) => {
+                    if (event.name === 'word') {
+                        const charIndex = event.charIndex;
+                        // Find the word span that contains this character index
+                        const targetWord = wordSpans.find(wordInfo =>
+                            charIndex >= wordInfo.startIndex && charIndex < wordInfo.endIndex
+                        );
+
+                        if (targetWord) {
+                            clearHighlight(); // Remove previous highlight
+                            currentHighlightSpan = targetWord.span;
+                            currentHighlightSpan.classList.add('highlighted-word');
+
+                            // Scroll the word into view
+                            targetWord.span.scrollIntoView({
+                                behavior: 'smooth', // Smooth scrolling
+                                block: 'center' // Center the word in the viewport
+                            });
+                        } else {
+                            // This console.warn is helpful for debugging if indices are off
+                            console.warn('Could not find word span for charIndex:', charIndex, 'Text portion:', text.substring(charIndex, charIndex + 20));
+                            // Optional: If a word is not found, clear highlight to avoid stale highlights
+                            clearHighlight();
+                        }
+                    }
+                };
+
+                // Event listener for end of speech
+                currentUtterance.onend = () => {
+                    clearHighlight(); // Clear highlight when speech ends
+                };
+
+                // Event listener for errors
+                 currentUtterance.onerror = (event) => {
+                     console.error('SpeechSynthesisUtterance error:', event.error);
+                     if (event.error !== 'cancelled') {
+                        showMessage(`వచనాన్ని చదవడంలో లోపం: ${event.error}`, 'error');
+                     }
+                     clearHighlight();
+                 };
+
+
+                synth.speak(currentUtterance);
+            } else if (isAudioMuted) {
+                 console.log("Audio is muted, not speaking.");
+            } else {
+                 console.warn("No text provided to speakText function or text is empty.");
+            }
+        }
+
+        // Function to clear highlighting
+        function clearHighlight() {
+            if (currentHighlightSpan) {
+                currentHighlightSpan.classList.remove('highlighted-word');
+                currentHighlightSpan = null;
+            }
+            // Also remove highlight from all other spans just in case
+            document.querySelectorAll('.verse-word.highlighted-word').forEach(span => {
+                 span.classList.remove('highlighted-word');
+            });
+        }
+
+        // Function to update the audio button icon based on mute state
+        function updateAudioButtonIcon() {
+            const audioButton = verseDisplay.querySelector('#playAllAudio');
+            if (audioButton) {
+                const icon = audioButton.querySelector('i');
+                if (icon) {
+                    if (isAudioMuted) {
+                        icon.classList.remove('ph-speaker-high');
+                        icon.classList.add('ph-speaker-slash');
+                        audioButton.title = 'ఆడియో ఆన్ చేయండి'; // Turn audio on
+                    } else {
+                        icon.classList.remove('ph-speaker-slash');
+                        icon.classList.add('ph-speaker-high');
+                        audioButton.title = 'ఆడియో ఆఫ్ చేయండి / ఆపు'; // Turn audio off / Stop
+                    }
+                }
+            }
+        }
+
+        // Function to toggle mute state
+        function toggleMute() {
+             isAudioMuted = !isAudioMuted;
+             updateAudioButtonIcon();
+             if (isAudioMuted && synth.speaking) {
+                 synth.cancel(); // Stop speech if muted while speaking
+                 clearHighlight(); // Clear highlight when stopping speech
+             }
+             // Optional: Save mute state to localStorage
+             // localStorage.setItem('bhagavathGitaMuteState', isAudioMuted);
+        }
+
+        // Function to update the favorite button icon based on favorite status
+        function updateFavoriteButtonIcon(isFavorited) {
+             const favoriteVerseBtn = verseDisplay.querySelector('#favoriteVerseBtn');
+             if (favoriteVerseBtn) {
+                 const outlinedIcon = favoriteVerseBtn.querySelector('.ph-heart');
+                 const filledIcon = favoriteVerseBtn.querySelector('.ph-heart-fill');
+
+                 if (isFavorited) {
+                     favoriteVerseBtn.classList.add('favorited');
+                     favoriteVerseBtn.title = 'ఇష్టమైన వాటి నుండి తీసివేయండి'; // Remove from favorites
+                     if (outlinedIcon) outlinedIcon.classList.add('hidden');
+                     if (filledIcon) filledIcon.classList.remove('hidden');
+                 } else {
+                     favoriteVerseBtn.classList.remove('favorited');
+                     favoriteVerseBtn.title = 'ఇష్టమైనదిగా గుర్తించండి'; // Mark as favorite
+                     if (outlinedIcon) outlinedIcon.classList.remove('hidden');
+                     if (filledIcon) filledIcon.classList.add('hidden');
+                 }
+                 console.log("Favorite button updated. Is favorited:", isFavorited); // Debugging line
+             } else {
+                 console.error("Favorite button element not found in displayVerse for icon update.");
+             }
+        }
+
+
+        // Function to display a verse in the new format (using cards)
+        function displayVerse(verseData) {
+            hideMessage(); // Hide general message area
+            clearHighlight(); // Clear any highlight from previous verse
+            wordSpans = []; // **CRITICAL: Reset global wordSpans array for the new verse**
+
+            // Scroll to the top of the page
+            window.scrollTo(0, 0);
+
+
+            // Clear previous content in the main display area
+            verseDisplay.innerHTML = '';
+
+            // Store current verse data temporarily for favorite/share actions
+            verseDisplay.dataset.chapter = verseData.chapter;
+            verseDisplay.dataset.verse = verseData.verse;
+            verseDisplay.dataset.sanskritVerse = verseData.sanskrit_verse_telugu_script || '';
+            verseDisplay.dataset.teluguMeaning = verseData.polished_telugu_meaning || verseData.telugu_meaning || '';
+            verseDisplay.dataset.teluguDescription = verseData.telugu_description || '';
+
+
+            // Pre-fill feedback form with current chapter and verse (references removed, but keeping logic for now)
+            // if (feedbackChapterInput) feedbackChapterInput.value = verseData.chapter;
+            // if (feedbackVerseInput) feedbackVerseInput.value = verseData.verse;
+
+            // Get the raw text content for each part
+            const sanskritVerse = verseData.sanskrit_verse_telugu_script;
+            const polishedTeluguMeaning = verseData.polished_telugu_meaning || verseData.telugu_meaning || 'తెలుగు భావార్థం అందుబాటులో లేదు.';
+            const teluguDescription = verseData.telugu_description || 'సందేశం అందుబాటులో లేదు.';
+
+            // --- Phase 1: Construct the HTML structure and append to DOM ---
+            let contentHTML = ``;
+
+            let hasSanskritVerse = false;
+            if (sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
+                hasSanskritVerse = true;
+                contentHTML += `
+                    <div id="sanskritVerseTile">
+                        <div class="sanskrit-tile-info">
+                            అధ్యాయం [${verseData.chapter}], శ్లోకం [${verseData.verse}]:
+                        </div>
+                        <div id="sanskritVerse" class="sanskrit-verse-text">
+                            </div>
+                        <button class="audio-button" id="playAllAudio" title="ఆడియో ఆన్ చేయండి">
+                            <i class="ph ph-speaker-slash"></i>
+                        </button>
+                        <button class="favorite-button" id="favoriteVerseBtn" title="ఇష్టమైనదిగా గుర్తించండి">
+                            <i class="ph ph-heart"></i>
+                            <i class="ph ph-heart-fill hidden"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                // If no Sanskrit verse, still add favorite and audio buttons to a container
+                contentHTML += `
+                    <div style="position: relative; min-height: 40px; margin-bottom: 1rem;">
+                        <button class="favorite-button" id="favoriteVerseBtn" title="ఇష్టమైనదిగా గుర్తించండి" style="top: 0.5rem; left: 0.5rem;">
+                            <i class="ph ph-heart"></i>
+                            <i class="ph ph-heart-fill hidden"></i>
+                        </button>
+                        <button class="audio-button" id="playAllAudio" title="ఆడియో ఆన్ చేయండి" style="top: 0.5rem; right: 0.5rem;">
+                            <i class="ph ph-speaker-slash"></i>
+                        </button>
+                    </div>
+                `;
+            }
+
+            contentHTML += `
+                <div id="shlokamBhavarthamContainer" class="content-card shlokam-bhavartham">
+                    <div class="verse-label shlokam-bhavartham"><i class="ph ph-book-open"></i> శ్లోకం భావార్థం:</div>
+                    <div id="shlokamBhavartham" class="shlokam-bhavartham-text">
+                        </div>
+                </div>
+
+                <div id="sandeshamContainer" class="content-card sandesham">
+                    <div class="verse-label sandesham"><i class="ph ph-chat-centered-text"></i> సందేశం:</div>
+                    <div id="sandesham" class="sandesham-text">
+                        </div>
+                </div>
+
+                <div class="share-container">
+                    <p class="font-roboto">ఈ శ్లోకాన్ని పంచుకోండి:</p>
+                    <div class="share-buttons">
+                        <button class="share-button whatsapp" data-platform="whatsapp" title="Share on WhatsApp">
+                            <i class="ph ph-whatsapp-logo"></i>
+                        </button>
+                        <button class="share-button facebook" data-platform="facebook" title="Share on Facebook">
+                            <i class="ph ph-facebook-logo"></i>
+                        </button>
+                        <button class="share-button twitter" data-platform="twitter" title="Share on Twitter">
+                            <i class="ph ph-twitter-logo"></i>
+                        </button>
+                        <button class="share-button generic" data-platform="generic" title="Share or Copy">
+                            <i class="ph ph-share-network"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            verseDisplay.innerHTML = contentHTML; // Render the HTML structure
+            verseDisplay.classList.remove('hidden');
+
+            // Get references to the elements now that they are in the DOM
+            const sanskritVerseElement = verseDisplay.querySelector('#sanskritVerse');
+            const shlokamBhavarthamElement = verseDisplay.querySelector('#shlokamBhavartham');
+            const sandeshamElement = verseDisplay.querySelector('#sandesham');
+
+            // Helper to format text for speech (ensures single spaces between words)
+            // This is crucial for consistent indexing between spoken text and displayed text
+            const formatTextForSpeech = (text) => text.trim().split(/\s+/).filter(word => word.length > 0).join(' ');
+
+            // --- Phase 2: Build the full text for speech and populate DOM with wrapped words ---
+            let fullTextToSpeak = '';
+            let currentAbsoluteOffset = 0; // Tracks the current position in `fullTextToSpeak` for wordSpan indexing
+
+            // 1. Add Sanskrit Section (label and text)
+            if (hasSanskritVerse) {
+                const sanskritInfoSpoken = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
+                fullTextToSpeak += sanskritInfoSpoken;
+                // No need to adjust currentAbsoluteOffset here, as wrapWordsInSpans will start from this offset
+                // and we'll update it after the segment.
+
+                if (sanskritVerseElement) {
+                    const formattedSanskritText = formatTextForSpeech(sanskritVerse);
+                    wrapWordsInSpans(formattedSanskritText, sanskritVerseElement, currentAbsoluteOffset);
+                    fullTextToSpeak += formattedSanskritText;
+                    currentAbsoluteOffset = fullTextToSpeak.length; // Update absolute offset after adding text
+                }
+            } else if (sanskritVerseElement) {
+                sanskritVerseElement.textContent = sanskritVerse || 'సంస్కృత శ్లోకం అందుబాటులో లేదు.';
+            }
+
+            // Add a separator space between sections for natural speech flow
+            if (fullTextToSpeak.length > 0 && !fullTextToSpeak.endsWith(' ')) {
+                fullTextToSpeak += ' ';
+                currentAbsoluteOffset += 1;
+            }
+
+
+            // 2. Add Merged Shlokam/Bhavartham Section
+            const shlokamBhavarthamLabelSpoken = `శ్లోకం భావార్థం. `;
+            fullTextToSpeak += shlokamBhavarthamLabelSpoken;
+            currentAbsoluteOffset += shlokamBhavarthamLabelSpoken.length;
+
+            if (shlokamBhavarthamElement) {
+                const formattedMeaningText = formatTextForSpeech(polishedTeluguMeaning);
+                wrapWordsInSpans(formattedMeaningText, shlokamBhavarthamElement, currentAbsoluteOffset);
+                fullTextToSpeak += formattedMeaningText;
+                currentAbsoluteOffset = fullTextToSpeak.length;
+            }
+
+            // Add a separator space between sections
+            if (fullTextToSpeak.length > 0 && !fullTextToSpeak.endsWith(' ')) {
+                fullTextToSpeak += ' ';
+                currentAbsoluteOffset += 1;
+            }
+
+            // 3. Add Sandesham Section
+            const sandeshamLabelSpoken = `సందేశం. `;
+            fullTextToSpeak += sandeshamLabelSpoken;
+            currentAbsoluteOffset += sandeshamLabelSpoken.length;
+
+            if (sandeshamElement) {
+                const formattedDescriptionText = formatTextForSpeech(teluguDescription);
+                wrapWordsInSpans(formattedDescriptionText, sandeshamElement, currentAbsoluteOffset);
+                fullTextToSpeak += formattedDescriptionText;
+                currentAbsoluteOffset = fullTextToSpeak.length;
+            }
+
+            // Trim any final trailing space
+            fullTextToSpeak = fullTextToSpeak.trim();
+
+
+            // --- Phase 3: Attach Event Listeners and Finalize UI ---
+            // Audio Mute/Unmute Logic
+            const playAllAudioButton = verseDisplay.querySelector('#playAllAudio');
+            if (playAllAudioButton) {
+                updateAudioButtonIcon(); // Set initial icon state
+                playAllAudioButton.addEventListener('click', () => {
+                    toggleMute(); // Toggle mute state
+                    if (!isAudioMuted) { // If audio is now ON
+                        if (fullTextToSpeak && fullTextToSpeak.trim() !== '') {
+                            speakText(fullTextToSpeak.trim(), 'te-IN');
+                        } else {
+                            console.warn("No text to speak on play button click.");
+                        }
+                    } else { // If audio is now OFF (muted)
+                        if (synth.speaking) {
+                            synth.cancel(); // Stop any ongoing speech
+                            clearHighlight();
+                        }
+                    }
+                });
+            } else {
+                console.error("Audio button not found after displayVerse.");
+            }
+
+            // Favorite Button Logic
+            const favoriteVerseBtn = verseDisplay.querySelector('#favoriteVerseBtn');
+            if (favoriteVerseBtn) {
+                const currentVerseKey = `${verseData.chapter}-${verseData.verse}`;
+                // Set initial icon state based on whether it's favorited
+                updateFavoriteButtonIcon(favorites.includes(currentVerseKey));
+
+                favoriteVerseBtn.addEventListener('click', () => {
+                    const chapter = verseDisplay.dataset.chapter;
+                    const verse = verseDisplay.dataset.verse;
+                    const verseKey = `${chapter}-${verse}`;
+
+                    if (favorites.includes(verseKey)) {
+                        // Remove from favorites
+                        favorites = favorites.filter(favKey => favKey !== verseKey);
+                        showMessage(`అధ్యాయం ${chapter}, శ్లోకం ${verse} ఇష్టమైన వాటి నుండి తీసివేయబడింది.`, 'success');
+                    } else {
+                        // Add to favorites
+                        favorites.push(verseKey);
+                        showMessage(`అధ్యాయం ${chapter}, శ్లోకం ${verse} ఇష్టమైన వాటికి జోడించబడింది.`, 'success');
+                    }
+                    // Save updated favorites to localStorage
+                    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+                    // Update icon after adding/removing
+                    updateFavoriteButtonIcon(favorites.includes(verseKey));
+                    updateFavoritesListUI(); // Update the list in the side menu
+                });
+            } else {
+                console.error("Favorite button not found after displayVerse.");
+            }
+
+            // Final console logs for debugging
+            console.log("Full text to speak:", fullTextToSpeak);
+            console.log("Word spans for highlighting:", wordSpans);
+            // You can also uncomment this to inspect individual word spans and their indices
+            // wordSpans.forEach(w => console.log(w.text, w.startIndex, w.endIndex, `(Char: ${fullTextToSpeak.substring(w.startIndex, w.startIndex + 10)}...)`));
+
+
+            // Auto-play TTS
+            if (synth && fullTextToSpeak && fullTextToSpeak.trim() !== '' && !isAudioMuted) {
+                setTimeout(() => {
+                    speakText(fullTextToSpeak.trim(), 'te-IN');
+                }, 100);
+            } else if (fullTextToSpeak.trim() === '') {
+                console.warn("No text to speak.");
+            }
+
+            // Trigger confetti effect after displaying the verse
+            triggerConfetti();
+        }
+
+        // Function to fetch a verse from API or cache
+        async function fetchVerse(chapter, verse) {
+            hideMessage(); // Hide any old messages when starting a new fetch
+            const cacheKey = `${chapter}-${verse}`;
+            const cachedData = verseCache[cacheKey];
+
+            if (cachedData) {
+                console.log(`Serving Chapter ${chapter}, Verse ${verse} from cache.`);
+                displayVerse(cachedData);
+                return;
+            }
+
+            if (!navigator.onLine) {
+                 showMessage(`మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`, 'error');
+                 verseDisplay.classList.add('hidden');
+                 return;
+            }
+
+            showMessage('శ్లోకం పొందుతోంది...'); // Getting verse... (now uses new showMessage)
+            try {
+                console.log(`Attempting to fetch from API: ${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
+                const response = await fetch(`${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
+
+                if (!response.ok) {
+                    let errorDetails = `HTTP error! status: ${response.status}`;
+                    try {
+                         const errorData = await response.json();
+                         errorDetails = errorData.error || JSON.stringify(errorData);
+                    } catch (jsonError) {
+                         try {
+                             const errorText = await response.text();
+                             errorDetails = `HTTP error! status: ${response.status}, Response Text: ${errorText}`;
+                         } catch (textError) {
+                             errorDetails = `HTTP error! status: ${response.status}, Could not read response body.`;
+                         }
+                    }
+                    console.error('Fetch failed with details:', errorDetails);
+                    throw new Error(errorDetails);
+                }
+
+                const data = await response.json();
+
+                verseCache[cacheKey] = data;
+                localStorage.setItem(CACHE_KEY, JSON.stringify(verseCache));
+                console.log(`Workspaceed Chapter ${chapter}, Verse ${verse} from API and cached.`);
+                console.log('Fetched data:', data);
+
+                displayVerse(data);
+
+            } catch (error) {
+                console.error('Error fetching verse:', error);
+                // Log more specific error details
+                console.error('Error name:', error.name);
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
+
+                let displayMessage = `శ్లోకం పొందడంలో లోపం: ${error.message}`;
+                if (error.message.includes('Failed to fetch') || navigator.onLine === false) {
+                     displayMessage = `మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`;
+                     console.log("Likely offline error, displaying specific message.");
+                } else if (!error.message || error.message === '[object Object]') {
+                     console.error('Raw error object:', error);
+                     displayMessage = `శ్లోకం పొందడంలో లోపం. వివరాల కోసం కన్సోల్ చూడండి.`;
+                }
+                showMessage(displayMessage, 'error'); // Use 'error' type which won't auto-hide
+                verseDisplay.classList.add('hidden');
+            }
+        }
+
+        // Function to fetch a random verse
+        async function fetchRandomVerse() {
+             hideMessage(); // Hide any old messages
+             if (!navigator.onLine) {
+                 const cachedVerseKeys = Object.keys(verseCache);
+                 if (cachedVerseKeys.length > 0) {
+                     const randomKey = cachedVerseKeys[Math.floor(Math.random() * cachedVerseKeys.length)];
+                     const [chapter, verse] = randomKey.split('-').map(Number);
+                     console.log(`Workspaceing random verse from cache: Chapter ${chapter}, Verse ${verse}`);
+                     displayVerse(verseCache[randomKey]);
+                 } else {
+                     showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు కాష్‌లో శ్లోకాలు అందుబాటులో లేవు.', 'error');
+                     verseDisplay.classList.add('hidden');
+                 }
+             } else {
+                 const maxChapter = 18;
+                 const randomChapter = Math.floor(Math.random() * maxChapter) + 1;
+                 const maxVerse = CHAPTER_VERSE_COUNTS[randomChapter] || 78;
+                 const randomVerse = Math.floor(Math.random() * maxVerse) + 1;
+
+                 console.log(`Workspaceing random verse from API: Chapter ${randomChapter}, Verse ${randomVerse}`);
+                 fetchVerse(randomChapter, randomVerse);
+             }
+             closeSideMenu();
+        }
+
+        // Function to populate the chapter dropdown
+        function populateChapterDropdown() {
+            for (let i = 1; i <= 18; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `అధ్యాయం ${i}`;
+                chapterSelect.appendChild(option);
+            }
+        }
+
+        // Function to populate the verse dropdown based on selected chapter
+        function populateVerseDropdown(chapter) {
+            verseSelect.innerHTML = '<option value="">శ్లోకం ఎంచుకోండి</option>';
+            verseSelect.disabled = true;
+
+            if (chapter && CHAPTER_VERSE_COUNTS[chapter]) {
+                const numVerses = CHAPTER_VERSE_COUNTS[chapter];
+                for (let i = 1; i <= numVerses; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = `శ్లోకం ${i}`;
+                    verseSelect.appendChild(option);
+                }
+                verseSelect.disabled = false;
+            }
+        }
+
+        // Function to update the favorites list UI in the side menu
+        function updateFavoritesListUI() {
+             favoritesUl.innerHTML = ''; // Clear current list
+
+             if (favorites.length === 0) {
+                 const li = document.createElement('li');
+                 li.textContent = 'ఇష్టమైన శ్లోకాలు లేవు.'; // No favorite verses.
+                 favoritesUl.appendChild(li);
+             } else {
+                 // Sort favorites by chapter and then verse
+                 favorites.sort((a, b) => {
+                     const [aChap, aVerse] = a.split('-').map(Number);
+                     const [bChap, bVerse] = b.split('-').map(Number);
+                     if (aChap !== bChap) {
+                         return aChap - bChap;
+                     }
+                     return aVerse - bVerse;
+                 });
+
+                 favorites.forEach(verseKey => {
+                     const [chapter, verse] = verseKey.split('-');
+                     const li = document.createElement('li');
+                     li.textContent = `అధ్యాయం ${chapter}, శ్లోకం ${verse}`;
+                     li.dataset.chapter = chapter; // Store data attributes for fetching
+                     li.dataset.verse = verse;
+                     favoritesUl.appendChild(li);
+                 });
+             }
+        }
+
+
+        // --- Side Menu Logic ---
+        function openSideMenu() {
+            sideMenu.classList.add('open');
+            sideMenuOverlay.classList.add('visible');
+             sideMenuHint.style.display = 'none'; // Hide hint when menu is open
+             updateFavoritesListUI(); // Update favorites list whenever menu opens
+        }
+
+        function closeSideMenu() {
+            sideMenu.classList.remove('open');
+            sideMenuOverlay.classList.remove('visible');
+             // Show hint again after a delay if not in landscape on small screen
+             if (!(window.matchMedia("(orientation: landscape) and (max-width: 768px)").matches)) {
+                 setTimeout(() => {
+                     sideMenuHint.style.display = 'block';
+                 }, 500); // Show hint after menu closes
+             }
+        }
+
+        // Event listeners
+        fetchSpecificVerseBtn.addEventListener('click', () => {
+            const chapter = parseInt(chapterSelect.value);
+            const verse = parseInt(verseSelect.value);
+
+            if (isNaN(chapter) || isNaN(verse) || chapter <= 0 || verse <= 0) {
+                showMessage('దయచేసి అధ్యాయం మరియు శ్లోకం ఎంచుకోండి.', 'error');
+                return;
+            }
+
+            fetchVerse(chapter, verse);
+            closeSideMenu(); // Close menu after fetching
+        });
+
+        fetchRandomVerseBtn.addEventListener('click', fetchRandomVerse); // fetchRandomVerse now handles closing the menu
+
+        chapterSelect.addEventListener('change', (event) => {
+            const selectedChapter = parseInt(event.target.value);
+            populateVerseDropdown(selectedChapter);
+        });
+
+        sideMenuOverlay.addEventListener('click', closeSideMenu); // Close menu when clicking overlay
+
+        // Event listener for clicking on the favorites section header to toggle the list
+        favoritesSection.addEventListener('click', () => {
+             favoritesSection.classList.toggle('expanded');
+             // The CSS transition handles the height change
+        });
+
+        // Event listener for clicking on a favorite verse in the list
+        favoritesUl.addEventListener('click', (event) => {
+             const targetLi = event.target.closest('li');
+             // Ensure the click was on an actual verse item, not the "No favorites" message
+             if (targetLi && targetLi.dataset.chapter && targetLi.dataset.verse) {
+                 const chapter = parseInt(targetLi.dataset.chapter);
+                 const verse = parseInt(targetLi.dataset.verse);
+                 fetchVerse(chapter, verse); // Fetch and display the selected favorite verse
+                 closeSideMenu(); // Close the menu
+             }
+        });
+
+        // Feedback submit button logic removed as section is removed.
+        // submitFeedbackBtn.addEventListener('click', () => { ... });
+
+
+        // --- Swipe Functionality for Side Menu Hint ---
+        let touchStartX = 0;
+        const swipeThreshold = 50; // Minimum horizontal distance for a swipe
+
+        sideMenuHint.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+
+        sideMenuHint.addEventListener('touchmove', (e) => {
+            if (touchStartX === 0) return;
+
+            const touchMoveX = e.touches[0].clientX;
+            const diffX = touchMoveX - touchStartX;
+
+            if (diffX > swipeThreshold) {
+                openSideMenu();
+                touchStartX = 0;
+                e.preventDefault();
+            } else if (Math.abs(e.touches[0].clientY - e.changedTouches[0].clientY) > Math.abs(diffX)) {
+                 touchStartX = 0;
+            }
+        });
+
+        sideMenuHint.addEventListener('touchend', (e) => {
+            touchStartX = 0;
+        });
+
+        // Also add a click listener to the hint for desktop/non-swipe interaction
+        sideMenuHint.addEventListener('click', openSideMenu);
+
+
+        // --- Handle orientation change for hint visibility ---
+        function handleOrientationChange() {
+             if (window.matchMedia("(orientation: landscape) and (max-width: 768px)").matches) {
+                 sideMenuHint.style.display = 'none';
+             } else {
+                 if (!sideMenu.classList.contains('open')) {
+                     sideMenuHint.style.display = 'block';
+                 }
+             }
+        }
+
+        // Listen for orientation changes
+        window.addEventListener('orientationchange', handleOrientationChange);
+        // Also check on load
+        window.addEventListener('load', handleOrientationChange);
+
+        // --- Splash Screen Logic ---
+        function hideSplashScreen() {
+             splashScreen.classList.add('hidden');
+             mainContent.classList.add('visible');
+             fetchRandomVerse(); // Fetch a random verse on load (will use cache if offline)
+        }
+
+        // Hide splash screen after a delay, ensuring content is loaded
+        window.addEventListener('load', () => {
+            populateChapterDropdown();
+            updateFavoritesListUI();
+
+            setTimeout(hideSplashScreen, 2000); // Hide after 2 seconds
+        });
+
+
+        // --- Social Share Logic ---
+        document.addEventListener('click', (event) => {
+             if (event.target.closest('.share-button')) {
+                 const button = event.target.closest('.share-button');
+                 const platform = button.dataset.platform;
+
+                 // Get the text content directly from the dataset attributes
+                 const chapter = verseDisplay.dataset.chapter;
+                 const verse = verseDisplay.dataset.verse;
+                 const sanskritVerseText = verseDisplay.dataset.sanskritVerse;
+                 const teluguMeaningText = verseDisplay.dataset.teluguMeaning;
+                 const teluguDescriptionText = verseDisplay.dataset.teluguDescription;
+
+                 let shareText = '';
+
+                 // Add a clear title to the shared message
+                 shareText += `✨ శ్రీమద్భగవద్గీత శ్లోకం ✨\n\n`;
+
+                 // Use Emojis for visual appeal
+                 if (chapter && verse) {
+                     shareText += `📖 అధ్యాయం ${chapter}, శ్లోకం ${verse}:\n`;
+                 }
+
+                 if (sanskritVerseText && sanskritVerseText.trim() !== '' && sanskritVerseText !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
+                     shareText += `🕉️ ${sanskritVerseText.trim()}\n\n`;
+                 }
+
+                 if (teluguMeaningText && teluguMeaningText.trim() !== '' && teluguMeaningText !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') {
+                     shareText += `💡 భావార్థం:\n${teluguMeaningText.trim()}\n\n`;
+                 }
+                 if (teluguDescriptionText && teluguDescriptionText.trim() !== '' && teluguDescriptionText !== 'సందేశం:\n${teluguDescriptionText.trim()}\n\n'; // Corrected line
+                 }
+
+                 shareText += `Source: adabala.com`;
+
+                 // Handle specific platforms directly
+                 if (platform === 'whatsapp' || platform === 'facebook' || platform === 'twitter') {
+                     handleSpecificPlatformShare(platform, shareText);
+                 } else if (platform === 'generic') {
+                     if (navigator.share) {
+                         navigator.share({
+                             title: 'శ్రీమద్భగవద్గీత శ్లోకం',
+                             text: shareText,
+                         }).then(() => {
+                             console.log('Successfully shared via Web Share API');
+                         }).catch((error) => {
+                             console.error('Error sharing via Web Share API:', error);
+                             copyToClipboard(shareText);
+                             showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
+                         });
+                     } else {
+                         copyToClipboard(shareText);
+                         showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
+                     }
+                 }
+             }
+        });
+
+
+        function handleSpecificPlatformShare(platform, text) {
+             const encodedText = encodeURIComponent(text);
+             let shareUrl = '';
+
+             switch (platform) {
+                 case 'whatsapp':
+                     shareUrl = `https://wa.me/?text=${encodedText}`;
+                     break;
+                 case 'facebook':
+                     // Facebook sharer often requires a URL, but we'll try with just quote/hashtag if no URL is allowed.
+                     // For pure text, clipboard is the best fallback.
+                     shareUrl = `https://www.facebook.com/sharer/sharer.php?quote=${encodedText}`;
+                     break;
+                 case 'twitter':
+                     shareUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
+                     break;
+                 // 'generic' case is handled in the main click listener
+             }
+
+             if (shareUrl) {
+                 window.open(shareUrl, '_blank');
+             } else {
+                 // This else block should ideally not be hit for whatsapp/facebook/twitter
+                 // as shareUrl will always be set in the switch for those platforms.
+                 // It's a safeguard.
+                 copyToClipboard(text);
+                 showMessage('ఈ ప్లాట్‌ఫారమ్‌కు నేరుగా భాగస్వామ్యం చేయడం సాధ్యం కాలేదు. శ్లోకం కాపీ చేయబడింది!', 'info');
+             }
+        }
+
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '0';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                console.log('Text copied to clipboard:', text); // Debugging
+            } catch (err) {
+                console.error('Unable to copy to clipboard', err);
+            }
+            document.body.removeChild(textarea);
+        }
+
+
+        // --- PWA Service Worker Registration ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                console.log('Attempting to register Service Worker...');
+                console.log('Current origin:', location.origin);
+                console.log('Current pathname:', location.pathname);
+                // The scope should match the directory where your PWA is served.
+                // For GitHub Pages, if your PWA is in a subfolder like /Gita/, the scope should be '/Gita/'.
+                // Ensure service-worker.js is directly inside your /Gita/ folder.
+                navigator.serviceWorker.register('/Gita/service-worker.js', { scope: '/Gita/' })
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration);
+                    })
+                    .catch(error => {
+                        console.error('Service Worker registration failed:');
+                        console.error('Error name:', error.name);
+                        console.error('Error message:', error.message);
+                        console.error('Error stack:', error.stack);
+                        console.error('Ensure service-worker.js is at the root of your /Gita/ subfolder on GitHub Pages and accessible via HTTPS.');
+                        // Provide more context to the user if the error is a SecurityError
+                        if (error.name === 'SecurityError') {
+                            showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: HTTPS అవసరం. మీ సైట్ HTTPS ద్వారా అందించబడుతుందని నిర్ధారించుకోండి.', 'error');
+                        } else if (error.name === 'NetworkError') {
+                            showMessage('సర్వీస్ వర్ker రిజిస్ట్రేషన్ విఫలమైంది: నెట్‌వర్క్ సమస్య. ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'error');
+                        } else {
+                            showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది. వివరాల కోసం కన్సోల్‌ని తనిఖీ చేయండి.', 'error');
+                        }
+                    });
+            });
+        }
+
+        window.addEventListener('online', () => {
+            console.log('App is online.');
+            showMessage('మీరు ఆన్‌లైన్‌లోకి తిరిగి వచ్చారు.', 'info'); // You are back online.
+        });
+
+        window.addEventListener('offline', () => {
+            console.log('App is offline.');
+            showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. కాష్ చేయబడిన కంటెంట్ మాత్రమే అందుబాటులో ఉండవచ్చు.', 'info'); // You are offline. Only cached content may be available.
+        });
+
+        // Check Phosphor Icons loading on DOMContentLoaded
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => { // Give a small delay for the script to execute
+                // Check if Phosphor Icons are available by trying to create an element with a phosphor class
+                const testIcon = document.createElement('i');
+                testIcon.className = 'ph ph-heart';
+                document.body.appendChild(testIcon); // Temporarily add to DOM to check computed style
+                const computedStyle = window.getComputedStyle(testIcon);
+                // Check if the font-family includes 'Phosphor' and if the width/height are non-zero
+                const isPhosphorLoaded = computedStyle.fontFamily.includes('Phosphor') &&
+                                         parseInt(computedStyle.width) > 0 &&
+                                         parseInt(computedStyle.height) > 0;
+                document.body.removeChild(testIcon); // Remove it
+
+                if (isPhosphorLoaded) {
+                    console.log('Phosphor Icons library appears to be loaded and rendering.');
+                } else {
+                    console.warn('Phosphor Icons library might not be loaded or rendering correctly. Icons may not display.');
+                    showMessage('ఐకాన్‌లు సరిగ్గా లోడ్ కాకపోవచ్చు. దయచేసి మీ ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'info', 5000);
+                }
+            }, 1000); // Delay check by 1 second
+        });
+
+        // Function to navigate to the previous verse
+        function goToPreviousVerse() {
+            let currentChapter = parseInt(verseDisplay.dataset.chapter);
+            let currentVerse = parseInt(verseDisplay.dataset.verse);
+
+            if (isNaN(currentChapter) || isNaN(currentVerse)) {
+                showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
+                return;
+            }
+
+            if (currentVerse > 1) {
+                fetchVerse(currentChapter, currentVerse - 1);
+            } else if (currentChapter > 1) {
+                const prevChapter = currentChapter - 1;
+                const lastVerseOfPrevChapter = CHAPTER_VERSE_COUNTS[prevChapter];
+                fetchVerse(prevChapter, lastVerseOfPrevChapter);
+            } else {
+                showMessage('ఇది మొదటి అధ్యాయంలోని మొదటి శ్లోకం.', 'info');
+            }
+        }
+
+        // Function to navigate to the next verse
+        function goToNextVerse() {
+            let currentChapter = parseInt(verseDisplay.dataset.chapter);
+            let currentVerse = parseInt(verseDisplay.dataset.verse);
+
+            if (isNaN(currentChapter) || isNaN(currentVerse)) {
+                showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
+                return;
+            }
+
+            const maxVerseInCurrentChapter = CHAPTER_VERSE_COUNTS[currentChapter];
+
+            if (currentVerse < maxVerseInCurrentChapter) {
+                fetchVerse(currentChapter, currentVerse + 1);
+            } else if (currentChapter < 18) { // Assuming 18 chapters in total
+                const nextChapter = currentChapter + 1;
+                fetchVerse(nextChapter, 1); // Go to the first verse of the next chapter
+            } else {
+                showMessage('ఇది చివరి అధ్యాయంలోని చివరి శ్లోకం.', 'info');
+            }
+        }
+
+        // Add event listeners for navigation buttons
+        prevVerseBtn.addEventListener('click', goToPreviousVerse);
+        nextVerseBtn.addEventListener('click', goToNextVerse);
+
+    </script>
+</body>
+</html>
