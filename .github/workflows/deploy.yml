@@ -1,0 +1,50 @@
+name: Deploy PWA with Dynamic Version
+
+on:
+  push:
+    branches:
+      - main # Adjust this to your primary branch (e.g., master, gh-pages)
+  release:
+    types: [published] # This workflow will run when you publish a new GitHub Release
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag or commit SHA
+        id: get_version
+        run: |
+          # Check if the workflow was triggered by a release
+          if [ "${{ github.event_name }}" == "release" ]; then
+            VERSION=${{ github.event.release.tag_name }}
+          else
+            # Otherwise, use the short commit SHA
+            VERSION=$(git rev-parse --short HEAD)
+          fi
+          echo "Determined version: $VERSION"
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV # Store the version in an environment variable
+
+      - name: Update version in index.html
+        run: |
+          # Use sed to replace the placeholder with the actual version
+          # Ensure 'index.html' is the correct path to your file relative to the repo root
+          sed -i "s|__RELEASE_VERSION__|${{ env.RELEASE_VERSION }}|" index.html
+          echo "Updated index.html with version: ${{ env.RELEASE_VERSION }}"
+          # Optional: Display the modified file content for debugging
+          # cat index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # This should be the directory where your PWA files are located after any build steps.
+          # If your PWA files (like index.html, service-worker.js, etc.) are in the root of your repo, use './'.
+          # If they are in a subfolder (e.g., 'Gita'), use 'Gita'.
+          publish_dir: ./ # Adjust this path if your PWA is in a subfolder (e.g., 'Gita')
+          # If your PWA is hosted in a subpath like 'yourusername.github.io/Gita/', you might need:
+          # publish_branch: gh-pages # or your chosen GitHub Pages branch
+          # cname: # Your custom domain if applicable
+          # destination_dir: # Set if you publish to a subdirectory within gh-pages branch
