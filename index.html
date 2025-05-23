@@ -1517,7 +1517,7 @@
 
                 verseCache[cacheKey] = data;
                 localStorage.setItem(CACHE_KEY, JSON.stringify(verseCache));
-                console.log(`Workspaceed Chapter ${chapter}, Verse ${verse} from API and cached.`);
+                console.log(`Fetched Chapter ${chapter}, Verse ${verse} from API and cached.`);
                 console.log('Fetched data:', data);
 
                 displayVerse(data);
@@ -1550,7 +1550,7 @@
                  if (cachedVerseKeys.length > 0) {
                      const randomKey = cachedVerseKeys[Math.floor(Math.random() * cachedVerseKeys.length)];
                      const [chapter, verse] = randomKey.split('-').map(Number);
-                     console.log(`Workspaceing random verse from cache: Chapter ${chapter}, Verse ${verse}`);
+                     console.log(`Fetching random verse from cache: Chapter ${chapter}, Verse ${verse}`);
                      displayVerse(verseCache[randomKey]);
                  } else {
                      showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు కాష్‌లో శ్లోకాలు అందుబాటులో లేవు.', 'error');
@@ -1562,7 +1562,7 @@
                  const maxVerse = CHAPTER_VERSE_COUNTS[randomChapter] || 78;
                  const randomVerse = Math.floor(Math.random() * maxVerse) + 1;
 
-                 console.log(`Workspaceing random verse from API: Chapter ${randomChapter}, Verse ${randomVerse}`);
+                 console.log(`Fetching random verse from API: Chapter ${randomChapter}, Verse ${randomVerse}`);
                  fetchVerse(randomChapter, randomVerse);
              }
              closeSideMenu();
@@ -1783,7 +1783,9 @@
                  if (teluguMeaningText && teluguMeaningText.trim() !== '' && teluguMeaningText !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') {
                      shareText += `💡 భావార్థం:\n${teluguMeaningText.trim()}\n\n`;
                  }
-                 if (teluguDescriptionText && teluguDescriptionText.trim() !== '' && teluguDescriptionText !== 'సందేశం:\n${teluguDescriptionText.trim()}\n\n'; // Corrected line
+                 // Corrected the line for teluguDescriptionText
+                 if (teluguDescriptionText && teluguDescriptionText.trim() !== '' && teluguDescriptionText !== 'సందేశం అందుబాటులో లేదు.') {
+                     shareText += `💬 సందేశం:\n${teluguDescriptionText.trim()}\n\n`;
                  }
 
                  shareText += `Source: adabala.com`;
@@ -1884,7 +1886,7 @@
                         if (error.name === 'SecurityError') {
                             showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: HTTPS అవసరం. మీ సైట్ HTTPS ద్వారా అందించబడుతుందని నిర్ధారించుకోండి.', 'error');
                         } else if (error.name === 'NetworkError') {
-                            showMessage('సర్వీస్ వర్ker రిజిస్ట్రేషన్ విఫలమైంది: నెట్‌వర్క్ సమస్య. ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'error');
+                            showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: నెట్‌వర్క్ సమస్య. ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'error');
                         } else {
                             showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది. వివరాల కోసం కన్సోల్‌ని తనిఖీ చేయండి.', 'error');
                         }
