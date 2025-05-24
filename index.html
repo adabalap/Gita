@@ -33,8 +33,7 @@
             background-position: center;
             background-attachment: fixed; /* Keep background fixed while scrolling */
             overflow-x: hidden; /* Prevent horizontal scrollbar when menu is open */
-            /* Added for a more divine/vibing feel */
-            filter: sepia(0.3) brightness(1.05); /* Apply a subtle sepia and brightness filter to the background image */
+            /* filter removed from body to fix fixed positioning issues */
         }
 
         /* Apply Roboto to headings and UI elements */
@@ -52,6 +51,7 @@
             height: 100%;
             background-color: rgba(255, 255, 255, 0.5); /* Slightly more transparent background overlay for better visibility of the divine background */
             z-index: -1; /* Place behind content */
+            /* backdrop-filter removed from body::before as it can also create stacking context */
         }
 
         .splash-screen {
@@ -75,6 +75,8 @@
             z-index: 100;
             transition: opacity 0.8s ease-in-out; /* Smoother transition */
             text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6); /* More prominent shadow */
+            /* Filter applied here for splash screen */
+            filter: sepia(0.3) brightness(1.05);
         }
         .splash-screen h1 {
             font-size: 3rem; /* Larger title on splash */
@@ -98,6 +100,8 @@
             padding-left: 1rem; /* Keep horizontal padding */
             padding-right: 1rem; /* Keep horizontal padding */
             padding-bottom: 1rem; /* Keep bottom padding */
+            /* Filter applied here for main content */
+            filter: sepia(0.3) brightness(1.05);
         }
 
         /* Adjust padding for larger screens */
@@ -386,13 +390,8 @@
         }
         /* Message Area */
         .message-area {
-            position: fixed; /* Fixed position */
-            bottom: 1rem; /* At the bottom */
-            left: 50%;
-            transform: translateX(-50%); /* Center horizontally */
-            width: calc(100% - 2rem); /* Full width minus padding */
-            max-width: 400px; /* Max width for readability */
-            z-index: 90; /* Above most content, below splash screen */
+            /* Now positioned within the side menu, not fixed to viewport */
+            width: 100%; /* Take full width of parent (side-menu) */
             padding: 0.8rem 1rem;
             border-radius: 0.5rem;
             font-weight: medium;
@@ -404,6 +403,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             border: 1px solid;
             color: #333; /* Default text color */
+            margin-bottom: 1rem; /* Space below the message area in sidebar */
         }
         .message-area.show {
             opacity: 1;
@@ -424,6 +424,19 @@
             background-color: rgba(209, 250, 229, 0.8); /* Light green with transparency */
             color: #065f46; /* Dark green text */
             border-color: rgba(74, 222, 128, 0.8);
+        }
+
+        /* Spinner animation for loading messages */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message-area .spinner-icon {
+            display: inline-block;
+            margin-left: 0.5rem;
+            animation: spin 1s linear infinite;
+            vertical-align: middle; /* Align icon vertically with text */
         }
 
 
@@ -887,6 +900,8 @@
     <div class="side-menu-overlay" id="sideMenuOverlay"></div>
 
     <div class="side-menu" id="sideMenu">
+         <div id="messageArea" class="message-area hidden"></div>
+
          <div class="controls">
              <button class="btn btn-primary w-full mb-3 font-roboto" id="fetchSpecificVerseBtn">
                  <i class="ph ph-book-open"></i> నిర్దిష్ట శ్లోకం </button>
@@ -942,8 +957,6 @@
 
     </div>
 
-    <div id="messageArea" class="message-area hidden"></div>
-
     <div class="confetti-container" id="confettiContainer"></div>
 
     <footer>
@@ -961,7 +974,7 @@
         const verseSelect = document.getElementById('verseSelect');
         const fetchSpecificVerseBtn = document.getElementById('fetchSpecificVerseBtn');
         const fetchRandomVerseBtn = document.getElementById('fetchRandomVerseBtn');
-        const messageArea = document.getElementById('messageArea');
+        const messageArea = document.getElementById('messageArea'); // Now in sidebar
         const appVersionDisplay = document.getElementById('appVersionDisplay'); // New element for version display
 
         const confettiContainer = document.getElementById('confettiContainer');
@@ -985,6 +998,7 @@
         const langText2 = document.getElementById('langText2'); // Span for second language text
         let isEnglishActive = false; // State to track current language display
 
+        let messageHideTimeout = null; // To manage the auto-hide of messages
 
         // Base URL for your Flask API
         const API_BASE_URL = 'https://gita.adabala.com'; // UPDATE THIS IF YOUR API URL CHANGES
@@ -1011,30 +1025,48 @@
         let currentHighlightSpan = null; // To keep track of the currently highlighted span
         let isAudioMuted = true; // Audio mute state, default to true (muted)
 
-        // Function to show messages (now handles toast behavior)
+        // Function to show messages (now handles toast behavior and sidebar auto-pop/auto-close)
         function showMessage(msg, type = 'info', duration = 3000) { // duration for info/success
-            messageArea.textContent = msg;
+            messageArea.innerHTML = ''; // Clear previous content
+            const textNode = document.createTextNode(msg);
+            messageArea.appendChild(textNode);
+
+            // Add spinner for info messages that are meant to be loading (duration 0)
+            if (type === 'info' && duration === 0) {
+                const spinnerIcon = document.createElement('i');
+                spinnerIcon.className = 'ph ph-hourglass-simple spinner-icon text-lg'; // Phosphor hourglass icon
+                messageArea.appendChild(spinnerIcon);
+            }
+
             messageArea.className = `message-area ${type} show`; // Add 'show' class
 
             // Clear any existing timeout for auto-hide
-            if (messageArea.hideTimeout) {
-                clearTimeout(messageArea.hideTimeout);
+            if (messageHideTimeout) {
+                clearTimeout(messageHideTimeout);
             }
 
-            if (type === 'info' || type === 'success') {
-                messageArea.hideTimeout = setTimeout(() => {
-                    messageArea.classList.remove('show');
-                }, duration);
+            // Auto-pop the sidebar if a message is displayed
+            if (!sideMenu.classList.contains('open')) {
+                openSideMenu();
             }
-            // Error messages will not auto-hide, they stay until explicitly hidden or new message appears
+
+            // Set auto-hide timeout
+            messageHideTimeout = setTimeout(() => {
+                messageArea.classList.remove('show');
+                messageArea.innerHTML = ''; // Clear content when hiding
+                // Auto-close sidebar after message disappears
+                closeSideMenu();
+            }, duration);
         }
 
         // Function to hide messages (for errors or if needed explicitly)
         function hideMessage() {
             messageArea.classList.remove('show');
-            if (messageArea.hideTimeout) {
-                clearTimeout(messageArea.hideTimeout);
+            if (messageHideTimeout) {
+                clearTimeout(messageHideTimeout);
             }
+            messageArea.innerHTML = ''; // Clear content when hiding
+            // No auto-close of sidebar here, as it's handled by showMessage's timeout
         }
 
         // Function to trigger confetti/flower effect
@@ -1266,7 +1298,7 @@
                  return null;
             }
 
-            showMessage('అనువాదం పొందుతోంది...', 'info', 0); // Getting translation... (info, no auto-hide)
+            showMessage('అనువాదం పొందుతోంది...', 'info', 0); // Getting translation... (info, no auto-hide, with spinner)
 
             try {
                 console.log(`[fetchTranslation] Making POST request to ${API_BASE_URL}/translate`);
@@ -1307,10 +1339,7 @@
                 showMessage(`అనువాదం పొందడంలో లోపం: ${error.message}`, 'error'); // Error getting translation
                 return null;
             } finally {
-                // Ensure message is hidden if it was a loading message, or if an error occurred that needs manual dismissal
-                if (messageArea.textContent.includes('అనువాదం పొందుతోంది...')) {
-                    hideMessage(); // Hide loading message
-                }
+                // The message will auto-hide via the timeout set in showMessage
             }
         }
 
@@ -1617,7 +1646,7 @@
                  return;
             }
 
-            showMessage('శ్లోకం పొందుతోంది...', 'info'); // Getting verse... (now uses new showMessage)
+            showMessage('శ్లోకం పొందుతోంది...', 'info', 0); // Getting verse... (now uses new showMessage with spinner)
             try {
                 console.log(`[fetchVerse] Attempting to fetch from API: ${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
                 const response = await fetch(`${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
@@ -1665,6 +1694,8 @@
                 }
                 showMessage(displayMessage, 'error'); // Use 'error' type which won't auto-hide
                 verseDisplay.classList.add('hidden');
+            } finally {
+                // The message will auto-hide via the timeout set in showMessage
             }
         }
 
@@ -1828,6 +1859,23 @@
             console.log(`[chapterSelect] Changed to: ${event.target.value}`);
             const selectedChapter = parseInt(event.target.value);
             populateVerseDropdown(selectedChapter);
+        });
+
+        // NEW: Auto-action when a verse is selected in the dropdown
+        verseSelect.addEventListener('change', () => {
+            console.log(`[verseSelect] Changed.`);
+            const chapter = parseInt(chapterSelect.value);
+            const verse = parseInt(verseSelect.value);
+
+            // Only auto-fetch if both chapter and verse are valid numbers
+            if (!isNaN(chapter) && chapter > 0 && !isNaN(verse) && verse > 0) {
+                console.log(`[verseSelect] Both chapter and verse selected. Auto-fetching Chapter ${chapter}, Verse ${verse}.`);
+                // Reset translation state when new verse is fetched explicitly
+                isEnglishActive = false;
+                updateLanguageToggleButton(); // Call helper to update button state
+                fetchVerse(chapter, verse);
+                closeSideMenu(); // Close menu after fetching
+            }
         });
 
         sideMenuOverlay.addEventListener('click', closeSideMenu); // Close menu when clicking overlay
