@@ -392,7 +392,7 @@
         .btn-secondary:hover {
             background-color: #059669; /* Darker emerald */
         }
-        /* Message Area (for sidebar, now unused for general messages) */
+        /* Message Area (for sidebar) */
         .message-area {
             width: 100%;
             padding: 0.8rem 1rem;
@@ -400,30 +400,30 @@
             font-weight: medium;
             font-size: 0.95rem;
             text-align: center;
-            opacity: 0;
+            opacity: 0; /* Hidden by default */
             visibility: hidden;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             border: 1px solid;
             color: #333; /* Default text color */
-            margin-bottom: 1rem;
+            margin-bottom: 1rem; /* Space below the message area in sidebar */
         }
         .message-area.show {
             opacity: 1;
             visibility: visible;
         }
         .message-area.error {
-            background-color: rgba(254, 226, 226, 0.8);
-            color: #991b1b;
+            background-color: rgba(254, 226, 226, 0.8); /* Red background with higher transparency */
+            color: #991b1b; /* Dark red text */
             border-color: rgba(248, 113, 113, 0.8);
         }
          .message-area.info {
-            background-color: rgba(219, 234, 254, 0.8);
-            color: #1e40af;
+            background-color: rgba(219, 234, 254, 0.8); /* Blue background with higher transparency */
+            color: #1e40af; /* Dark blue text */
             border-color: rgba(147, 197, 253, 0.8);
         }
         .message-area.success {
-            background-color: rgba(209, 250, 229, 0.8);
+            background-color: rgba(209, 250, 229, 0.8); /* Light green with transparency */
             color: #065f46;
             border-color: rgba(74, 222, 128, 0.8);
         }
@@ -994,7 +994,7 @@
     <div class="side-menu-overlay" id="sideMenuOverlay"></div>
 
     <div class="side-menu" id="sideMenu">
-         <div id="messageArea" class="message-area hidden"></div>
+         <div id="sidebarMessageArea" class="message-area hidden"></div>
 
          <div class="controls">
              <button class="btn btn-primary w-full mb-3 font-roboto" id="fetchSpecificVerseBtn">
@@ -1061,7 +1061,7 @@
 
     <script>
         // User-configurable App Version
-        const APP_VERSION = "2.0.9"; // Updated version number
+        const APP_VERSION = "2.1.0"; // Updated version number to reflect message handling changes
 
         const splashScreen = document.getElementById('splashScreen');
         const mainContent = document.getElementById('mainContent');
@@ -1070,8 +1070,8 @@
         const verseSelect = document.getElementById('verseSelect');
         const fetchSpecificVerseBtn = document.getElementById('fetchSpecificVerseBtn');
         const fetchRandomVerseBtn = document.getElementById('fetchRandomVerseBtn');
-        // const messageArea = document.getElementById('messageArea'); // This is now unused for general messages
-        const toastMessageArea = document.getElementById('toastMessageArea'); // NEW: For messages on main screen
+        const sidebarMessageArea = document.getElementById('sidebarMessageArea'); // Renamed for clarity
+        const toastMessageArea = document.getElementById('toastMessageArea'); // For messages on main screen
         const appVersionDisplay = document.getElementById('appVersionDisplay'); // New element for version display
 
         const confettiContainer = document.getElementById('confettiContainer');
@@ -1101,6 +1101,7 @@
         let isEnglishActive = false; // State to track current language display
 
         let toastHideTimeout = null; // To manage the auto-hide of toast messages
+        let sidebarMessageHideTimeout = null; // To manage auto-hide of sidebar messages
 
         // Base URL for your Flask API
         const API_BASE_URL = 'https://gita.adabala.com'; // UPDATE THIS IF YOUR API URL CHANGES
@@ -1156,8 +1157,8 @@
          * @param {string} type The type of message ('info', 'success', 'error').
          * @param {number} duration The duration in milliseconds before auto-hiding. 0 means it stays until hideToastMessage() is called.
          */
-        function showMessage(msg, type = 'info', duration = 500) { // Default duration for toasts
-            console.log(`[showMessage] Displaying toast: "${msg}" (Type: ${type}, Duration: ${duration})`);
+        function showToastMessage(msg, type = 'info', duration = 500) { // Default duration for toasts
+            console.log(`[showToastMessage] Displaying toast: "${msg}" (Type: ${type}, Duration: ${duration})`);
             toastMessageArea.innerHTML = ''; // Clear previous content
             const textNode = document.createTextNode(msg);
             toastMessageArea.appendChild(textNode);
@@ -1190,11 +1191,52 @@
             toastMessageArea.innerHTML = ''; // Clear content when hiding
         }
 
+        /**
+         * Function to show messages inside the sidebar.
+         * @param {string} msg The message to display.
+         * @param {string} type The type of message ('info', 'success', 'error').
+         * @param {number} duration The duration in milliseconds before auto-hiding. 0 means it stays until hideSidebarMessage() is called.
+         */
+        function showSidebarMessage(msg, type = 'info', duration = 500) { // Default duration for sidebar messages
+            console.log(`[showSidebarMessage] Displaying in sidebar: "${msg}" (Type: ${type}, Duration: ${duration})`);
+            sidebarMessageArea.innerHTML = ''; // Clear previous content
+            const textNode = document.createTextNode(msg);
+            sidebarMessageArea.appendChild(textNode);
+
+            sidebarMessageArea.className = `message-area ${type} show`; // Add 'show' class
+
+            // Clear any existing timeout for auto-hide
+            if (sidebarMessageHideTimeout) {
+                clearTimeout(sidebarMessageHideTimeout);
+            }
+
+            // Set auto-hide timeout only if duration is specified and greater than 0
+            if (duration > 0) {
+                sidebarMessageHideTimeout = setTimeout(() => {
+                    hideSidebarMessage();
+                }, duration);
+            }
+        }
+
+        /**
+         * Function to hide the sidebar message.
+         */
+        function hideSidebarMessage() {
+            console.log(`[hideSidebarMessage] Hiding sidebar message.`);
+            sidebarMessageArea.classList.remove('show');
+            if (sidebarMessageHideTimeout) {
+                clearTimeout(sidebarMessageHideTimeout);
+                sidebarMessageHideTimeout = null;
+            }
+            sidebarMessageArea.innerHTML = ''; // Clear content when hiding
+        }
+
+
         // Function to trigger confetti/flower effect
         function triggerConfetti() {
             const numConfetti = 50; // Number of confetti pieces
             const colors = ['#ff0', '#f00', '#0f0', '#0f0', '#ff00ff', '#00ffff', '#ffa500']; // Confetti colors (added more green)
-            const emojis = ['🌸', '�', '🌺', '🌻', '🌹', '🌷']; // Flower emojis (optional)
+            const emojis = ['🌸', '🌼', '🌺', '🌻', '🌹', '🌷']; // Flower emojis (optional)
             const animationDuration = '3s'; // Duration for one fall animation
 
             // Clear any existing confetti
@@ -1320,7 +1362,7 @@
                  currentUtterance.onerror = (event) => {
                      console.error('SpeechSynthesisUtterance error:', event.error);
                      if (event.error !== 'cancelled') {
-                        showMessage(`వచనాన్ని చదవడంలో లోపం: ${event.error}`, 'error'); // Error reading text
+                        showToastMessage(`వచనాన్ని చదవడంలో లోపం: ${event.error}`, 'error'); // Error reading text
                      }
                      clearHighlight();
                  };
@@ -1415,7 +1457,7 @@
             }
 
             if (!navigator.onLine) {
-                 showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. అనువాదం అందుబాటులో లేదు.', 'error'); // Translation not available offline.
+                 showToastMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. అనువాదం అందుబాటులో లేదు.', 'error'); // Translation not available offline.
                  return null;
             }
 
@@ -1451,12 +1493,12 @@
                     console.log(`[fetchTranslation] Stored translation in cache for ${currentVerseKey}`);
                 }
 
-                showMessage('అనువాదం విజయవంతమైంది.', 'success'); // Translation successful. (auto-hides)
+                showToastMessage('అనువాదం విజయవంతమైంది.', 'success'); // Translation successful. (auto-hides)
                 return translatedData;
 
             } catch (error) {
                 console.error('[fetchTranslation] Error fetching translation:', error);
-                showMessage(`అనువాదం పొందడంలో లోపం: ${error.message}`, 'error'); // Error getting translation (auto-hides)
+                showToastMessage(`అనువాదం పొందడంలో లోపం: ${error.message}`, 'error'); // Error getting translation (auto-hides)
                 return null;
             } finally {
                 hideLoadingOverlay(); // Always hide the loading overlay
@@ -1522,7 +1564,7 @@
                 } else {
                     // If translation failed, revert to Telugu and show message
                     console.warn(`[displayVerse] English translation failed or not available. Reverting to Telugu.`);
-                    showMessage('అనువాదం అందుబాటులో లేదు, తెలుగులో చూపుతోంది.', 'info'); // Translation not available, showing in Telugu.
+                    showToastMessage('అనువాదం అందుబాటులో లేదు, తెలుగులో చూపుతోంది.', 'info'); // Translation not available, showing in Telugu.
                     isEnglishActive = false; // Reset toggle state
                     // Ensure the button text and icon are reset if translation failed
                     updateLanguageToggleButton(); // Call helper to update button state
@@ -1708,11 +1750,11 @@
                     if (favorites.includes(verseKey)) {
                         // Remove from favorites
                         favorites = favorites.filter(favKey => favKey !== verseKey);
-                        showMessage(`అధ్యాయం ${chapter}, శ్లోకం ${verse} ఇష్టమైన వాటి నుండి తీసివేయబడింది.`, 'success');
+                        showToastMessage(`అధ్యాయం ${chapter}, శ్లోకం ${verse} ఇష్టమైన వాటి నుండి తీసివేయబడింది.`, 'success');
                     } else {
                         // Add to favorites
                         favorites.push(verseKey);
-                        showMessage(`అధ్యాయం ${chapter}, శ్లోకం ${verse} ఇష్టమైన వాటికి జోడించబడింది.`, 'success');
+                        showToastMessage(`అధ్యాయం ${chapter}, శ్లోకం ${verse} ఇష్టమైన వాటికి జోడించబడింది.`, 'success');
                     }
                     // Save updated favorites to localStorage
                     localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
@@ -1759,7 +1801,7 @@
             }
 
             if (!navigator.onLine) {
-                 showMessage(`మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`, 'error');
+                 showToastMessage(`మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`, 'error');
                  verseDisplay.classList.add('hidden');
                  return;
             }
@@ -1794,7 +1836,7 @@
                 console.log('[fetchVerse] Fetched data:', data);
 
                 displayVerse(data);
-                showMessage('శ్లోకం విజయవంతంగా లోడ్ చేయబడింది.', 'success'); // Verse loaded successfully. (auto-hides)
+                showToastMessage('శ్లోకం విజయవంతంగా లోడ్ చేయబడింది.', 'success'); // Verse loaded successfully. (auto-hides)
 
             } catch (error) {
                 console.error('[fetchVerse] Error fetching verse:', error);
@@ -1811,7 +1853,7 @@
                      console.error('[fetchVerse] Raw error object:', error);
                      displayMessage = `శ్లోకం పొందడంలో లోపం. వివరాల కోసం కన్సోల్ చూడండి.`;
                 }
-                showMessage(displayMessage, 'error'); // Error getting verse (auto-hides)
+                showToastMessage(displayMessage, 'error'); // Error getting verse (auto-hides)
                 verseDisplay.classList.add('hidden');
             } finally {
                 hideLoadingOverlay(); // Always hide the loading overlay
@@ -1829,7 +1871,7 @@
                      console.log(`[fetchRandomVerse] Fetching random verse from cache: Chapter ${chapter}, Verse ${verse}`);
                      displayVerse(verseCache[randomKey]);
                  } else {
-                     showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు కాష్‌లో శ్లోకాలు అందుబాటులో లేవు.', 'error');
+                     showToastMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు కాష్‌లో శ్లోకాలు అందుబాటులో లేవు.', 'error');
                      verseDisplay.classList.add('hidden');
                  }
              } else {
@@ -1912,12 +1954,14 @@
             sideMenuOverlay.classList.add('visible');
              sideMenuHint.style.display = 'none'; // Hide hint when menu is open
              updateFavoritesListUI(); // Update favorites list whenever menu opens
+             hideToastMessage(); // Hide any toast message when sidebar opens
         }
 
         function closeSideMenu() {
             console.log(`[closeSideMenu] Closing side menu.`);
             sideMenu.classList.remove('open');
             sideMenuOverlay.classList.remove('visible');
+            hideSidebarMessage(); // Hide any sidebar message when sidebar closes
              // Show hint again after a delay if not in landscape on small screen
              // The menu closes immediately via CSS transition, this is for the hint to reappear
              if (!(window.matchMedia("(orientation: landscape) and (max-width: 768px)").matches)) {
@@ -1952,8 +1996,9 @@
             const chapter = parseInt(chapterSelect.value);
             const verse = parseInt(verseSelect.value);
 
+            // Input validation error should be in sidebar
             if (isNaN(chapter) || isNaN(verse) || chapter <= 0 || verse <= 0) {
-                showMessage('దయచేసి అధ్యాయం మరియు శ్లోకం ఎంచుకోండి.', 'error');
+                showSidebarMessage('దయచేసి అధ్యాయం మరియు శ్లోకం ఎంచుకోండి.', 'error');
                 return;
             }
 
@@ -2030,7 +2075,8 @@
             console.log(`[languageToggleBtn] Clicked. Current isEnglishActive: ${isEnglishActive}`);
 
             if (verseDisplay.classList.contains('hidden')) {
-                showMessage('దయచేసి ముందుగా ఒక శ్లోకాన్ని లోడ్ చేయండి.', 'info'); // Please load a verse first.
+                // Error when no verse is loaded should be in sidebar
+                showSidebarMessage('దయచేసి ముందుగా ఒక శ్లోకాన్ని లోడ్ చేయండి.', 'info'); // Please load a verse first.
                 console.log(`[languageToggleBtn] Verse display is hidden, returning.`);
                 return;
             }
@@ -2055,11 +2101,11 @@
                 } else {
                     // This case should ideally not happen if a verse is currently displayed
                     console.error("[languageToggleBtn] Current verse data not found in cache for re-display.");
-                    showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
+                    showToastMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
                 }
             } else {
                 console.error("[languageToggleBtn] No valid verse available for translation (dataset missing).");
-                showMessage('అనువాదం కోసం శ్లోకం అందుబాటులో లేదు.', 'error'); // No verse available for translation.
+                showToastMessage('అనువాదం కోసం శ్లోకం అందుబాటులో లేదు.', 'error'); // No verse available for translation.
             }
             closeSideMenu(); // Close the side menu after translation is attempted/completed
         });
@@ -2202,11 +2248,11 @@
                          }).catch((error) => {
                              console.error('Error sharing via Web Share API:', error);
                              copyToClipboard(shareText);
-                             showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
+                             showToastMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
                          });
                      } else {
                          copyToClipboard(shareText);
-                         showMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
+                         showToastMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
                      }
                  }
              }
@@ -2239,7 +2285,7 @@
                  // as shareUrl will always be set in the switch for those platforms.
                  // It's a safeguard.
                  copyToClipboard(text);
-                 showMessage('ఈ ప్లాట్‌ఫారమ్‌కు నేరుగా భాగస్వామ్యం చేయడం సాధ్యం కాలేదు. శ్లోకం కాపీ చేయబడింది!', 'info');
+                 showToastMessage('ఈ ప్లాట్‌ఫారమ్‌కు నేరుగా భాగస్వామ్యం చేయడం సాధ్యం కాలేదు. శ్లోకం కాపీ చేయబడింది!', 'info');
              }
         }
 
@@ -2283,11 +2329,11 @@
                         console.error('Ensure service-worker.js is at the root of your /Gita/ subfolder on GitHub Pages and accessible via HTTPS.');
                         // Provide more context to the user if the error is a SecurityError
                         if (error.name === 'SecurityError') {
-                            showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: HTTPS అవసరం. మీ సైట్ HTTPS ద్వారా అందించబడుతుందని నిర్ధారించుకోండి.', 'error');
+                            showToastMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: HTTPS అవసరం. మీ సైట్ HTTPS ద్వారా అందించబడుతుందని నిర్ధారించుకోండి.', 'error');
                         } else if (error.name === 'NetworkError') {
-                            showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: నెట్‌వర్క్ సమస్య. ఇంటర్NET కనెక్షన్‌ని తనిఖీ చేయండి.', 'error');
+                            showToastMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: నెట్‌వర్క్ సమస్య. ఇంటర్NET కనెక్షన్‌ని తనిఖీ చేయండి.', 'error');
                         } else {
-                            showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది. వివరాల కోసం కన్సోల్‌ని తనిఖీ చేయండి.', 'error');
+                            showToastMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది. వివరాల కోసం కన్సోల్‌ని తనిఖీ చేయండి.', 'error');
                         }
                     });
             });
@@ -2295,12 +2341,12 @@
 
         window.addEventListener('online', () => {
             console.log('App is online.');
-            showMessage('మీరు ఆన్‌లైన్‌లోకి తిరిగి వచ్చారు.', 'info'); // You are back online.
+            showToastMessage('మీరు ఆన్‌లైన్‌లోకి తిరిగి వచ్చారు.', 'info'); // You are back online.
         });
 
         window.addEventListener('offline', () => {
             console.log('App is offline.');
-            showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. కాష్ చేయబడిన కంటెంట్ మాత్రమే అందుబాటులో ఉండవచ్చు.', 'info'); // You are offline. Only cached content may be available.
+            showToastMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. కాష్ చేయబడిన కంటెంట్ మాత్రమే అందుబాటులో ఉండవచ్చు.', 'info'); // You are offline. Only cached content may be available.
         });
 
         // Check Phosphor Icons loading on DOMContentLoaded
@@ -2322,7 +2368,7 @@
                     console.log('Phosphor Icons library appears to be loaded and rendering.');
                 } else {
                     console.warn('Phosphor Icons library might not be loaded or rendering correctly. Icons may not display.');
-                    showMessage('ఐకాన్‌లు సరిగ్గా లోడ్ కాకపోవచ్చు. దయచేసి మీ ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'info', 500); // Changed duration here too
+                    showToastMessage('ఐకాన్‌లు సరిగ్గా లోడ్ కాకపోవచ్చు. దయచేసి మీ ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'info', 500); // Changed duration here too
                 }
             }, 1000); // Delay check by 1 second
         });
@@ -2339,7 +2385,7 @@
                     fetchRandomVerse(); // Try to load a random verse from cache/online
                 } else {
                     verseDisplay.classList.add('hidden'); // Hide verse display
-                    showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info');
+                    showToastMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info');
                 }
                 return;
             }
@@ -2355,7 +2401,7 @@
                 const lastVerseOfPrevChapter = CHAPTER_VERSE_COUNTS[prevChapter];
                 fetchVerse(prevChapter, lastVerseOfPrevChapter);
             } else {
-                showMessage('ఇది మొదటి అధ్యాయంలోని మొదటి శ్లోకం.', 'info'); // Changed to showMessage
+                showToastMessage('ఇది మొదటి అధ్యాయంలోని మొదటి శ్లోకం.', 'info'); // Changed to showToastMessage
             }
         }
 
@@ -2371,7 +2417,7 @@
                     fetchRandomVerse(); // Try to load a random verse from cache/online
                 } else {
                     verseDisplay.classList.add('hidden'); // Hide verse display
-                    showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info');
+                    showToastMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info');
                 }
                 return;
             }
@@ -2388,7 +2434,7 @@
                 const nextChapter = currentChapter + 1;
                 fetchVerse(nextChapter, 1); // Go to the first verse of the next chapter
             } else {
-                showMessage('ఇది చివరి అధ్యాయంలోని చివరి శ్లోకం.', 'info'); // Changed to showMessage
+                showToastMessage('ఇది చివరి అధ్యాయంలోని చివరి శ్లోకం.', 'info'); // Changed to showToastMessage
             }
         }
 
@@ -2399,4 +2445,3 @@
     </script>
 </body>
 </html>
-�
