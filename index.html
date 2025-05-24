@@ -392,43 +392,86 @@
         .btn-secondary:hover {
             background-color: #059669; /* Darker emerald */
         }
-        /* Message Area */
+        /* Message Area (for sidebar, now unused for general messages) */
         .message-area {
-            /* Now positioned within the side menu, not fixed to viewport */
-            width: 100%; /* Take full width of parent (side-menu) */
+            width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 0.5rem;
             font-weight: medium;
             font-size: 0.95rem;
             text-align: center;
-            opacity: 0; /* Hidden by default */
+            opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             border: 1px solid;
             color: #333; /* Default text color */
-            margin-bottom: 1rem; /* Space below the message area in sidebar */
+            margin-bottom: 1rem;
         }
         .message-area.show {
             opacity: 1;
             visibility: visible;
         }
         .message-area.error {
-            background-color: rgba(254, 226, 226, 0.8); /* Red background with higher transparency */
-            color: #991b1b; /* Dark red text */
+            background-color: rgba(254, 226, 226, 0.8);
+            color: #991b1b;
             border-color: rgba(248, 113, 113, 0.8);
         }
          .message-area.info {
-            background-color: rgba(219, 234, 254, 0.8); /* Blue background with higher transparency */
-            color: #1e40af; /* Dark blue text */
+            background-color: rgba(219, 234, 254, 0.8);
+            color: #1e40af;
             border-color: rgba(147, 197, 253, 0.8);
         }
-        /* New: success message style for toast */
         .message-area.success {
-            background-color: rgba(209, 250, 229, 0.8); /* Light green with transparency */
-            color: #065f46; /* Dark green text */
+            background-color: rgba(209, 250, 229, 0.8);
+            color: #065f46;
             border-color: rgba(74, 222, 128, 0.8);
         }
+
+        /* NEW: Toast Message Area (for main screen) */
+        .toast-message-area {
+            position: fixed; /* Fixed position relative to viewport */
+            top: 1rem; /* From the top */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Adjust for true centering */
+            z-index: 50; /* Above main content, below splash/loading */
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: medium;
+            font-size: 0.95rem;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: 1px solid;
+            max-width: 90%; /* Limit width on small screens */
+            width: fit-content; /* Adjust width to content */
+            white-space: nowrap; /* Prevent text wrapping */
+            overflow: hidden; /* Hide overflow */
+            text-overflow: ellipsis; /* Add ellipsis for overflow */
+        }
+        .toast-message-area.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        /* Specific styles for error, info, success types for toast */
+        .toast-message-area.error {
+            background-color: rgba(254, 226, 226, 0.9); /* More opaque for toast */
+            color: #991b1b;
+            border-color: rgba(248, 113, 113, 0.9);
+        }
+        .toast-message-area.info {
+            background-color: rgba(219, 234, 254, 0.9); /* More opaque for toast */
+            color: #1e40af;
+            border-color: rgba(147, 197, 253, 0.9);
+        }
+        .toast-message-area.success {
+            background-color: rgba(209, 250, 229, 0.9); /* More opaque for toast */
+            color: #065f46;
+            border-color: rgba(74, 222, 128, 0.9);
+        }
+
 
         /* Spinner animation for loading messages */
         @keyframes spin {
@@ -436,7 +479,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        .message-area .spinner-icon {
+        .message-area .spinner-icon, .toast-message-area .spinner-icon { /* Apply to both if needed */
             display: inline-block;
             margin-left: 0.5rem;
             animation: spin 1s linear infinite;
@@ -934,25 +977,6 @@
             animation: spin 2s linear infinite; /* Spin animation for hourglass */
         }
 
-        /* New: Initial message when no verse is loaded */
-        /* This style block is kept for reference but the element is removed from HTML */
-        .initial-message {
-            text-align: center;
-            padding: 2rem;
-            color: #4b5563;
-            font-size: 1.2rem;
-            margin-top: 2rem;
-            background-color: rgba(255, 255, 255, 0.6);
-            border-radius: 1rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            backdrop-filter: blur(3px);
-            border: 1px solid rgba(229, 231, 235, 0.7);
-        }
-
-        .initial-message p {
-            margin-bottom: 1rem;
-        }
-
     </style>
 </head>
 <body>
@@ -1013,6 +1037,8 @@
     <div class="main-content container mx-auto p-4 md:p-8" id="mainContent">
         <h1 id="appHeading">శ్రీమద్భగవద్గీత</h1>
 
+        <div id="toastMessageArea" class="toast-message-area hidden"></div>
+
         <div id="verseDisplay" class="card hidden">
         </div>
 
@@ -1035,7 +1061,7 @@
 
     <script>
         // User-configurable App Version
-        const APP_VERSION = "2.0.7"; // Updated version number
+        const APP_VERSION = "2.0.9"; // Updated version number
 
         const splashScreen = document.getElementById('splashScreen');
         const mainContent = document.getElementById('mainContent');
@@ -1044,7 +1070,8 @@
         const verseSelect = document.getElementById('verseSelect');
         const fetchSpecificVerseBtn = document.getElementById('fetchSpecificVerseBtn');
         const fetchRandomVerseBtn = document.getElementById('fetchRandomVerseBtn');
-        const messageArea = document.getElementById('messageArea'); // Now in sidebar
+        // const messageArea = document.getElementById('messageArea'); // This is now unused for general messages
+        const toastMessageArea = document.getElementById('toastMessageArea'); // NEW: For messages on main screen
         const appVersionDisplay = document.getElementById('appVersionDisplay'); // New element for version display
 
         const confettiContainer = document.getElementById('confettiContainer');
@@ -1056,7 +1083,6 @@
         // New loading overlay elements
         const loadingOverlay = document.getElementById('loadingOverlay');
         const loadingMessage = document.getElementById('loadingMessage');
-        // const initialMessageDiv = document.getElementById('initialMessage'); // Removed this line as the element is gone
 
         // Favorites elements
         const favoritesSection = document.getElementById('favoritesSection');
@@ -1074,7 +1100,7 @@
         const langText2 = document.getElementById('langText2'); // Span for second language text
         let isEnglishActive = false; // State to track current language display
 
-        let messageHideTimeout = null; // To manage the auto-hide of messages
+        let toastHideTimeout = null; // To manage the auto-hide of toast messages
 
         // Base URL for your Flask API
         const API_BASE_URL = 'https://gita.adabala.com'; // UPDATE THIS IF YOUR API URL CHANGES
@@ -1112,7 +1138,6 @@
             // Hide main content and navigation buttons during loading
             verseDisplay.classList.add('hidden');
             navigationButtonsContainer.classList.add('hidden');
-            // initialMessageDiv.classList.add('hidden'); // Removed: Element no longer exists
         }
 
         /**
@@ -1123,69 +1148,53 @@
             loadingOverlay.classList.remove('visible');
             // Show navigation buttons again after loading
             navigationButtonsContainer.classList.remove('hidden');
-            // No longer need to manage initialMessageDiv visibility here
-            // if (!verseDisplay.classList.contains('hidden')) {
-            //     initialMessageDiv.classList.add('hidden');
-            // } else {
-            //     initialMessageDiv.classList.remove('hidden');
-            // }
         }
 
-        // Function to show messages (now handles toast behavior and sidebar auto-pop/auto-close)
-        // duration = 0 means the message stays until hideMessage() is called.
-        // duration > 0 means it auto-hides after 'duration' milliseconds.
-        function showMessage(msg, type = 'info', duration = 5000) {
-            console.log(`[showMessage] Displaying: "${msg}" (Type: ${type}, Duration: ${duration})`);
-            messageArea.innerHTML = ''; // Clear previous content
+        /**
+         * Function to show messages as a toast on the main screen.
+         * @param {string} msg The message to display.
+         * @param {string} type The type of message ('info', 'success', 'error').
+         * @param {number} duration The duration in milliseconds before auto-hiding. 0 means it stays until hideToastMessage() is called.
+         */
+        function showMessage(msg, type = 'info', duration = 500) { // Default duration for toasts
+            console.log(`[showMessage] Displaying toast: "${msg}" (Type: ${type}, Duration: ${duration})`);
+            toastMessageArea.innerHTML = ''; // Clear previous content
             const textNode = document.createTextNode(msg);
-            messageArea.appendChild(textNode);
+            toastMessageArea.appendChild(textNode);
 
-            // Add spinner for info messages that are meant to be loading (duration 0)
-            const isLoaderMessage = (type === 'info' && duration === 0);
-            if (isLoaderMessage) {
-                messageArea.appendChild(document.createTextNode('\u00A0')); // Non-breaking space
-                const spinnerIcon = document.createElement('i');
-                spinnerIcon.className = 'ph ph-hourglass-simple spinner-icon text-lg'; // Phosphor hourglass icon
-                messageArea.appendChild(spinnerIcon);
-            }
-
-            messageArea.className = `message-area ${type} show`; // Add 'show' class
+            toastMessageArea.className = `toast-message-area ${type} show`; // Add 'show' class
 
             // Clear any existing timeout for auto-hide
-            if (messageHideTimeout) {
-                clearTimeout(messageHideTimeout);
-            }
-
-            // Auto-pop the sidebar if a message is displayed
-            if (!sideMenu.classList.contains('open')) {
-                openSideMenu();
+            if (toastHideTimeout) {
+                clearTimeout(toastHideTimeout);
             }
 
             // Set auto-hide timeout only if duration is specified and greater than 0
             if (duration > 0) {
-                messageHideTimeout = setTimeout(() => {
-                    hideMessage(); // Call hideMessage to properly clear and close
+                toastHideTimeout = setTimeout(() => {
+                    hideToastMessage();
                 }, duration);
             }
         }
 
-        // Function to hide messages
-        function hideMessage() {
-            console.log(`[hideMessage] Hiding message and closing sidebar.`);
-            messageArea.classList.remove('show');
-            if (messageHideTimeout) {
-                clearTimeout(messageHideTimeout);
-                messageHideTimeout = null;
+        /**
+         * Function to hide the toast message.
+         */
+        function hideToastMessage() {
+            console.log(`[hideToastMessage] Hiding toast message.`);
+            toastMessageArea.classList.remove('show');
+            if (toastHideTimeout) {
+                clearTimeout(toastHideTimeout);
+                toastHideTimeout = null;
             }
-            messageArea.innerHTML = ''; // Clear content when hiding
-            closeSideMenu(); // Always close sidebar when message is explicitly hidden
+            toastMessageArea.innerHTML = ''; // Clear content when hiding
         }
 
         // Function to trigger confetti/flower effect
         function triggerConfetti() {
             const numConfetti = 50; // Number of confetti pieces
             const colors = ['#ff0', '#f00', '#0f0', '#0f0', '#ff00ff', '#00ffff', '#ffa500']; // Confetti colors (added more green)
-            const emojis = ['🌸', '🌼', '🌺', '🌻', '🌹', '🌷']; // Flower emojis (optional)
+            const emojis = ['🌸', '�', '🌺', '🌻', '🌹', '🌷']; // Flower emojis (optional)
             const animationDuration = '3s'; // Duration for one fall animation
 
             // Clear any existing confetti
@@ -1465,9 +1474,6 @@
 
             // Scroll to the top of the page
             window.scrollTo(0, 0);
-
-            // initialMessageDiv is removed, so no need to hide it here.
-            // initialMessageDiv.classList.add('hidden');
 
             // Clear previous content in the main display area
             verseDisplay.innerHTML = '';
@@ -1755,7 +1761,6 @@
             if (!navigator.onLine) {
                  showMessage(`మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`, 'error');
                  verseDisplay.classList.add('hidden');
-                 // initialMessageDiv.classList.remove('hidden'); // Removed: Element no longer exists
                  return;
             }
 
@@ -1808,7 +1813,6 @@
                 }
                 showMessage(displayMessage, 'error'); // Error getting verse (auto-hides)
                 verseDisplay.classList.add('hidden');
-                // initialMessageDiv.classList.remove('hidden'); // Removed: Element no longer exists
             } finally {
                 hideLoadingOverlay(); // Always hide the loading overlay
             }
@@ -1827,7 +1831,6 @@
                  } else {
                      showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు కాష్‌లో శ్లోకాలు అందుబాటులో లేవు.', 'error');
                      verseDisplay.classList.add('hidden');
-                     // initialMessageDiv.classList.remove('hidden'); // Removed: Element no longer exists
                  }
              } else {
                  const maxChapter = 18;
@@ -2026,9 +2029,6 @@
         languageToggleBtn.addEventListener('click', async () => {
             console.log(`[languageToggleBtn] Clicked. Current isEnglishActive: ${isEnglishActive}`);
 
-            // The initialMessageDiv has been removed, so no need to hide it here.
-            // initialMessageDiv.classList.add('hidden');
-
             if (verseDisplay.classList.contains('hidden')) {
                 showMessage('దయచేసి ముందుగా ఒక శ్లోకాన్ని లోడ్ చేయండి.', 'info'); // Please load a verse first.
                 console.log(`[languageToggleBtn] Verse display is hidden, returning.`);
@@ -2061,6 +2061,7 @@
                 console.error("[languageToggleBtn] No valid verse available for translation (dataset missing).");
                 showMessage('అనువాదం కోసం శ్లోకం అందుబాటులో లేదు.', 'error'); // No verse available for translation.
             }
+            closeSideMenu(); // Close the side menu after translation is attempted/completed
         });
 
 
@@ -2321,7 +2322,7 @@
                     console.log('Phosphor Icons library appears to be loaded and rendering.');
                 } else {
                     console.warn('Phosphor Icons library might not be loaded or rendering correctly. Icons may not display.');
-                    showMessage('ఐకాన్‌లు సరిగ్గా లోడ్ కాకపోవచ్చు. దయచేసి మీ ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'info', 5000);
+                    showMessage('ఐకాన్‌లు సరిగ్గా లోడ్ కాకపోవచ్చు. దయచేసి మీ ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'info', 500); // Changed duration here too
                 }
             }, 1000); // Delay check by 1 second
         });
@@ -2337,7 +2338,6 @@
                 if (Object.keys(verseCache).length > 0) {
                     fetchRandomVerse(); // Try to load a random verse from cache/online
                 } else {
-                    // initialMessageDiv.classList.remove('hidden'); // Removed: Element no longer exists
                     verseDisplay.classList.add('hidden'); // Hide verse display
                     showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info');
                 }
@@ -2370,7 +2370,6 @@
                 if (Object.keys(verseCache).length > 0) {
                     fetchRandomVerse(); // Try to load a random verse from cache/online
                 } else {
-                    // initialMessageDiv.classList.remove('hidden'); // Removed: Element no longer exists
                     verseDisplay.classList.add('hidden'); // Hide verse display
                     showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info');
                 }
@@ -2400,3 +2399,4 @@
     </script>
 </body>
 </html>
+�
