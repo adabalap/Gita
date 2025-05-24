@@ -887,8 +887,10 @@
     <div class="side-menu-overlay" id="sideMenuOverlay"></div>
 
     <div class="side-menu" id="sideMenu">
-         <h2>ఒక శ్లోకం పొందండి</h2>
-         <div class="controls"> <div class="input-group">
+         <div class="controls">
+             <button class="btn btn-primary w-full mb-3 font-roboto" id="fetchSpecificVerseBtn">
+                 <i class="ph ph-book-open"></i> నిర్దిష్ట శ్లోకం </button>
+             <div class="input-group">
                 <select id="chapterSelect" class="focus:ring-blue-500 focus:border-blue-500 font-roboto">
                     <option value="">అధ్యాయం ఎంచుకోండి</option>
                 </select>
@@ -896,12 +898,8 @@
                     <option value="">శ్లోకం ఎంచుకోండి</option>
                 </select>
             </div>
-            <button class="btn btn-primary w-full mb-3 font-roboto" id="fetchSpecificVerseBtn">
-                 <i class="ph ph-book-open"></i> నిర్దిష్ట శ్లోకం పొందండి
-            </button>
             <button class="btn btn-secondary w-full font-roboto" id="fetchRandomVerseBtn">
-                 <i class="ph ph-shuffle"></i> యాదృచ్ఛిక శ్లోకం పొందండి
-            </button>
+                 <i class="ph ph-shuffle"></i> యాదృచ్ఛిక శ్లోకం </button>
         </div>
 
         <button class="btn btn-primary w-full mt-4 font-roboto" id="languageToggleBtn">
@@ -954,7 +952,7 @@
 
     <script>
         // User-configurable App Version
-        const APP_VERSION = "2.0.0"; // You can change this version number manually.
+        const APP_VERSION = "1.0.0"; // You can change this version number manually.
 
         const splashScreen = document.getElementById('splashScreen');
         const mainContent = document.getElementById('mainContent');
@@ -1169,7 +1167,7 @@
                  currentUtterance.onerror = (event) => {
                      console.error('SpeechSynthesisUtterance error:', event.error);
                      if (event.error !== 'cancelled') {
-                        showMessage(`వచనాన్ని చదవడంలో లోపం: ${event.error}`, 'error');
+                        showMessage(`వచనాన్ని చదవడంలో లోపం: ${event.error}`, 'error'); // Error reading text
                      }
                      clearHighlight();
                  };
@@ -1790,11 +1788,11 @@
             if (isEnglishActive) {
                 langText1.textContent = 'English';
                 langText2.textContent = 'తెలుగు';
-                iconElement.className = 'ph ph-arrows-left-right'; // Changed icon to ph-arrows-left-right
+                iconElement.className = 'ph ph-translate'; // Consistent icon
             } else {
                 langText1.textContent = 'తెలుగు';
                 langText2.textContent = 'English';
-                iconElement.className = 'ph ph-translate';
+                iconElement.className = 'ph ph-translate'; // Consistent icon
             }
         }
 
