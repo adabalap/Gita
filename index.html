@@ -2199,4 +2199,87 @@
             showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. కాష్ చేయబడిన కంటెంట్ మాత్రమే అందుబాటులో ఉండవచ్చు.', 'info'); // You are offline. Only cached content may be available.
         });
 
-        // Check Phosphor Ic
+        // Check Phosphor Icons loading on DOMContentLoaded
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log(`[DOMContentLoaded] DOM fully loaded.`);
+            setTimeout(() => { // Give a small delay for the script to execute
+                // Check if Phosphor Icons are available by trying to create an element with a phosphor class
+                const testIcon = document.createElement('i');
+                testIcon.className = 'ph ph-heart';
+                document.body.appendChild(testIcon); // Temporarily add to DOM to check computed style
+                const computedStyle = window.getComputedStyle(testIcon);
+                // Check if the font-family includes 'Phosphor' and if the width/height are non-zero
+                const isPhosphorLoaded = computedStyle.fontFamily.includes('Phosphor') &&
+                                         parseInt(computedStyle.width) > 0 &&
+                                         parseInt(computedStyle.height) > 0;
+                document.body.removeChild(testIcon); // Remove it
+
+                if (isPhosphorLoaded) {
+                    console.log('Phosphor Icons library appears to be loaded and rendering.');
+                } else {
+                    console.warn('Phosphor Icons library might not be loaded or rendering correctly. Icons may not display.');
+                    showMessage('ఐకాన్‌లు సరిగ్గా లోడ్ కాకపోవచ్చు. దయచేసి మీ ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'info', 5000);
+                }
+            }, 1000); // Delay check by 1 second
+        });
+
+        // Function to navigate to the previous verse
+        function goToPreviousVerse() {
+            console.log(`[goToPreviousVerse] Called.`);
+            let currentChapter = parseInt(verseDisplay.dataset.chapter);
+            let currentVerse = parseInt(verseDisplay.dataset.verse);
+
+            if (isNaN(currentChapter) || isNaN(currentVerse)) {
+                showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
+                return;
+            }
+
+            // Reset translation state when navigating
+            isEnglishActive = false;
+            updateLanguageToggleButton(); // Call helper to update button state
+
+            if (currentVerse > 1) {
+                fetchVerse(currentChapter, currentVerse - 1);
+            } else if (currentChapter > 1) {
+                const prevChapter = currentChapter - 1;
+                const lastVerseOfPrevChapter = CHAPTER_VERSE_COUNTS[prevChapter];
+                fetchVerse(prevChapter, lastVerseOfPrevChapter);
+            } else {
+                showMessage('ఇది మొదటి అధ్యాయంలోని మొదటి శ్లోకం.', 'info');
+            }
+        }
+
+        // Function to navigate to the next verse
+        function goToNextVerse() {
+            console.log(`[goToNextVerse] Called.`);
+            let currentChapter = parseInt(verseDisplay.dataset.chapter);
+            let currentVerse = parseInt(verseDisplay.dataset.verse);
+
+            if (isNaN(currentChapter) || isNaN(currentVerse)) {
+                showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
+                return;
+            }
+
+            // Reset translation state when navigating
+            isEnglishActive = false;
+            updateLanguageToggleButton(); // Call helper to update button state
+
+            const maxVerseInCurrentChapter = CHAPTER_VERSE_COUNTS[currentChapter];
+
+            if (currentVerse < maxVerseInCurrentChapter) {
+                fetchVerse(currentChapter, currentVerse + 1);
+            } else if (currentChapter < 18) { // Assuming 18 chapters in total
+                const nextChapter = currentChapter + 1;
+                fetchVerse(nextChapter, 1); // Go to the first verse of the next chapter
+            } else {
+                showMessage('ఇది చివరి అధ్యాయంలోని చివరి శ్లోకం.', 'info');
+            }
+        }
+
+        // Add event listeners for navigation buttons
+        prevVerseBtn.addEventListener('click', goToPreviousVerse);
+        nextVerseBtn.addEventListener('click', goToNextVerse);
+
+    </script>
+</body>
+</html>
