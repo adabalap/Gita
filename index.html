@@ -906,7 +906,7 @@
         </button>
 
         <div class="release-version">
-            Version: f853a37
+            Version: bed571b
         </div>
 
     </div>
@@ -1231,8 +1231,8 @@
              }
         }
 
-        // Function to fetch translation from Gemini API
-        async function fetchTranslation(chapter, verse, sanskritVerse, teluguMeaning, teluguDescription) {
+        // Function to fetch translation from Backend API
+        async function fetchTranslation(chapter, verse, sanskritTelugu, teluguMeaning, teluguDescription) {
             const currentVerseKey = `${chapter}-${verse}`;
             let cachedTranslation = verseCache[currentVerseKey]?.english_translation;
 
@@ -1249,62 +1249,33 @@
             showMessage('అనువాదం పొందుతోంది...', 'info', 0); // Getting translation... (info, no auto-hide)
 
             try {
-                const prompt = `Translate the following Telugu Bhagavad Gita verse components to English, maintaining context and spiritual essence. Provide the output in a structured JSON format with keys: "sanskrit_verse_english_script", "english_meaning", "english_description".
-                Telugu Sanskrit Verse: ${sanskritVerse}
-                Telugu Meaning: ${teluguMeaning}
-                Telugu Description: ${teluguDescription}`;
-
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-
-                const payload = {
-                    contents: chatHistory,
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                "sanskrit_verse_english_script": { "type": "STRING" },
-                                "english_meaning": { "type": "STRING" },
-                                "english_description": { "type": "STRING" }
-                            },
-                            "propertyOrdering": ["sanskrit_verse_english_script", "english_meaning", "english_description"]
-                        }
-                    }
-                };
-
-                const apiKey = ""; // Canvas will automatically provide this
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
+                const response = await fetch(`${API_BASE_URL}/translate`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sanskrit_telugu: sanskritTelugu,
+                        telugu_meaning: teluguMeaning,
+                        telugu_description: teluguDescription
+                    })
                 });
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(`API error: ${errorData.error.message || response.statusText}`);
+                    throw new Error(`API error: ${errorData.error || response.statusText}`);
                 }
 
-                const result = await response.json();
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const jsonString = result.candidates[0].content.parts[0].text;
-                    const parsedJson = JSON.parse(jsonString);
+                const translatedData = await response.json();
 
-                    // Store the translation in the cache
-                    if (verseCache[currentVerseKey]) {
-                        verseCache[currentVerseKey].english_translation = parsedJson;
-                        localStorage.setItem(CACHE_KEY, JSON.stringify(verseCache));
-                    }
-
-                    showMessage('అనువాదం విజయవంతమైంది.', 'success'); // Translation successful.
-                    return parsedJson;
-                } else {
-                    throw new Error('Invalid API response structure.');
+                // Store the translation in the cache
+                if (verseCache[currentVerseKey]) {
+                    verseCache[currentVerseKey].english_translation = translatedData;
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(verseCache));
                 }
+
+                showMessage('అనువాదం విజయవంతమైంది.', 'success'); // Translation successful.
+                return translatedData;
 
             } catch (error) {
                 console.error('Error fetching translation:', error);
@@ -2064,7 +2035,7 @@
                         if (error.name === 'SecurityError') {
                             showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: HTTPS అవసరం. మీ సైట్ HTTPS ద్వారా అందించబడుతుందని నిర్ధారించుకోండి.', 'error');
                         } else if (error.name === 'NetworkError') {
-                            showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: నెట్‌వర్క్ సమస్య. ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'error');
+                            showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: నెట్‌వర్క్ సమస్య. ఇంటర్NET కనెక్షన్‌ని తనిఖీ చేయండి.', 'error');
                         } else {
                             showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది. వివరాల కోసం కన్సోల్‌ని తనిఖీ చేయండి.', 'error');
                         }
