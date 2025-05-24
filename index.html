@@ -1157,7 +1157,7 @@
          * @param {string} type The type of message ('info', 'success', 'error').
          * @param {number} duration The duration in milliseconds before auto-hiding. 0 means it stays until hideToastMessage() is called.
          */
-        function showToastMessage(msg, type = 'info', duration = 500) { // Default duration for toasts
+        function showToastMessage(msg, type = 'info', duration = 3000) { // Changed default duration to 3000ms (3 seconds)
             console.log(`[showToastMessage] Displaying toast: "${msg}" (Type: ${type}, Duration: ${duration})`);
             toastMessageArea.innerHTML = ''; // Clear previous content
             const textNode = document.createTextNode(msg);
@@ -1197,7 +1197,7 @@
          * @param {string} type The type of message ('info', 'success', 'error').
          * @param {number} duration The duration in milliseconds before auto-hiding. 0 means it stays until hideSidebarMessage() is called.
          */
-        function showSidebarMessage(msg, type = 'info', duration = 500) { // Default duration for sidebar messages
+        function showSidebarMessage(msg, type = 'info', duration = 3000) { // Changed default duration to 3000ms (3 seconds)
             console.log(`[showSidebarMessage] Displaying in sidebar: "${msg}" (Type: ${type}, Duration: ${duration})`);
             sidebarMessageArea.innerHTML = ''; // Clear previous content
             const textNode = document.createTextNode(msg);
@@ -1998,7 +1998,7 @@
 
             // Input validation error should be in sidebar
             if (isNaN(chapter) || isNaN(verse) || chapter <= 0 || verse <= 0) {
-                showSidebarMessage('దయచేసి అధ్యాయం మరియు శ్లోకం ఎంచుకోండి.', 'error');
+                showSidebarMessage('దయచేసి అధ్యాయం మరియు శ్లోకం ఎంచుకోండి.', 'error', 3000); // Changed duration
                 return;
             }
 
@@ -2076,7 +2076,7 @@
 
             if (verseDisplay.classList.contains('hidden')) {
                 // Error when no verse is loaded should be in sidebar
-                showSidebarMessage('దయచేసి ముందుగా ఒక శ్లోకాన్ని లోడ్ చేయండి.', 'info'); // Please load a verse first.
+                showSidebarMessage('దయచేసి ముందుగా ఒక శ్లోకాన్ని లోడ్ చేయండి.', 'info', 3000); // Changed duration
                 console.log(`[languageToggleBtn] Verse display is hidden, returning.`);
                 return;
             }
@@ -2101,11 +2101,11 @@
                 } else {
                     // This case should ideally not happen if a verse is currently displayed
                     console.error("[languageToggleBtn] Current verse data not found in cache for re-display.");
-                    showToastMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
+                    showToastMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error', 3000); // Changed duration
                 }
             } else {
                 console.error("[languageToggleBtn] No valid verse available for translation (dataset missing).");
-                showToastMessage('అనువాదం కోసం శ్లోకం అందుబాటులో లేదు.', 'error'); // No verse available for translation.
+                showToastMessage('అనువాదం కోసం శ్లోకం అందుబాటులో లేదు.', 'error', 3000); // Changed duration
             }
             closeSideMenu(); // Close the side menu after translation is attempted/completed
         });
@@ -2248,11 +2248,11 @@
                          }).catch((error) => {
                              console.error('Error sharing via Web Share API:', error);
                              copyToClipboard(shareText);
-                             showToastMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
+                             showToastMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success', 3000); // Changed duration
                          });
                      } else {
                          copyToClipboard(shareText);
-                         showToastMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success');
+                         showToastMessage('శ్లోకం కాపీ చేయబడింది! మీరు ఇప్పుడు దీన్ని ఎక్కడైనా పంచుకోవచ్చు.', 'success', 3000); // Changed duration
                      }
                  }
              }
@@ -2285,7 +2285,7 @@
                  // as shareUrl will always be set in the switch for those platforms.
                  // It's a safeguard.
                  copyToClipboard(text);
-                 showToastMessage('ఈ ప్లాట్‌ఫారమ్‌కు నేరుగా భాగస్వామ్యం చేయడం సాధ్యం కాలేదు. శ్లోకం కాపీ చేయబడింది!', 'info');
+                 showToastMessage('ఈ ప్లాట్‌ఫారమ్‌కు నేరుగా భాగస్వామ్యం చేయడం సాధ్యం కాలేదు. శ్లోకం కాపీ చేయబడింది!', 'info', 3000); // Changed duration
              }
         }
 
@@ -2329,11 +2329,11 @@
                         console.error('Ensure service-worker.js is at the root of your /Gita/ subfolder on GitHub Pages and accessible via HTTPS.');
                         // Provide more context to the user if the error is a SecurityError
                         if (error.name === 'SecurityError') {
-                            showToastMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: HTTPS అవసరం. మీ సైట్ HTTPS ద్వారా అందించబడుతుందని నిర్ధారించుకోండి.', 'error');
+                            showToastMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: HTTPS అవసరం. మీ సైట్ HTTPS ద్వారా అందించబడుతుందని నిర్ధారించుకోండి.', 'error', 3000); // Changed duration
                         } else if (error.name === 'NetworkError') {
-                            showToastMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: నెట్‌వర్క్ సమస్య. ఇంటర్NET కనెక్షన్‌ని తనిఖీ చేయండి.', 'error');
+                            showToastMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: నెట్‌వర్క్ సమస్య. ఇంటర్NET కనెక్షన్‌ని తనిఖీ చేయండి.', 'error', 3000); // Changed duration
                         } else {
-                            showToastMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది. వివరాల కోసం కన్సోల్‌ని తనిఖీ చేయండి.', 'error');
+                            showToastMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది. వివరాల కోసం కన్సోల్‌ని తనిఖీ చేయండి.', 'error', 3000); // Changed duration
                         }
                     });
             });
@@ -2341,12 +2341,12 @@
 
         window.addEventListener('online', () => {
             console.log('App is online.');
-            showToastMessage('మీరు ఆన్‌లైన్‌లోకి తిరిగి వచ్చారు.', 'info'); // You are back online.
+            showToastMessage('మీరు ఆన్‌లైన్‌లోకి తిరిగి వచ్చారు.', 'info', 3000); // Changed duration
         });
 
         window.addEventListener('offline', () => {
             console.log('App is offline.');
-            showToastMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. కాష్ చేయబడిన కంటెంట్ మాత్రమే అందుబాటులో ఉండవచ్చు.', 'info'); // You are offline. Only cached content may be available.
+            showToastMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. కాష్ చేయబడిన కంటెంట్ మాత్రమే అందుబాటులో ఉండవచ్చు.', 'info', 3000); // Changed duration
         });
 
         // Check Phosphor Icons loading on DOMContentLoaded
@@ -2368,7 +2368,7 @@
                     console.log('Phosphor Icons library appears to be loaded and rendering.');
                 } else {
                     console.warn('Phosphor Icons library might not be loaded or rendering correctly. Icons may not display.');
-                    showToastMessage('ఐకాన్‌లు సరిగ్గా లోడ్ కాకపోవచ్చు. దయచేసి మీ ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'info', 500); // Changed duration here too
+                    showToastMessage('ఐకాన్‌లు సరిగ్గా లోడ్ కాకపోవచ్చు. దయచేసి మీ ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'info', 3000); // Changed duration here too
                 }
             }, 1000); // Delay check by 1 second
         });
@@ -2385,7 +2385,7 @@
                     fetchRandomVerse(); // Try to load a random verse from cache/online
                 } else {
                     verseDisplay.classList.add('hidden'); // Hide verse display
-                    showToastMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info');
+                    showToastMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info', 3000); // Changed duration
                 }
                 return;
             }
@@ -2401,7 +2401,7 @@
                 const lastVerseOfPrevChapter = CHAPTER_VERSE_COUNTS[prevChapter];
                 fetchVerse(prevChapter, lastVerseOfPrevChapter);
             } else {
-                showToastMessage('ఇది మొదటి అధ్యాయంలోని మొదటి శ్లోకం.', 'info'); // Changed to showToastMessage
+                showToastMessage('ఇది మొదటి అధ్యాయంలోని మొదటి శ్లోకం.', 'info', 3000); // Changed to showToastMessage
             }
         }
 
@@ -2417,7 +2417,7 @@
                     fetchRandomVerse(); // Try to load a random verse from cache/online
                 } else {
                     verseDisplay.classList.add('hidden'); // Hide verse display
-                    showToastMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info');
+                    showToastMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info', 3000); // Changed duration
                 }
                 return;
             }
@@ -2434,7 +2434,7 @@
                 const nextChapter = currentChapter + 1;
                 fetchVerse(nextChapter, 1); // Go to the first verse of the next chapter
             } else {
-                showToastMessage('ఇది చివరి అధ్యాయంలోని చివరి శ్లోకం.', 'info'); // Changed to showToastMessage
+                showToastMessage('ఇది చివరి అధ్యాయంలోని చివరి శ్లోకం.', 'info', 3000); // Changed to showToastMessage
             }
         }
 
