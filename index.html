@@ -999,7 +999,6 @@
         let isEnglishActive = false; // State to track current language display
 
         let messageHideTimeout = null; // To manage the auto-hide of messages
-        let messageDisplayPromise = Promise.resolve(); // To chain promises for minimum display time
 
         // Base URL for your Flask API
         const API_BASE_URL = 'https://gita.adabala.com'; // UPDATE THIS IF YOUR API URL CHANGES
@@ -1027,7 +1026,10 @@
         let isAudioMuted = true; // Audio mute state, default to true (muted)
 
         // Function to show messages (now handles toast behavior and sidebar auto-pop/auto-close)
-        function showMessage(msg, type = 'info', duration = 5000) { // duration default changed to 5000ms
+        // duration = 0 means the message stays until hideMessage() is called.
+        // duration > 0 means it auto-hides after 'duration' milliseconds.
+        function showMessage(msg, type = 'info', duration = 5000) {
+            console.log(`[showMessage] Displaying: "${msg}" (Type: ${type}, Duration: ${duration})`);
             messageArea.innerHTML = ''; // Clear previous content
             const textNode = document.createTextNode(msg);
             messageArea.appendChild(textNode);
@@ -1035,7 +1037,6 @@
             // Add spinner for info messages that are meant to be loading (duration 0)
             const isLoaderMessage = (type === 'info' && duration === 0);
             if (isLoaderMessage) {
-                // Add a non-breaking space for visual separation
                 messageArea.appendChild(document.createTextNode('\u00A0')); // Non-breaking space
                 const spinnerIcon = document.createElement('i');
                 spinnerIcon.className = 'ph ph-hourglass-simple spinner-icon text-lg'; // Phosphor hourglass icon
@@ -1054,37 +1055,24 @@
                 openSideMenu();
             }
 
-            // If it's a loading message, ensure it stays for a minimum time
-            if (isLoaderMessage) {
-                let resolvePromise;
-                messageDisplayPromise = new Promise(resolve => {
-                    resolvePromise = resolve;
-                });
-                // Set a minimum display time for loading messages
-                setTimeout(() => {
-                    resolvePromise(); // Resolve the promise after minimum time
-                }, 1000); // Minimum 1000ms (1 second) display for loading messages
-            } else {
-                // For non-loading messages, set auto-hide timeout
+            // Set auto-hide timeout only if duration is specified and greater than 0
+            if (duration > 0) {
                 messageHideTimeout = setTimeout(() => {
-                    messageArea.classList.remove('show');
-                    messageArea.innerHTML = ''; // Clear content when hiding
-                    closeSideMenu(); // Auto-close sidebar after message disappears
+                    hideMessage(); // Call hideMessage to properly clear and close
                 }, duration);
             }
         }
 
-        // Function to hide messages (for errors or if needed explicitly, or after loading)
-        async function hideMessage() {
-            // Wait for the minimum display time promise to resolve before hiding
-            await messageDisplayPromise;
-
+        // Function to hide messages
+        function hideMessage() {
+            console.log(`[hideMessage] Hiding message and closing sidebar.`);
             messageArea.classList.remove('show');
             if (messageHideTimeout) {
                 clearTimeout(messageHideTimeout);
+                messageHideTimeout = null;
             }
             messageArea.innerHTML = ''; // Clear content when hiding
-            // No auto-close of sidebar here, as it's handled by showMessage's timeout or explicit closeSideMenu calls
+            closeSideMenu(); // Always close sidebar when message is explicitly hidden
         }
 
         // Function to trigger confetti/flower effect
@@ -1316,8 +1304,7 @@
                  return null;
             }
 
-            showMessage('అనువాదం పొందుతోంది...', 'info', 0); // Getting translation... (info, no auto-hide, with spinner)
-
+            showMessage('అనువాదం పొందుతోంది...', 'info', 0); // Getting translation... (info, stays until hidden)
             try {
                 console.log(`[fetchTranslation] Making POST request to ${API_BASE_URL}/translate`);
                 const response = await fetch(`${API_BASE_URL}/translate`, {
@@ -1349,15 +1336,15 @@
                     console.log(`[fetchTranslation] Stored translation in cache for ${currentVerseKey}`);
                 }
 
-                showMessage('అనువాదం విజయవంతమైంది.', 'success'); // Translation successful.
+                showMessage('అనువాదం విజయవంతమైంది.', 'success'); // Translation successful. (auto-hides)
                 return translatedData;
 
             } catch (error) {
                 console.error('[fetchTranslation] Error fetching translation:', error);
-                showMessage(`అనువాదం పొందడంలో లోపం: ${error.message}`, 'error'); // Error getting translation
+                showMessage(`అనువాదం పొందడంలో లోపం: ${error.message}`, 'error'); // Error getting translation (auto-hides)
                 return null;
             } finally {
-                // The message will auto-hide via the timeout set in showMessage, respecting minimum display time
+                hideMessage(); // Always hide the "Getting translation..." message
             }
         }
 
@@ -1367,7 +1354,7 @@
             console.log(`[displayVerse] Called with verseData:`, verseData);
             console.log(`[displayVerse] Current isEnglishActive state: ${isEnglishActive}`);
 
-            hideMessage(); // Hide general message area
+            // hideMessage(); // Removed: fetchVerse and fetchTranslation will handle hiding their messages
             clearHighlight(); // Clear any highlight from previous verse
             wordSpans = []; // **CRITICAL: Reset global wordSpans array for the new verse**
 
@@ -1647,7 +1634,8 @@
         // Function to fetch a verse from API or cache
         async function fetchVerse(chapter, verse) {
             console.log(`[fetchVerse] Called for Chapter ${chapter}, Verse ${verse}`);
-            hideMessage(); // Hide any old messages when starting a new fetch
+            // hideMessage(); // Removed as showMessage will handle opening/closing
+
             const cacheKey = `${chapter}-${verse}`;
             const cachedData = verseCache[cacheKey];
 
@@ -1664,7 +1652,7 @@
                  return;
             }
 
-            showMessage('శ్లోకం పొందుతోంది...', 'info', 0); // Getting verse... (now uses new showMessage with spinner)
+            showMessage('శ్లోకం పొందుతోంది...', 'info', 0); // Getting verse... (stays until hidden)
             try {
                 console.log(`[fetchVerse] Attempting to fetch from API: ${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
                 const response = await fetch(`${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
@@ -1694,6 +1682,7 @@
                 console.log('[fetchVerse] Fetched data:', data);
 
                 displayVerse(data);
+                showMessage('శ్లోకం విజయవంతంగా లోడ్ చేయబడింది.', 'success'); // Verse loaded successfully. (auto-hides)
 
             } catch (error) {
                 console.error('[fetchVerse] Error fetching verse:', error);
@@ -1710,17 +1699,17 @@
                      console.error('[fetchVerse] Raw error object:', error);
                      displayMessage = `శ్లోకం పొందడంలో లోపం. వివరాల కోసం కన్సోల్ చూడండి.`;
                 }
-                showMessage(displayMessage, 'error'); // Use 'error' type which won't auto-hide
+                showMessage(displayMessage, 'error'); // Error getting verse (auto-hides)
                 verseDisplay.classList.add('hidden');
             } finally {
-                // The message will auto-hide via the timeout set in showMessage, respecting minimum display time
+                hideMessage(); // Always hide the "Getting verse..." message
             }
         }
 
         // Function to fetch a random verse
         async function fetchRandomVerse() {
              console.log(`[fetchRandomVerse] Called.`);
-             hideMessage(); // Hide any old messages
+             // hideMessage(); // Removed as fetchVerse will handle this
              if (!navigator.onLine) {
                  const cachedVerseKeys = Object.keys(verseCache);
                  if (cachedVerseKeys.length > 0) {
@@ -2230,7 +2219,7 @@
             let currentVerse = parseInt(verseDisplay.dataset.verse);
 
             if (isNaN(currentChapter) || isNaN(currentVerse)) {
-                showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
+                console.log('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.'); // Changed to console.log
                 return;
             }
 
@@ -2245,7 +2234,7 @@
                 const lastVerseOfPrevChapter = CHAPTER_VERSE_COUNTS[prevChapter];
                 fetchVerse(prevChapter, lastVerseOfPrevChapter);
             } else {
-                showMessage('ఇది మొదటి అధ్యాయంలోని మొదటి శ్లోకం.', 'info');
+                console.log('ఇది మొదటి అధ్యాయంలోని మొదటి శ్లోకం.'); // Changed to console.log
             }
         }
 
@@ -2256,7 +2245,7 @@
             let currentVerse = parseInt(verseDisplay.dataset.verse);
 
             if (isNaN(currentChapter) || isNaN(currentVerse)) {
-                showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
+                console.log('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.'); // Changed to console.log
                 return;
             }
 
@@ -2272,7 +2261,7 @@
                 const nextChapter = currentChapter + 1;
                 fetchVerse(nextChapter, 1); // Go to the first verse of the next chapter
             } else {
-                showMessage('ఇది చివరి అధ్యాయంలోని చివరి శ్లోకం.', 'info');
+                console.log('ఇది చివరి అధ్యాయంలోని చివరి శ్లోకం.'); // Changed to console.log
             }
         }
 
