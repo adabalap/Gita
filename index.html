@@ -28,7 +28,7 @@
             flex-direction: column;
             /* Divine Background for Main Content - Path updated for /Gita/ */
             /* Ensure you have this image or replace with a placeholder/color */
-            background-image: url('https://placehold.co/1920x1080/eef2ff/374151?text=Divine+Background'); /* Placeholder image */
+            background-image: url('/Gita/images/divine-background.jpeg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed; /* Keep background fixed while scrolling */
@@ -63,7 +63,7 @@
             background-color: #6b46c1; /* Purple fallback */
              /* Classic Bhagavad Gita Image for Splash Screen - Path updated for /Gita/ */
              /* Ensure you have this image or replace with a placeholder/color */
-            background-image: url('https://placehold.co/1920x1080/6b46c1/ffffff?text=Splash+Image'); /* Placeholder image */
+            background-image: url('/Gita/images/splash-image.jpeg');
             background-size: cover;
             background-position: center;
             color: white;
@@ -641,11 +641,11 @@
          /* Subtle hint for the side menu - Enhanced Aesthetics (Peacock Feather inspired) */
          .side-menu-hint {
              position: fixed;
-             top: 25%; /* Positioned 1/4 from the top */
+             top: 25%; /* Fixed at 25% from top */
              left: 0;
-             transform: translateY(-50%); /* Adjust for vertical centering based on its own height */
+             /* Removed translateY(-50%) to align top edge at 25% */
              width: 15px; /* Wider bar */
-             height: 200px; /* Significantly taller */
+             height: 180px; /* Significantly taller */
              /* Peacock Feather Gradient */
              background: linear-gradient(to bottom, #008080, #4682b4, #008080); /* Teal, Steel Blue, Teal */
              z-index: 10; /* Below main content */
@@ -663,9 +663,9 @@
 
          /* Add a pulse animation to the hint */
          @keyframes pulse-hint {
-             0% { opacity: 0.7; transform: translateY(-50%) scale(1); }
-             50% { opacity: 1; transform: translateY(-50%) scale(1.05); }
-             100% { opacity: 0.7; transform: translateY(-50%) scale(1); }
+             0% { opacity: 0.7; transform: translateY(0%) scale(1); } /* Adjusted transform for fixed top */
+             50% { opacity: 1; transform: translateY(0%) scale(1.05); } /* Adjusted transform for fixed top */
+             100% { opacity: 0.7; transform: translateY(0%) scale(1); } /* Adjusted transform for fixed top */
          }
 
          .side-menu-hint {
@@ -747,7 +747,11 @@
              background-color: rgba(243, 244, 246, 0.85); /* Lighter gray on hover */
          }
 
-         /* --- Landscape Optimization for small screens --- */
+         /* Specific styles for Feedback Form */
+         /* Removed as feedback section is removed */
+
+
+        /* --- Landscape Optimization for small screens --- */
         @media (orientation: landscape) and (max-width: 768px) {
             #appHeading {
                 font-size: 2rem; /* Slightly smaller */
@@ -845,7 +849,6 @@
         .navigation-buttons .btn {
             flex: 1; /* Allow buttons to grow and take equal space */
             min-width: 120px; /* Minimum width for buttons */
-            font-size: 0.95rem; /* Smaller font size for navigation buttons */
         }
 
         /* Style for the release version text */
@@ -888,12 +891,6 @@
             </button>
         </div>
 
-        <div id="translationSection" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #d1d5db;">
-            <button class="btn btn-primary w-full font-roboto" id="toggleTranslationBtn">
-                <i class="ph ph-translate"></i> English లోకి అనువదించండి
-            </button>
-        </div>
-
         <div id="favoritesSection">
              <h2>
                  <i class="ph ph-caret-right"></i> ఇష్టమైన శ్లోకాలు
@@ -903,6 +900,10 @@
                     <li>ఇష్టమైన శ్లోకాలు లేవు.</li> </ul>
              </div>
         </div>
+
+        <button class="btn btn-primary w-full mt-4 font-roboto" id="languageToggleBtn">
+            <i class="ph ph-translate"></i> English
+        </button>
 
         <div class="release-version">
             Version: __RELEASE_VERSION__
@@ -945,8 +946,8 @@
         const chapterSelect = document.getElementById('chapterSelect');
         const verseSelect = document.getElementById('verseSelect');
         const fetchSpecificVerseBtn = document.getElementById('fetchSpecificVerseBtn');
-        const fetchRandomVerseBtn = document.getElementById('fetchRandomVerseBtn');
-        const messageArea = document.getElementById('messageArea'); // This is now the centralized toast/error area
+        const fetchRandomVerseBtn = document.getElementById('fetchRandomVerseBtn'); // Corrected typo here
+        const messageArea = document.getElementById('messageArea');
 
         const confettiContainer = document.getElementById('confettiContainer');
 
@@ -959,27 +960,25 @@
         const favoritesList = document.getElementById('favoritesList');
         const favoritesUl = document.getElementById('favoritesUl');
 
-        // Translation elements
-        const toggleTranslationBtn = document.getElementById('toggleTranslationBtn');
-
         // Navigation buttons
         const prevVerseBtn = document.getElementById('prevVerseBtn');
         const nextVerseBtn = document.getElementById('nextVerseBtn');
 
+        // Translation elements
+        const languageToggleBtn = document.getElementById('languageToggleBtn');
+        let isEnglishActive = false; // State to track current language display
+
 
         // Base URL for your Flask API
-        // Ensure this is HTTPS if your PWA is on HTTPS (like GitHub Pages)
         const API_BASE_URL = 'https://gita.adabala.com'; // UPDATE THIS IF YOUR API URL CHANGES
 
         // Simple local cache using localStorage
         let verseCache = JSON.parse(localStorage.getItem('bhagavathGitaCache')) || {};
         const CACHE_KEY = 'bhagavathGitaCache'; // Key for localStorage
         const FAVORITES_KEY = 'bhagavathGitaFavorites'; // Key for localStorage favorites
-        const TRANSLATION_CACHE_KEY = 'bhagavathGitaTranslationCache'; // Key for translation cache
 
         // Load favorites from localStorage on startup
         let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
-        let translationCache = JSON.parse(localStorage.getItem(TRANSLATION_CACHE_KEY)) || {};
 
         // Define the number of verses in each chapter (same as backend)
         const CHAPTER_VERSE_COUNTS = {
@@ -994,13 +993,6 @@
         let wordSpans = []; // Array to store references to word spans and their text/index info
         let currentHighlightSpan = null; // To keep track of the currently highlighted span
         let isAudioMuted = true; // Audio mute state, default to true (muted)
-
-        // Translation state
-        let isEnglishTranslationActive = false;
-        let currentVerseTeluguMeaning = '';
-        let currentVerseTeluguDescription = '';
-        let currentVerseEnglishMeaning = '';
-        let currentVerseEnglishDescription = '';
 
         // Function to show messages (now handles toast behavior)
         function showMessage(msg, type = 'info', duration = 3000) { // duration for info/success
@@ -1239,25 +1231,103 @@
              }
         }
 
+        // Function to fetch translation from Gemini API
+        async function fetchTranslation(chapter, verse, sanskritVerse, teluguMeaning, teluguDescription) {
+            const currentVerseKey = `${chapter}-${verse}`;
+            let cachedTranslation = verseCache[currentVerseKey]?.english_translation;
+
+            if (cachedTranslation) {
+                console.log(`Serving English translation for Chapter ${chapter}, Verse ${verse} from cache.`);
+                return cachedTranslation;
+            }
+
+            if (!navigator.onLine) {
+                 showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. అనువాదం అందుబాటులో లేదు.', 'error'); // Translation not available offline.
+                 return null;
+            }
+
+            showMessage('అనువాదం పొందుతోంది...', 'info', 0); // Getting translation... (info, no auto-hide)
+
+            try {
+                const prompt = `Translate the following Telugu Bhagavad Gita verse components to English, maintaining context and spiritual essence. Provide the output in a structured JSON format with keys: "sanskrit_verse_english_script", "english_meaning", "english_description".
+                Telugu Sanskrit Verse: ${sanskritVerse}
+                Telugu Meaning: ${teluguMeaning}
+                Telugu Description: ${teluguDescription}`;
+
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+                const payload = {
+                    contents: chatHistory,
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                "sanskrit_verse_english_script": { "type": "STRING" },
+                                "english_meaning": { "type": "STRING" },
+                                "english_description": { "type": "STRING" }
+                            },
+                            "propertyOrdering": ["sanskrit_verse_english_script", "english_meaning", "english_description"]
+                        }
+                    }
+                };
+
+                const apiKey = ""; // Canvas will automatically provide this
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API error: ${errorData.error.message || response.statusText}`);
+                }
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const jsonString = result.candidates[0].content.parts[0].text;
+                    const parsedJson = JSON.parse(jsonString);
+
+                    // Store the translation in the cache
+                    if (verseCache[currentVerseKey]) {
+                        verseCache[currentVerseKey].english_translation = parsedJson;
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(verseCache));
+                    }
+
+                    showMessage('అనువాదం విజయవంతమైంది.', 'success'); // Translation successful.
+                    return parsedJson;
+                } else {
+                    throw new Error('Invalid API response structure.');
+                }
+
+            } catch (error) {
+                console.error('Error fetching translation:', error);
+                showMessage(`అనువాదం పొందడంలో లోపం: ${error.message}`, 'error'); // Error getting translation
+                return null;
+            } finally {
+                // Ensure message is hidden if it was a loading message, or if an error occurred that needs manual dismissal
+                if (messageArea.textContent.includes('అనువాదం పొందుతోంది...')) {
+                    hideMessage(); // Hide loading message
+                }
+            }
+        }
+
+
         // Function to display a verse in the new format (using cards)
-        function displayVerse(verseData) {
+        async function displayVerse(verseData) {
             hideMessage(); // Hide general message area
             clearHighlight(); // Clear any highlight from previous verse
             wordSpans = []; // **CRITICAL: Reset global wordSpans array for the new verse**
 
-            // Reset translation state for new verse
-            isEnglishTranslationActive = false;
-            toggleTranslationBtn.textContent = 'English లోకి అనువదించండి';
-            toggleTranslationBtn.querySelector('i').className = 'ph ph-translate'; // Reset icon
-
-            // Store original Telugu text
-            currentVerseTeluguMeaning = verseData.polished_telugu_meaning || verseData.telugu_meaning || 'తెలుగు భావార్థం అందుబాటులో లేదు.';
-            currentVerseTeluguDescription = verseData.telugu_description || 'సందేశం అందుబాటులో లేదు.';
-            currentVerseEnglishMeaning = ''; // Clear English translation
-            currentVerseEnglishDescription = ''; // Clear English translation
-
             // Scroll to the top of the page
             window.scrollTo(0, 0);
+
 
             // Clear previous content in the main display area
             verseDisplay.innerHTML = '';
@@ -1266,26 +1336,59 @@
             verseDisplay.dataset.chapter = verseData.chapter;
             verseDisplay.dataset.verse = verseData.verse;
             verseDisplay.dataset.sanskritVerse = verseData.sanskrit_verse_telugu_script || '';
-            // Store the currently displayed meaning/description (Telugu initially)
-            verseDisplay.dataset.teluguMeaning = currentVerseTeluguMeaning;
-            verseDisplay.dataset.teluguDescription = currentVerseTeluguDescription;
+            verseDisplay.dataset.teluguMeaning = verseData.polished_telugu_meaning || verseData.telugu_meaning || '';
+            verseDisplay.dataset.teluguDescription = verseData.telugu_description || '';
 
+            // Get the raw text content for each part (Telugu originals)
+            const sanskritVerseOriginal = verseData.sanskrit_verse_telugu_script;
+            const polishedTeluguMeaningOriginal = verseData.polished_telugu_meaning || verseData.telugu_meaning || 'తెలుగు భావార్థం అందుబాటులో లేదు.';
+            const teluguDescriptionOriginal = verseData.telugu_description || 'సందేశం అందుబాటులో లేదు.';
 
-            // Get the raw text content for each part
-            const sanskritVerse = verseData.sanskrit_verse_telugu_script;
-            const displayedMeaning = currentVerseTeluguMeaning;
-            const displayedDescription = currentVerseTeluguDescription;
+            let sanskritVerseToDisplay = sanskritVerseOriginal;
+            let meaningToDisplay = polishedTeluguMeaningOriginal;
+            let descriptionToDisplay = teluguDescriptionOriginal;
+            let speechLang = 'te-IN'; // Default speech language
+
+            // If English is active, try to get and use translations
+            if (isEnglishActive) {
+                const currentVerseKey = `${verseData.chapter}-${verseData.verse}`;
+                let englishTranslation = verseCache[currentVerseKey]?.english_translation;
+
+                if (!englishTranslation) {
+                    // Fetch translation if not already cached
+                    englishTranslation = await fetchTranslation(
+                        verseData.chapter,
+                        verseData.verse,
+                        sanskritVerseOriginal,
+                        polishedTeluguMeaningOriginal,
+                        teluguDescriptionOriginal
+                    );
+                }
+
+                if (englishTranslation) {
+                    sanskritVerseToDisplay = englishTranslation.sanskrit_verse_english_script || sanskritVerseOriginal;
+                    meaningToDisplay = englishTranslation.english_meaning || polishedTeluguMeaningOriginal;
+                    descriptionToDisplay = englishTranslation.english_description || teluguDescriptionOriginal;
+                    speechLang = 'en-US'; // Change speech language to English
+                } else {
+                    // If translation failed, revert to Telugu and show message
+                    showMessage('అనువాదం అందుబాటులో లేదు, తెలుగులో చూపుతోంది.', 'info'); // Translation not available, showing in Telugu.
+                    isEnglishActive = false; // Reset toggle state
+                    languageToggleBtn.textContent = 'English'; // Update button text
+                    languageToggleBtn.querySelector('i').className = 'ph ph-translate'; // Update icon
+                }
+            }
+
 
             // --- Phase 1: Construct the HTML structure and append to DOM ---
             let contentHTML = ``;
 
-            let hasSanskritVerse = false;
-            if (sanskritVerse && sanskritVerse.trim() !== '' && sanskritVerse !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
-                hasSanskritVerse = true;
+            let hasSanskritVerse = (sanskritVerseToDisplay && sanskritVerseToDisplay.trim() !== '' && sanskritVerseToDisplay !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.');
+            if (hasSanskritVerse) {
                 contentHTML += `
                     <div id="sanskritVerseTile">
                         <div class="sanskrit-tile-info">
-                            అధ్యాయం [${verseData.chapter}], శ్లోకం [${verseData.verse}]:
+                            ${isEnglishActive ? 'Chapter' : 'అధ్యాయం'} [${verseData.chapter}], ${isEnglishActive ? 'Verse' : 'శ్లోకం'} [${verseData.verse}]:
                         </div>
                         <div id="sanskritVerse" class="sanskrit-verse-text">
                             </div>
@@ -1315,19 +1418,19 @@
 
             contentHTML += `
                 <div id="shlokamBhavarthamContainer" class="content-card shlokam-bhavartham">
-                    <div class="verse-label shlokam-bhavartham"><i class="ph ph-book-open"></i> శ్లోకం భావార్థం:</div>
+                    <div class="verse-label shlokam-bhavartham"><i class="ph ph-book-open"></i> ${isEnglishActive ? 'Meaning' : 'శ్లోకం భావార్థం'}:</div>
                     <div id="shlokamBhavartham" class="shlokam-bhavartham-text">
                         </div>
                 </div>
 
                 <div id="sandeshamContainer" class="content-card sandesham">
-                    <div class="verse-label sandesham"><i class="ph ph-chat-centered-text"></i> సందేశం:</div>
+                    <div class="verse-label sandesham"><i class="ph ph-chat-centered-text"></i> ${isEnglishActive ? 'Message' : 'సందేశం'}:</div>
                     <div id="sandesham" class="sandesham-text">
                         </div>
                 </div>
 
                 <div class="share-container">
-                    <p class="font-roboto">ఈ శ్లోకాన్ని పంచుకోండి:</p>
+                    <p class="font-roboto">${isEnglishActive ? 'Share this verse:' : 'ఈ శ్లోకాన్ని పంచుకోండి:'}</p>
                     <div class="share-buttons">
                         <button class="share-button whatsapp" data-platform="whatsapp" title="Share on WhatsApp">
                             <i class="ph ph-whatsapp-logo"></i>
@@ -1354,7 +1457,6 @@
             const sandeshamElement = verseDisplay.querySelector('#sandesham');
 
             // Helper to format text for speech (ensures single spaces between words)
-            // This is crucial for consistent indexing between spoken text and displayed text
             const formatTextForSpeech = (text) => text.trim().split(/\s+/).filter(word => word.length > 0).join(' ');
 
             // --- Phase 2: Build the full text for speech and populate DOM with wrapped words ---
@@ -1363,19 +1465,17 @@
 
             // 1. Add Sanskrit Section (label and text)
             if (hasSanskritVerse) {
-                const sanskritInfoSpoken = `అధ్యాయం ${verseData.chapter}, శ్లోకం ${verseData.verse}. సంస్కృత శ్లోకం. `;
+                const sanskritInfoSpoken = `${isEnglishActive ? 'Chapter' : 'అధ్యాయం'} ${verseData.chapter}, ${isEnglishActive ? 'Verse' : 'శ్లోకం'} ${verseData.verse}. ${isEnglishActive ? 'Sanskrit Verse' : 'సంస్కృత శ్లోకం'}. `;
                 fullTextToSpeak += sanskritInfoSpoken;
-                // No need to adjust currentAbsoluteOffset here, as wrapWordsInSpans will start from this offset
-                // and we'll update it after the segment.
 
                 if (sanskritVerseElement) {
-                    const formattedSanskritText = formatTextForSpeech(sanskritVerse);
+                    const formattedSanskritText = formatTextForSpeech(sanskritVerseToDisplay);
                     wrapWordsInSpans(formattedSanskritText, sanskritVerseElement, currentAbsoluteOffset);
                     fullTextToSpeak += formattedSanskritText;
-                    currentAbsoluteOffset = fullTextToSpeak.length; // Update absolute offset after adding text
+                    currentAbsoluteOffset = fullTextToSpeak.length;
                 }
             } else if (sanskritVerseElement) {
-                sanskritVerseElement.textContent = sanskritVerse || 'సంస్కృత శ్లోకం అందుబాటులో లేదు.';
+                sanskritVerseElement.textContent = sanskritVerseToDisplay;
             }
 
             // Add a separator space between sections for natural speech flow
@@ -1386,12 +1486,12 @@
 
 
             // 2. Add Merged Shlokam/Bhavartham Section
-            const shlokamBhavarthamLabelSpoken = `శ్లోకం భావార్థం. `;
+            const shlokamBhavarthamLabelSpoken = `${isEnglishActive ? 'Meaning' : 'శ్లోకం భావార్థం'}. `;
             fullTextToSpeak += shlokamBhavarthamLabelSpoken;
             currentAbsoluteOffset += shlokamBhavarthamLabelSpoken.length;
 
             if (shlokamBhavarthamElement) {
-                const formattedMeaningText = formatTextForSpeech(displayedMeaning); // Use displayed meaning
+                const formattedMeaningText = formatTextForSpeech(meaningToDisplay);
                 wrapWordsInSpans(formattedMeaningText, shlokamBhavarthamElement, currentAbsoluteOffset);
                 fullTextToSpeak += formattedMeaningText;
                 currentAbsoluteOffset = fullTextToSpeak.length;
@@ -1404,12 +1504,12 @@
             }
 
             // 3. Add Sandesham Section
-            const sandeshamLabelSpoken = `సందేశం. `;
+            const sandeshamLabelSpoken = `${isEnglishActive ? 'Message' : 'సందేశం'}. `;
             fullTextToSpeak += sandeshamLabelSpoken;
             currentAbsoluteOffset += sandeshamLabelSpoken.length;
 
             if (sandeshamElement) {
-                const formattedDescriptionText = formatTextForSpeech(displayedDescription); // Use displayed description
+                const formattedDescriptionText = formatTextForSpeech(descriptionToDisplay);
                 wrapWordsInSpans(formattedDescriptionText, sandeshamElement, currentAbsoluteOffset);
                 fullTextToSpeak += formattedDescriptionText;
                 currentAbsoluteOffset = fullTextToSpeak.length;
@@ -1428,7 +1528,7 @@
                     toggleMute(); // Toggle mute state
                     if (!isAudioMuted) { // If audio is now ON
                         if (fullTextToSpeak && fullTextToSpeak.trim() !== '') {
-                            speakText(fullTextToSpeak.trim(), 'te-IN'); // Always speak Telugu for now
+                            speakText(fullTextToSpeak.trim(), speechLang); // Use dynamic speechLang
                         } else {
                             console.warn("No text to speak on play button click.");
                         }
@@ -1484,7 +1584,7 @@
             // Auto-play TTS
             if (synth && fullTextToSpeak && fullTextToSpeak.trim() !== '' && !isAudioMuted) {
                 setTimeout(() => {
-                    speakText(fullTextToSpeak.trim(), 'te-IN');
+                    speakText(fullTextToSpeak.trim(), speechLang);
                 }, 100);
             } else if (fullTextToSpeak.trim() === '') {
                 console.warn("No text to speak.");
@@ -1502,6 +1602,7 @@
 
             if (cachedData) {
                 console.log(`Serving Chapter ${chapter}, Verse ${verse} from cache.`);
+                // When fetching from cache, ensure we display in the current language setting
                 displayVerse(cachedData);
                 return;
             }
@@ -1512,7 +1613,7 @@
                  return;
             }
 
-            showMessage('శ్లోకం పొందుతోంది...'); // Getting verse... (now uses new showMessage)
+            showMessage('శ్లోకం పొందుతోంది...', 'info'); // Getting verse... (now uses new showMessage)
             try {
                 console.log(`Attempting to fetch from API: ${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
                 const response = await fetch(`${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
@@ -1666,155 +1767,6 @@
              }
         }
 
-        // --- Translation Logic ---
-        async function translateText(text, targetLanguage = 'en') {
-            if (!text || text.trim() === '') {
-                return '';
-            }
-
-            const currentVerseKey = `${verseDisplay.dataset.chapter}-${verseDisplay.dataset.verse}`;
-            const translationCacheKey = `${currentVerseKey}-${targetLanguage}`;
-
-            if (translationCache[translationCacheKey]) {
-                console.log(`Serving translation for ${currentVerseKey} from cache.`);
-                return translationCache[translationCacheKey];
-            }
-
-            showMessage('అనువదిస్తోంది...', 'info', 0); // Show translating message, no auto-hide
-            try {
-                const prompt = `Translate the following Telugu text to English. Provide the translation in a JSON object with keys "translatedMeaning" and "translatedDescription".
-                Telugu Meaning: "${currentVerseTeluguMeaning}"
-                Telugu Description: "${currentVerseTeluguDescription}"
-                `;
-
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-
-                const payload = {
-                    contents: chatHistory,
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                "translatedMeaning": { "type": "STRING" },
-                                "translatedDescription": { "type": "STRING" }
-                            },
-                            "propertyOrdering": ["translatedMeaning", "translatedDescription"]
-                        }
-                    }
-                };
-                const apiKey = ""; // Canvas will provide this at runtime
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`API error: ${errorData.error.message || response.statusText}`);
-                }
-
-                const result = await response.json();
-                console.log("Gemini API response:", result);
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const jsonString = result.candidates[0].content.parts[0].text;
-                    const parsedJson = JSON.parse(jsonString);
-
-                    currentVerseEnglishMeaning = parsedJson.translatedMeaning || '';
-                    currentVerseEnglishDescription = parsedJson.translatedDescription || '';
-
-                    // Cache the translation
-                    translationCache[translationCacheKey] = {
-                        translatedMeaning: currentVerseEnglishMeaning,
-                        translatedDescription: currentVerseEnglishDescription
-                    };
-                    localStorage.setItem(TRANSLATION_CACHE_KEY, JSON.stringify(translationCache));
-
-                    hideMessage(); // Hide translation message
-                    return {
-                        translatedMeaning: currentVerseEnglishMeaning,
-                        translatedDescription: currentVerseEnglishDescription
-                    };
-                } else {
-                    throw new Error("Invalid response structure from translation API.");
-                }
-            } catch (error) {
-                console.error('Error translating text:', error);
-                showMessage(`అనువాదంలో లోపం: ${error.message}`, 'error');
-                return { translatedMeaning: '', translatedDescription: '' }; // Return empty on error
-            } finally {
-                // Ensure message is hidden if not already
-                if (messageArea.classList.contains('show') && messageArea.textContent.includes('అనువదిస్తోంది')) {
-                    hideMessage();
-                }
-            }
-        }
-
-        async function toggleTranslation() {
-            const shlokamBhavarthamElement = verseDisplay.querySelector('#shlokamBhavartham');
-            const sandeshamElement = verseDisplay.querySelector('#sandesham');
-
-            if (!shlokamBhavarthamElement || !sandeshamElement) {
-                showMessage('శ్లోకం వివరాలు లోడ్ కాలేదు.', 'error');
-                return;
-            }
-
-            isEnglishTranslationActive = !isEnglishTranslationActive;
-
-            if (isEnglishTranslationActive) {
-                toggleTranslationBtn.textContent = 'తెలుగు చూపించు';
-                toggleTranslationBtn.querySelector('i').className = 'ph ph-globe-hemisphere-east'; // Change icon to globe
-
-                // Check if English translation is already available in current state or cache
-                const currentVerseKey = `${verseDisplay.dataset.chapter}-${verseDisplay.dataset.verse}`;
-                const translationCacheKey = `${currentVerseKey}-en`;
-                const cachedTranslation = translationCache[translationCacheKey];
-
-                if (currentVerseEnglishMeaning && currentVerseEnglishDescription) {
-                    // Already translated in current session
-                    shlokamBhavarthamElement.textContent = currentVerseEnglishMeaning;
-                    sandeshamElement.textContent = currentVerseEnglishDescription;
-                } else if (cachedTranslation) {
-                    // Load from cache
-                    currentVerseEnglishMeaning = cachedTranslation.translatedMeaning;
-                    currentVerseEnglishDescription = cachedTranslation.translatedDescription;
-                    shlokamBhavarthamElement.textContent = currentVerseEnglishMeaning;
-                    sandeshamElement.textContent = currentVerseEnglishDescription;
-                } else {
-                    // Fetch translation from API
-                    const translated = await translateText(
-                        `Meaning: ${currentVerseTeluguMeaning}\nDescription: ${currentVerseTeluguDescription}`,
-                        'en'
-                    );
-                    if (translated.translatedMeaning && translated.translatedDescription) {
-                        shlokamBhavarthamElement.textContent = translated.translatedMeaning;
-                        sandeshamElement.textContent = translated.translatedDescription;
-                    } else {
-                        // Fallback to Telugu if translation fails
-                        isEnglishTranslationActive = false; // Revert state
-                        toggleTranslationBtn.textContent = 'English లోకి అనువదించండి';
-                        toggleTranslationBtn.querySelector('i').className = 'ph ph-translate';
-                        shlokamBhavarthamElement.textContent = currentVerseTeluguMeaning;
-                        sandeshamElement.textContent = currentVerseTeluguDescription;
-                        showMessage('అనువాదం పొందడంలో లోపం. తెలుగులో చూపుతోంది.', 'error');
-                    }
-                }
-            } else {
-                toggleTranslationBtn.textContent = 'English లోకి అనువదించండి';
-                toggleTranslationBtn.querySelector('i').className = 'ph ph-translate'; // Reset icon
-                shlokamBhavarthamElement.textContent = currentVerseTeluguMeaning;
-                sandeshamElement.textContent = currentVerseTeluguDescription;
-            }
-        }
-
-
         // Event listeners
         fetchSpecificVerseBtn.addEventListener('click', () => {
             const chapter = parseInt(chapterSelect.value);
@@ -1825,11 +1777,23 @@
                 return;
             }
 
+            // Reset translation state when new verse is fetched explicitly
+            isEnglishActive = false;
+            languageToggleBtn.textContent = 'English';
+            languageToggleBtn.querySelector('i').className = 'ph ph-translate';
+
             fetchVerse(chapter, verse);
             closeSideMenu(); // Close menu after fetching
         });
 
-        fetchRandomVerseBtn.addEventListener('click', fetchRandomVerse); // fetchRandomVerse now handles closing the menu
+        fetchRandomVerseBtn.addEventListener('click', () => {
+            // Reset translation state when new verse is fetched randomly
+            isEnglishActive = false;
+            languageToggleBtn.textContent = 'English';
+            languageToggleBtn.querySelector('i').className = 'ph ph-translate';
+            fetchRandomVerse(); // fetchRandomVerse now handles closing the menu
+        });
+
 
         chapterSelect.addEventListener('change', (event) => {
             const selectedChapter = parseInt(event.target.value);
@@ -1851,13 +1815,51 @@
              if (targetLi && targetLi.dataset.chapter && targetLi.dataset.verse) {
                  const chapter = parseInt(targetLi.dataset.chapter);
                  const verse = parseInt(targetLi.dataset.verse);
+
+                 // Reset translation state when a favorite verse is loaded
+                 isEnglishActive = false;
+                 languageToggleBtn.textContent = 'English';
+                 languageToggleBtn.querySelector('i').className = 'ph ph-translate';
+
                  fetchVerse(chapter, verse); // Fetch and display the selected favorite verse
                  closeSideMenu(); // Close the menu
              }
         });
 
-        // Event listener for the translation button
-        toggleTranslationBtn.addEventListener('click', toggleTranslation);
+        // --- Language Toggle Logic ---
+        languageToggleBtn.addEventListener('click', async () => {
+            if (verseDisplay.classList.contains('hidden')) {
+                showMessage('దయచేసి ముందుగా ఒక శ్లోకాన్ని లోడ్ చేయండి.', 'info'); // Please load a verse first.
+                return;
+            }
+
+            isEnglishActive = !isEnglishActive;
+            if (isEnglishActive) {
+                languageToggleBtn.textContent = 'తెలుగు'; // Change button text to Telugu
+                languageToggleBtn.querySelector('i').className = 'ph ph-translate-bold'; // Change icon to filled translate
+            } else {
+                languageToggleBtn.textContent = 'English'; // Change button text to English
+                languageToggleBtn.querySelector('i').className = 'ph ph-translate'; // Change icon to outline translate
+            }
+
+            // Re-display the current verse with the new language setting
+            const currentChapter = parseInt(verseDisplay.dataset.chapter);
+            const currentVerse = parseInt(verseDisplay.dataset.verse);
+            if (!isNaN(currentChapter) && !isNaN(currentVerse)) {
+                // Fetch the verse data again (it will come from cache) and then display it
+                // The displayVerse function now handles rendering based on isEnglishActive
+                const verseData = verseCache[`${currentChapter}-${currentVerse}`];
+                if (verseData) {
+                    await displayVerse(verseData); // Await displayVerse to ensure translation is fetched if needed
+                } else {
+                    // This case should ideally not happen if a verse is currently displayed
+                    console.error("Current verse data not found in cache for re-display.");
+                    showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
+                }
+            } else {
+                showMessage('అనువాదం కోసం శ్లోకం అందుబాటులో లేదు.', 'error'); // No verse available for translation.
+            }
+        });
 
 
         // --- Swipe Functionality for Side Menu Hint ---
@@ -1877,9 +1879,8 @@
             if (diffX > swipeThreshold) {
                 openSideMenu();
                 touchStartX = 0;
-                e.preventDefault(); // Prevent scrolling if swiping
+                e.preventDefault();
             } else if (Math.abs(e.touches[0].clientY - e.changedTouches[0].clientY) > Math.abs(diffX)) {
-                 // If vertical movement is greater than horizontal, it's a scroll, reset touchStartX
                  touchStartX = 0;
             }
         });
@@ -1933,20 +1934,25 @@
                  // Get the text content directly from the dataset attributes
                  const chapter = verseDisplay.dataset.chapter;
                  const verse = verseDisplay.dataset.verse;
-                 const sanskritVerseText = verseDisplay.dataset.sanskritVerse;
-                 // Use the currently displayed meaning/description for sharing
-                 const meaningText = verseDisplay.querySelector('#shlokamBhavartham').textContent;
-                 const descriptionText = verseDisplay.querySelector('#sandesham').textContent;
+                 const sanskritVerseText = isEnglishActive && verseCache[`${chapter}-${verse}`]?.english_translation?.sanskrit_verse_english_script
+                                           ? verseCache[`${chapter}-${verse}`].english_translation.sanskrit_verse_english_script
+                                           : verseDisplay.dataset.sanskritVerse;
+                 const meaningText = isEnglishActive && verseCache[`${chapter}-${verse}`]?.english_translation?.english_meaning
+                                     ? verseCache[`${chapter}-${verse}`].english_translation.english_meaning
+                                     : verseDisplay.dataset.teluguMeaning;
+                 const descriptionText = isEnglishActive && verseCache[`${chapter}-${verse}`]?.english_translation?.english_description
+                                         ? verseCache[`${chapter}-${verse}`].english_translation.english_description
+                                         : verseDisplay.dataset.teluguDescription;
 
 
                  let shareText = '';
 
                  // Add a clear title to the shared message
-                 shareText += `✨ శ్రీమద్భగవద్గీత శ్లోకం ✨\n\n`;
+                 shareText += `✨ ${isEnglishActive ? 'Srimad Bhagavad Gita Verse' : 'శ్రీమద్భగవద్గీత శ్లోకం'} ✨\n\n`;
 
                  // Use Emojis for visual appeal
                  if (chapter && verse) {
-                     shareText += `📖 అధ్యాయం ${chapter}, శ్లోకం ${verse}:\n`;
+                     shareText += `📖 ${isEnglishActive ? 'Chapter' : 'అధ్యాయం'} ${chapter}, ${isEnglishActive ? 'Verse' : 'శ్లోకం'} ${verse}:\n`;
                  }
 
                  if (sanskritVerseText && sanskritVerseText.trim() !== '' && sanskritVerseText !== 'సంస్కృత శ్లోకం అందుబాటులో లేదు.') {
@@ -1954,10 +1960,10 @@
                  }
 
                  if (meaningText && meaningText.trim() !== '' && meaningText !== 'తెలుగు భావార్థం అందుబాటులో లేదు.') {
-                     shareText += `💡 భావార్థం:\n${meaningText.trim()}\n\n`;
+                     shareText += `💡 ${isEnglishActive ? 'Meaning' : 'భావార్థం'}:\n${meaningText.trim()}\n\n`;
                  }
                  if (descriptionText && descriptionText.trim() !== '' && descriptionText !== 'సందేశం అందుబాటులో లేదు.') {
-                     shareText += `💬 సందేశం:\n${descriptionText.trim()}\n\n`;
+                     shareText += `💬 ${isEnglishActive ? 'Message' : 'సందేశం'}:\n${descriptionText.trim()}\n\n`;
                  }
 
                  shareText += `Source: adabala.com`;
@@ -2058,7 +2064,7 @@
                         if (error.name === 'SecurityError') {
                             showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: HTTPS అవసరం. మీ సైట్ HTTPS ద్వారా అందించబడుతుందని నిర్ధారించుకోండి.', 'error');
                         } else if (error.name === 'NetworkError') {
-                            showMessage('సర్వీస్ వర్кер రిజిస్ట్రేషన్ విఫలమైంది: నెట్‌వర్క్ సమస్య. ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'error');
+                            showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది: నెట్‌వర్క్ సమస్య. ఇంటర్నెట్ కనెక్షన్‌ని తనిఖీ చేయండి.', 'error');
                         } else {
                             showMessage('సర్వీస్ వర్కర్ రిజిస్ట్రేషన్ విఫలమైంది. వివరాల కోసం కన్సోల్‌ని తనిఖీ చేయండి.', 'error');
                         }
@@ -2109,6 +2115,11 @@
                 return;
             }
 
+            // Reset translation state when navigating
+            isEnglishActive = false;
+            languageToggleBtn.textContent = 'English';
+            languageToggleBtn.querySelector('i').className = 'ph ph-translate';
+
             if (currentVerse > 1) {
                 fetchVerse(currentChapter, currentVerse - 1);
             } else if (currentChapter > 1) {
@@ -2129,6 +2140,11 @@
                 showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
                 return;
             }
+
+            // Reset translation state when navigating
+            isEnglishActive = false;
+            languageToggleBtn.textContent = 'English';
+            languageToggleBtn.querySelector('i').className = 'ph ph-translate';
 
             const maxVerseInCurrentChapter = CHAPTER_VERSE_COUNTS[currentChapter];
 
