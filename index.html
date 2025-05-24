@@ -935,6 +935,7 @@
         }
 
         /* New: Initial message when no verse is loaded */
+        /* This style block is kept for reference but the element is removed from HTML */
         .initial-message {
             text-align: center;
             padding: 2rem;
@@ -1012,11 +1013,6 @@
     <div class="main-content container mx-auto p-4 md:p-8" id="mainContent">
         <h1 id="appHeading">శ్రీమద్భగవద్గీత</h1>
 
-        <div id="initialMessage" class="initial-message hidden">
-            <p>భగవద్గీత శ్లోకాలను అన్వేషించడానికి స్వాగతం!</p>
-            <p>ఎడమవైపు మెనూని తెరవడానికి స్వైప్ చేయండి లేదా క్లిక్ చేయండి. అక్కడ మీరు నిర్దిష్ట శ్లోకాన్ని ఎంచుకోవచ్చు లేదా యాదృచ్ఛిక శ్లోకాన్ని పొందవచ్చు.</p>
-        </div>
-
         <div id="verseDisplay" class="card hidden">
         </div>
 
@@ -1039,7 +1035,7 @@
 
     <script>
         // User-configurable App Version
-        const APP_VERSION = "TEST"; // Updated version number
+        const APP_VERSION = "2.0.7"; // Updated version number
 
         const splashScreen = document.getElementById('splashScreen');
         const mainContent = document.getElementById('mainContent');
@@ -1060,11 +1056,11 @@
         // New loading overlay elements
         const loadingOverlay = document.getElementById('loadingOverlay');
         const loadingMessage = document.getElementById('loadingMessage');
-        const initialMessageDiv = document.getElementById('initialMessage'); // New initial message div
+        // const initialMessageDiv = document.getElementById('initialMessage'); // Removed this line as the element is gone
 
         // Favorites elements
         const favoritesSection = document.getElementById('favoritesSection');
-        const favoritesList = document.getElementById('favoritesList');
+        const favoritesList = document = document.getElementById('favoritesList');
         const favoritesUl = document.getElementById('favoritesUl');
 
         // Navigation buttons
@@ -1116,7 +1112,7 @@
             // Hide main content and navigation buttons during loading
             verseDisplay.classList.add('hidden');
             navigationButtonsContainer.classList.add('hidden');
-            initialMessageDiv.classList.add('hidden'); // Hide initial message as well
+            // initialMessageDiv.classList.add('hidden'); // Removed: Element no longer exists
         }
 
         /**
@@ -1127,12 +1123,12 @@
             loadingOverlay.classList.remove('visible');
             // Show navigation buttons again after loading
             navigationButtonsContainer.classList.remove('hidden');
-            // If a verse is loaded, show verseDisplay, otherwise show initial message
-            if (!verseDisplay.classList.contains('hidden')) {
-                initialMessageDiv.classList.add('hidden');
-            } else {
-                initialMessageDiv.classList.remove('hidden');
-            }
+            // No longer need to manage initialMessageDiv visibility here
+            // if (!verseDisplay.classList.contains('hidden')) {
+            //     initialMessageDiv.classList.add('hidden');
+            // } else {
+            //     initialMessageDiv.classList.remove('hidden');
+            // }
         }
 
         // Function to show messages (now handles toast behavior and sidebar auto-pop/auto-close)
@@ -1470,8 +1466,8 @@
             // Scroll to the top of the page
             window.scrollTo(0, 0);
 
-            // Hide the initial message if a verse is being displayed
-            initialMessageDiv.classList.add('hidden');
+            // initialMessageDiv is removed, so no need to hide it here.
+            // initialMessageDiv.classList.add('hidden');
 
             // Clear previous content in the main display area
             verseDisplay.innerHTML = '';
@@ -1759,7 +1755,7 @@
             if (!navigator.onLine) {
                  showMessage(`మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`, 'error');
                  verseDisplay.classList.add('hidden');
-                 initialMessageDiv.classList.remove('hidden'); // Show initial message if offline and no cache
+                 // initialMessageDiv.classList.remove('hidden'); // Removed: Element no longer exists
                  return;
             }
 
@@ -1812,7 +1808,7 @@
                 }
                 showMessage(displayMessage, 'error'); // Error getting verse (auto-hides)
                 verseDisplay.classList.add('hidden');
-                initialMessageDiv.classList.remove('hidden'); // Show initial message on error
+                // initialMessageDiv.classList.remove('hidden'); // Removed: Element no longer exists
             } finally {
                 hideLoadingOverlay(); // Always hide the loading overlay
             }
@@ -1831,7 +1827,7 @@
                  } else {
                      showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు కాష్‌లో శ్లోకాలు అందుబాటులో లేవు.', 'error');
                      verseDisplay.classList.add('hidden');
-                     initialMessageDiv.classList.remove('hidden'); // Show initial message if offline and no cache
+                     // initialMessageDiv.classList.remove('hidden'); // Removed: Element no longer exists
                  }
              } else {
                  const maxChapter = 18;
@@ -1920,10 +1916,11 @@
             sideMenu.classList.remove('open');
             sideMenuOverlay.classList.remove('visible');
              // Show hint again after a delay if not in landscape on small screen
+             // The menu closes immediately via CSS transition, this is for the hint to reappear
              if (!(window.matchMedia("(orientation: landscape) and (max-width: 768px)").matches)) {
                  setTimeout(() => {
                      sideMenuHint.style.display = 'block';
-                 }, 500); // Show hint after menu closes
+                 }, 500); // Reduced delay for hint to reappear (0.5 seconds)
              }
         }
 
@@ -2028,6 +2025,10 @@
         // --- Language Toggle Logic ---
         languageToggleBtn.addEventListener('click', async () => {
             console.log(`[languageToggleBtn] Clicked. Current isEnglishActive: ${isEnglishActive}`);
+
+            // The initialMessageDiv has been removed, so no need to hide it here.
+            // initialMessageDiv.classList.add('hidden');
+
             if (verseDisplay.classList.contains('hidden')) {
                 showMessage('దయచేసి ముందుగా ఒక శ్లోకాన్ని లోడ్ చేయండి.', 'info'); // Please load a verse first.
                 console.log(`[languageToggleBtn] Verse display is hidden, returning.`);
@@ -2336,7 +2337,7 @@
                 if (Object.keys(verseCache).length > 0) {
                     fetchRandomVerse(); // Try to load a random verse from cache/online
                 } else {
-                    initialMessageDiv.classList.remove('hidden'); // Show initial message
+                    // initialMessageDiv.classList.remove('hidden'); // Removed: Element no longer exists
                     verseDisplay.classList.add('hidden'); // Hide verse display
                     showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info');
                 }
@@ -2369,7 +2370,7 @@
                 if (Object.keys(verseCache).length > 0) {
                     fetchRandomVerse(); // Try to load a random verse from cache/online
                 } else {
-                    initialMessageDiv.classList.remove('hidden'); // Show initial message
+                    // initialMessageDiv.classList.remove('hidden'); // Removed: Element no longer exists
                     verseDisplay.classList.add('hidden'); // Hide verse display
                     showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info');
                 }
