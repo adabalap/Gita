@@ -363,7 +363,7 @@
             border-radius: 0.75rem; /* More rounded buttons */
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.1s ease-out; /* Added transform for click feedback */
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* More prominent button shadow */
             display: flex; /* Use flexbox for icon and text alignment */
             align-items: center;
@@ -373,6 +373,10 @@
         }
         .btn:hover {
              box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Hover shadow effect */
+        }
+        .btn:active { /* Click feedback */
+            transform: scale(0.98);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .btn-primary {
             background-color: #4f46e5; /* Indigo */
@@ -516,9 +520,12 @@
             border-radius: 50%; /* Make it round */
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+            transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out, transform 0.1s ease-out; /* Added transform */
             font-size: 1.2rem; /* Icon size */
             color: white; /* Icon color */
+        }
+        .share-button:active { /* Click feedback */
+            transform: scale(0.95);
         }
 
         .share-button i {
@@ -566,7 +573,7 @@
             color: #6b7280; /* Gray text */
             background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
             border-top: 1px solid rgba(209, 213, 219, 0.7); /* More subtle border */
-            backdrop-filter: blur(3px); /* Frosted glass effect */
+            backdrop-filter: blur(3px);
         }
 
         footer a {
@@ -717,12 +724,16 @@
              border-radius: 0.75rem; /* Match other buttons */
              background-color: rgba(243, 244, 246, 0.8); /* Light gray background */
              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-             transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+             transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.1s ease-out; /* Added transform */
          }
 
          #favoritesSection h2:hover {
              background-color: rgba(229, 231, 235, 0.9); /* Darker gray on hover */
              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* More prominent shadow on hover */
+         }
+         #favoritesSection h2:active { /* Click feedback */
+            transform: scale(0.98);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
          }
 
 
@@ -763,7 +774,7 @@
              padding: 0.8rem;
              margin-bottom: 0.5rem;
              cursor: pointer;
-             transition: background-color 0.2s ease-in-out;
+             transition: background-color 0.2s ease-in-out, transform 0.1s ease-out; /* Added transform */
              font-size: 1.1rem;
              color: #4f46e5; /* Indigo color */
              font-weight: bold;
@@ -772,9 +783,9 @@
          #favoritesList li:hover {
              background-color: rgba(243, 244, 246, 0.85); /* Lighter gray on hover */
          }
-
-         /* Specific styles for Feedback Form */
-         /* Removed as feedback section is removed */
+         #favoritesList li:active { /* Click feedback */
+            transform: scale(0.98);
+         }
 
 
         /* --- Landscape Optimization for small screens --- */
@@ -888,6 +899,59 @@
             font-family: 'Roboto', sans-serif;
         }
 
+        /* New: Loading Overlay Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+            backdrop-filter: blur(5px); /* Frosted glass effect */
+            z-index: 100; /* Above everything else */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            color: #4f46e5; /* Indigo color */
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Roboto', sans-serif;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-overlay .hourglass-icon {
+            font-size: 4rem; /* Large hourglass icon */
+            margin-bottom: 1rem;
+            animation: spin 2s linear infinite; /* Spin animation for hourglass */
+        }
+
+        /* New: Initial message when no verse is loaded */
+        .initial-message {
+            text-align: center;
+            padding: 2rem;
+            color: #4b5563;
+            font-size: 1.2rem;
+            margin-top: 2rem;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            backdrop-filter: blur(3px);
+            border: 1px solid rgba(229, 231, 235, 0.7);
+        }
+
+        .initial-message p {
+            margin-bottom: 1rem;
+        }
+
     </style>
 </head>
 <body>
@@ -895,7 +959,12 @@
     <div class="splash-screen" id="splashScreen">
         <h1>శ్రీమద్భగవద్గీత</h1>
         <p>తెలుగులో</p>
-        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <i class="ph ph-hourglass-simple hourglass-icon"></i>
+        <span id="loadingMessage">లోడ్ అవుతోంది...</span>
+    </div>
 
     <div class="side-menu-overlay" id="sideMenuOverlay"></div>
 
@@ -943,8 +1012,13 @@
     <div class="main-content container mx-auto p-4 md:p-8" id="mainContent">
         <h1 id="appHeading">శ్రీమద్భగవద్గీత</h1>
 
+        <div id="initialMessage" class="initial-message hidden">
+            <p>భగవద్గీత శ్లోకాలను అన్వేషించడానికి స్వాగతం!</p>
+            <p>ఎడమవైపు మెనూని తెరవడానికి స్వైప్ చేయండి లేదా క్లిక్ చేయండి. అక్కడ మీరు నిర్దిష్ట శ్లోకాన్ని ఎంచుకోవచ్చు లేదా యాదృచ్ఛిక శ్లోకాన్ని పొందవచ్చు.</p>
+        </div>
+
         <div id="verseDisplay" class="card hidden">
-            </div>
+        </div>
 
         <div class="navigation-buttons" id="navigationButtons">
             <button class="btn btn-primary font-roboto" id="prevVerseBtn">
@@ -965,7 +1039,7 @@
 
     <script>
         // User-configurable App Version
-        const APP_VERSION = "2.0.1"; // You can change this version number manually.
+        const APP_VERSION = "TEST"; // Updated version number
 
         const splashScreen = document.getElementById('splashScreen');
         const mainContent = document.getElementById('mainContent');
@@ -983,6 +1057,11 @@
         const sideMenuOverlay = document.getElementById('sideMenuOverlay');
         const sideMenuHint = document.getElementById('sideMenuHint');
 
+        // New loading overlay elements
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const initialMessageDiv = document.getElementById('initialMessage'); // New initial message div
+
         // Favorites elements
         const favoritesSection = document.getElementById('favoritesSection');
         const favoritesList = document.getElementById('favoritesList');
@@ -991,6 +1070,7 @@
         // Navigation buttons
         const prevVerseBtn = document.getElementById('prevVerseBtn');
         const nextVerseBtn = document.getElementById('nextVerseBtn');
+        const navigationButtonsContainer = document.getElementById('navigationButtons'); // Reference to the container
 
         // Translation elements
         const languageToggleBtn = document.getElementById('languageToggleBtn');
@@ -1024,6 +1104,36 @@
         let wordSpans = []; // Array to store references to word spans and their text/index info
         let currentHighlightSpan = null; // To keep track of the currently highlighted span
         let isAudioMuted = true; // Audio mute state, default to true (muted)
+
+        /**
+         * Displays the loading overlay with a specific message.
+         * @param {string} msg The message to display.
+         */
+        function showLoadingOverlay(msg) {
+            console.log(`[showLoadingOverlay] Displaying: "${msg}"`);
+            loadingMessage.textContent = msg;
+            loadingOverlay.classList.add('visible');
+            // Hide main content and navigation buttons during loading
+            verseDisplay.classList.add('hidden');
+            navigationButtonsContainer.classList.add('hidden');
+            initialMessageDiv.classList.add('hidden'); // Hide initial message as well
+        }
+
+        /**
+         * Hides the loading overlay.
+         */
+        function hideLoadingOverlay() {
+            console.log(`[hideLoadingOverlay] Hiding loading overlay.`);
+            loadingOverlay.classList.remove('visible');
+            // Show navigation buttons again after loading
+            navigationButtonsContainer.classList.remove('hidden');
+            // If a verse is loaded, show verseDisplay, otherwise show initial message
+            if (!verseDisplay.classList.contains('hidden')) {
+                initialMessageDiv.classList.add('hidden');
+            } else {
+                initialMessageDiv.classList.remove('hidden');
+            }
+        }
 
         // Function to show messages (now handles toast behavior and sidebar auto-pop/auto-close)
         // duration = 0 means the message stays until hideMessage() is called.
@@ -1304,7 +1414,7 @@
                  return null;
             }
 
-            showMessage('అనువాదం పొందుతోంది...', 'info', 0); // Getting translation... (info, stays until hidden)
+            showLoadingOverlay('అనువాదం పొందుతోంది...'); // Show loading overlay for translation
             try {
                 console.log(`[fetchTranslation] Making POST request to ${API_BASE_URL}/translate`);
                 const response = await fetch(`${API_BASE_URL}/translate`, {
@@ -1344,7 +1454,7 @@
                 showMessage(`అనువాదం పొందడంలో లోపం: ${error.message}`, 'error'); // Error getting translation (auto-hides)
                 return null;
             } finally {
-                hideMessage(); // Always hide the "Getting translation..." message
+                hideLoadingOverlay(); // Always hide the loading overlay
             }
         }
 
@@ -1354,13 +1464,14 @@
             console.log(`[displayVerse] Called with verseData:`, verseData);
             console.log(`[displayVerse] Current isEnglishActive state: ${isEnglishActive}`);
 
-            // hideMessage(); // Removed: fetchVerse and fetchTranslation will handle hiding their messages
             clearHighlight(); // Clear any highlight from previous verse
             wordSpans = []; // **CRITICAL: Reset global wordSpans array for the new verse**
 
             // Scroll to the top of the page
             window.scrollTo(0, 0);
 
+            // Hide the initial message if a verse is being displayed
+            initialMessageDiv.classList.add('hidden');
 
             // Clear previous content in the main display area
             verseDisplay.innerHTML = '';
@@ -1634,7 +1745,6 @@
         // Function to fetch a verse from API or cache
         async function fetchVerse(chapter, verse) {
             console.log(`[fetchVerse] Called for Chapter ${chapter}, Verse ${verse}`);
-            // hideMessage(); // Removed as showMessage will handle opening/closing
 
             const cacheKey = `${chapter}-${verse}`;
             const cachedData = verseCache[cacheKey];
@@ -1649,10 +1759,11 @@
             if (!navigator.onLine) {
                  showMessage(`మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`, 'error');
                  verseDisplay.classList.add('hidden');
+                 initialMessageDiv.classList.remove('hidden'); // Show initial message if offline and no cache
                  return;
             }
 
-            showMessage('శ్లోకం పొందుతోంది...', 'info', 0); // Getting verse... (stays until hidden)
+            showLoadingOverlay('శ్లోకం పొందుతోంది...'); // Show loading overlay for verse fetch
             try {
                 console.log(`[fetchVerse] Attempting to fetch from API: ${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
                 const response = await fetch(`${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
@@ -1701,15 +1812,15 @@
                 }
                 showMessage(displayMessage, 'error'); // Error getting verse (auto-hides)
                 verseDisplay.classList.add('hidden');
+                initialMessageDiv.classList.remove('hidden'); // Show initial message on error
             } finally {
-                hideMessage(); // Always hide the "Getting verse..." message
+                hideLoadingOverlay(); // Always hide the loading overlay
             }
         }
 
         // Function to fetch a random verse
         async function fetchRandomVerse() {
              console.log(`[fetchRandomVerse] Called.`);
-             // hideMessage(); // Removed as fetchVerse will handle this
              if (!navigator.onLine) {
                  const cachedVerseKeys = Object.keys(verseCache);
                  if (cachedVerseKeys.length > 0) {
@@ -1720,6 +1831,7 @@
                  } else {
                      showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు కాష్‌లో శ్లోకాలు అందుబాటులో లేవు.', 'error');
                      verseDisplay.classList.add('hidden');
+                     initialMessageDiv.classList.remove('hidden'); // Show initial message if offline and no cache
                  }
              } else {
                  const maxChapter = 18;
@@ -2015,7 +2127,8 @@
              console.log(`[hideSplashScreen] Hiding splash screen.`);
              splashScreen.classList.add('hidden');
              mainContent.classList.add('visible');
-             fetchRandomVerse(); // Fetch a random verse on load (will use cache if offline)
+             // Immediately fetch a random verse after splash screen hides
+             fetchRandomVerse();
         }
 
         // Hide splash screen after a delay, ensuring content is loaded
@@ -2219,7 +2332,14 @@
             let currentVerse = parseInt(verseDisplay.dataset.verse);
 
             if (isNaN(currentChapter) || isNaN(currentVerse)) {
-                console.log('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.'); // Changed to console.log
+                // If no verse is currently displayed, try to fetch a random one or show initial message
+                if (Object.keys(verseCache).length > 0) {
+                    fetchRandomVerse(); // Try to load a random verse from cache/online
+                } else {
+                    initialMessageDiv.classList.remove('hidden'); // Show initial message
+                    verseDisplay.classList.add('hidden'); // Hide verse display
+                    showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info');
+                }
                 return;
             }
 
@@ -2234,7 +2354,7 @@
                 const lastVerseOfPrevChapter = CHAPTER_VERSE_COUNTS[prevChapter];
                 fetchVerse(prevChapter, lastVerseOfPrevChapter);
             } else {
-                console.log('ఇది మొదటి అధ్యాయంలోని మొదటి శ్లోకం.'); // Changed to console.log
+                showMessage('ఇది మొదటి అధ్యాయంలోని మొదటి శ్లోకం.', 'info'); // Changed to showMessage
             }
         }
 
@@ -2245,7 +2365,14 @@
             let currentVerse = parseInt(verseDisplay.dataset.verse);
 
             if (isNaN(currentChapter) || isNaN(currentVerse)) {
-                console.log('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.'); // Changed to console.log
+                // If no verse is currently displayed, try to fetch a random one or show initial message
+                if (Object.keys(verseCache).length > 0) {
+                    fetchRandomVerse(); // Try to load a random verse from cache/online
+                } else {
+                    initialMessageDiv.classList.remove('hidden'); // Show initial message
+                    verseDisplay.classList.add('hidden'); // Hide verse display
+                    showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు. దయచేసి ఒక శ్లోకాన్ని ఎంచుకోండి.', 'info');
+                }
                 return;
             }
 
@@ -2261,7 +2388,7 @@
                 const nextChapter = currentChapter + 1;
                 fetchVerse(nextChapter, 1); // Go to the first verse of the next chapter
             } else {
-                console.log('ఇది చివరి అధ్యాయంలోని చివరి శ్లోకం.'); // Changed to console.log
+                showMessage('ఇది చివరి అధ్యాయంలోని చివరి శ్లోకం.', 'info'); // Changed to showMessage
             }
         }
 
