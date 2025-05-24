@@ -906,7 +906,9 @@
         </button>
 
         <div class="release-version">
-            Version: v1.1.0
+            Version: 08c3cad
+            <!-- NOTE: The '08c3cad' placeholder is intended to be replaced by your CI/CD pipeline (e.g., GitHub Actions)
+                 with the actual version number during deployment. It is not dynamically updated by JavaScript. -->
         </div>
 
     </div>
@@ -1233,11 +1235,14 @@
 
         // Function to fetch translation from Backend API
         async function fetchTranslation(chapter, verse, sanskritTelugu, teluguMeaning, teluguDescription) {
+            console.log(`[fetchTranslation] Attempting to fetch translation for Chapter ${chapter}, Verse ${verse}.`);
+            console.log(`[fetchTranslation] isEnglishActive: ${isEnglishActive}`);
+
             const currentVerseKey = `${chapter}-${verse}`;
             let cachedTranslation = verseCache[currentVerseKey]?.english_translation;
 
             if (cachedTranslation) {
-                console.log(`Serving English translation for Chapter ${chapter}, Verse ${verse} from cache.`);
+                console.log(`[fetchTranslation] Serving English translation for Chapter ${chapter}, Verse ${verse} from cache.`);
                 return cachedTranslation;
             }
 
@@ -1249,6 +1254,7 @@
             showMessage('అనువాదం పొందుతోంది...', 'info', 0); // Getting translation... (info, no auto-hide)
 
             try {
+                console.log(`[fetchTranslation] Making POST request to ${API_BASE_URL}/translate`);
                 const response = await fetch(`${API_BASE_URL}/translate`, {
                     method: 'POST',
                     headers: {
@@ -1261,24 +1267,28 @@
                     })
                 });
 
+                console.log(`[fetchTranslation] Response status: ${response.status}`);
                 if (!response.ok) {
                     const errorData = await response.json();
+                    console.error(`[fetchTranslation] API error response:`, errorData);
                     throw new Error(`API error: ${errorData.error || response.statusText}`);
                 }
 
                 const translatedData = await response.json();
+                console.log(`[fetchTranslation] Received translated data:`, translatedData);
 
                 // Store the translation in the cache
                 if (verseCache[currentVerseKey]) {
                     verseCache[currentVerseKey].english_translation = translatedData;
                     localStorage.setItem(CACHE_KEY, JSON.stringify(verseCache));
+                    console.log(`[fetchTranslation] Stored translation in cache for ${currentVerseKey}`);
                 }
 
                 showMessage('అనువాదం విజయవంతమైంది.', 'success'); // Translation successful.
                 return translatedData;
 
             } catch (error) {
-                console.error('Error fetching translation:', error);
+                console.error('[fetchTranslation] Error fetching translation:', error);
                 showMessage(`అనువాదం పొందడంలో లోపం: ${error.message}`, 'error'); // Error getting translation
                 return null;
             } finally {
@@ -1292,6 +1302,9 @@
 
         // Function to display a verse in the new format (using cards)
         async function displayVerse(verseData) {
+            console.log(`[displayVerse] Called with verseData:`, verseData);
+            console.log(`[displayVerse] Current isEnglishActive state: ${isEnglishActive}`);
+
             hideMessage(); // Hide general message area
             clearHighlight(); // Clear any highlight from previous verse
             wordSpans = []; // **CRITICAL: Reset global wordSpans array for the new verse**
@@ -1322,10 +1335,12 @@
 
             // If English is active, try to get and use translations
             if (isEnglishActive) {
+                console.log(`[displayVerse] isEnglishActive is true. Checking for English translation.`);
                 const currentVerseKey = `${verseData.chapter}-${verseData.verse}`;
                 let englishTranslation = verseCache[currentVerseKey]?.english_translation;
 
                 if (!englishTranslation) {
+                    console.log(`[displayVerse] English translation not in cache. Attempting to fetch.`);
                     // Fetch translation if not already cached
                     englishTranslation = await fetchTranslation(
                         verseData.chapter,
@@ -1337,16 +1352,20 @@
                 }
 
                 if (englishTranslation) {
+                    console.log(`[displayVerse] Using English translation.`);
                     sanskritVerseToDisplay = englishTranslation.sanskrit_verse_english_script || sanskritVerseOriginal;
                     meaningToDisplay = englishTranslation.english_meaning || polishedTeluguMeaningOriginal;
                     descriptionToDisplay = englishTranslation.english_description || teluguDescriptionOriginal;
                     speechLang = 'en-US'; // Change speech language to English
                 } else {
                     // If translation failed, revert to Telugu and show message
+                    console.warn(`[displayVerse] English translation failed or not available. Reverting to Telugu.`);
                     showMessage('అనువాదం అందుబాటులో లేదు, తెలుగులో చూపుతోంది.', 'info'); // Translation not available, showing in Telugu.
                     isEnglishActive = false; // Reset toggle state
-                    languageToggleBtn.textContent = 'English'; // Update button text
-                    languageToggleBtn.querySelector('i').className = 'ph ph-translate'; // Update icon
+                    // Ensure the button text and icon are reset if translation failed
+                    languageToggleBtn.querySelector('i').className = 'ph ph-translate';
+                    const textNode = Array.from(languageToggleBtn.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+                    if (textNode) textNode.nodeValue = ' English';
                 }
             }
 
@@ -1567,12 +1586,13 @@
 
         // Function to fetch a verse from API or cache
         async function fetchVerse(chapter, verse) {
+            console.log(`[fetchVerse] Called for Chapter ${chapter}, Verse ${verse}`);
             hideMessage(); // Hide any old messages when starting a new fetch
             const cacheKey = `${chapter}-${verse}`;
             const cachedData = verseCache[cacheKey];
 
             if (cachedData) {
-                console.log(`Serving Chapter ${chapter}, Verse ${verse} from cache.`);
+                console.log(`[fetchVerse] Serving Chapter ${chapter}, Verse ${verse} from cache.`);
                 // When fetching from cache, ensure we display in the current language setting
                 displayVerse(cachedData);
                 return;
@@ -1586,7 +1606,7 @@
 
             showMessage('శ్లోకం పొందుతోంది...', 'info'); // Getting verse... (now uses new showMessage)
             try {
-                console.log(`Attempting to fetch from API: ${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
+                console.log(`[fetchVerse] Attempting to fetch from API: ${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
                 const response = await fetch(`${API_BASE_URL}/verse?chapter=${chapter}&verse=${verse}`);
 
                 if (!response.ok) {
@@ -1602,7 +1622,7 @@
                              errorDetails = `HTTP error! status: ${response.status}, Could not read response body.`;
                          }
                     }
-                    console.error('Fetch failed with details:', errorDetails);
+                    console.error('[fetchVerse] Fetch failed with details:', errorDetails);
                     throw new Error(errorDetails);
                 }
 
@@ -1610,24 +1630,24 @@
 
                 verseCache[cacheKey] = data;
                 localStorage.setItem(CACHE_KEY, JSON.stringify(verseCache));
-                console.log(`Fetched Chapter ${chapter}, Verse ${verse} from API and cached.`);
-                console.log('Fetched data:', data);
+                console.log(`[fetchVerse] Fetched Chapter ${chapter}, Verse ${verse} from API and cached.`);
+                console.log('[fetchVerse] Fetched data:', data);
 
                 displayVerse(data);
 
             } catch (error) {
-                console.error('Error fetching verse:', error);
+                console.error('[fetchVerse] Error fetching verse:', error);
                 // Log more specific error details
-                console.error('Error name:', error.name);
-                console.error('Error message:', error.message);
-                console.error('Error stack:', error.stack);
+                console.error('[fetchVerse] Error name:', error.name);
+                console.error('[fetchVerse] Error message:', error.message);
+                console.error('[fetchVerse] Error stack:', error.stack);
 
                 let displayMessage = `శ్లోకం పొందడంలో లోపం: ${error.message}`;
                 if (error.message.includes('Failed to fetch') || navigator.onLine === false) {
                      displayMessage = `మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు శ్లోకం ${chapter}:${verse} కాష్‌లో అందుబాటులో లేదు.`;
-                     console.log("Likely offline error, displaying specific message.");
+                     console.log("[fetchVerse] Likely offline error, displaying specific message.");
                 } else if (!error.message || error.message === '[object Object]') {
-                     console.error('Raw error object:', error);
+                     console.error('[fetchVerse] Raw error object:', error);
                      displayMessage = `శ్లోకం పొందడంలో లోపం. వివరాల కోసం కన్సోల్ చూడండి.`;
                 }
                 showMessage(displayMessage, 'error'); // Use 'error' type which won't auto-hide
@@ -1637,13 +1657,14 @@
 
         // Function to fetch a random verse
         async function fetchRandomVerse() {
+             console.log(`[fetchRandomVerse] Called.`);
              hideMessage(); // Hide any old messages
              if (!navigator.onLine) {
                  const cachedVerseKeys = Object.keys(verseCache);
                  if (cachedVerseKeys.length > 0) {
                      const randomKey = cachedVerseKeys[Math.floor(Math.random() * cachedVerseKeys.length)];
                      const [chapter, verse] = randomKey.split('-').map(Number);
-                     console.log(`Fetching random verse from cache: Chapter ${chapter}, Verse ${verse}`);
+                     console.log(`[fetchRandomVerse] Fetching random verse from cache: Chapter ${chapter}, Verse ${verse}`);
                      displayVerse(verseCache[randomKey]);
                  } else {
                      showMessage('మీరు ఆఫ్‌లైన్‌లో ఉన్నారు మరియు కాష్‌లో శ్లోకాలు అందుబాటులో లేవు.', 'error');
@@ -1655,7 +1676,7 @@
                  const maxVerse = CHAPTER_VERSE_COUNTS[randomChapter] || 78;
                  const randomVerse = Math.floor(Math.random() * maxVerse) + 1;
 
-                 console.log(`Fetching random verse from API: Chapter ${randomChapter}, Verse ${randomVerse}`);
+                 console.log(`[fetchRandomVerse] Fetching random verse from API: Chapter ${randomChapter}, Verse ${randomVerse}`);
                  fetchVerse(randomChapter, randomVerse);
              }
              closeSideMenu();
@@ -1663,6 +1684,7 @@
 
         // Function to populate the chapter dropdown
         function populateChapterDropdown() {
+            console.log(`[populateChapterDropdown] Populating chapter dropdown.`);
             for (let i = 1; i <= 18; i++) {
                 const option = document.createElement('option');
                 option.value = i;
@@ -1673,6 +1695,7 @@
 
         // Function to populate the verse dropdown based on selected chapter
         function populateVerseDropdown(chapter) {
+            console.log(`[populateVerseDropdown] Populating verse dropdown for chapter: ${chapter}`);
             verseSelect.innerHTML = '<option value="">శ్లోకం ఎంచుకోండి</option>';
             verseSelect.disabled = true;
 
@@ -1690,6 +1713,7 @@
 
         // Function to update the favorites list UI in the side menu
         function updateFavoritesListUI() {
+             console.log(`[updateFavoritesListUI] Updating favorites list UI.`);
              favoritesUl.innerHTML = ''; // Clear current list
 
              if (favorites.length === 0) {
@@ -1721,6 +1745,7 @@
 
         // --- Side Menu Logic ---
         function openSideMenu() {
+            console.log(`[openSideMenu] Opening side menu.`);
             sideMenu.classList.add('open');
             sideMenuOverlay.classList.add('visible');
              sideMenuHint.style.display = 'none'; // Hide hint when menu is open
@@ -1728,6 +1753,7 @@
         }
 
         function closeSideMenu() {
+            console.log(`[closeSideMenu] Closing side menu.`);
             sideMenu.classList.remove('open');
             sideMenuOverlay.classList.remove('visible');
              // Show hint again after a delay if not in landscape on small screen
@@ -1740,6 +1766,7 @@
 
         // Event listeners
         fetchSpecificVerseBtn.addEventListener('click', () => {
+            console.log(`[fetchSpecificVerseBtn] Clicked.`);
             const chapter = parseInt(chapterSelect.value);
             const verse = parseInt(verseSelect.value);
 
@@ -1750,23 +1777,28 @@
 
             // Reset translation state when new verse is fetched explicitly
             isEnglishActive = false;
-            languageToggleBtn.textContent = 'English';
             languageToggleBtn.querySelector('i').className = 'ph ph-translate';
+            const textNode = Array.from(languageToggleBtn.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+            if (textNode) textNode.nodeValue = ' English';
 
             fetchVerse(chapter, verse);
             closeSideMenu(); // Close menu after fetching
         });
 
         fetchRandomVerseBtn.addEventListener('click', () => {
+            console.log(`[fetchRandomVerseBtn] Clicked.`);
             // Reset translation state when new verse is fetched randomly
             isEnglishActive = false;
-            languageToggleBtn.textContent = 'English';
             languageToggleBtn.querySelector('i').className = 'ph ph-translate';
+            const textNode = Array.from(languageToggleBtn.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+            if (textNode) textNode.nodeValue = ' English';
+
             fetchRandomVerse(); // fetchRandomVerse now handles closing the menu
         });
 
 
         chapterSelect.addEventListener('change', (event) => {
+            console.log(`[chapterSelect] Changed to: ${event.target.value}`);
             const selectedChapter = parseInt(event.target.value);
             populateVerseDropdown(selectedChapter);
         });
@@ -1775,22 +1807,26 @@
 
         // Event listener for clicking on the favorites section header to toggle the list
         favoritesSection.addEventListener('click', () => {
+             console.log(`[favoritesSection] Clicked. Toggling expanded state.`);
              favoritesSection.classList.toggle('expanded');
              // The CSS transition handles the height change
         });
 
         // Event listener for clicking on a favorite verse in the list
         favoritesUl.addEventListener('click', (event) => {
+             console.log(`[favoritesUl] Clicked.`);
              const targetLi = event.target.closest('li');
              // Ensure the click was on an actual verse item, not the "No favorites" message
              if (targetLi && targetLi.dataset.chapter && targetLi.dataset.verse) {
                  const chapter = parseInt(targetLi.dataset.chapter);
                  const verse = parseInt(targetLi.dataset.verse);
+                 console.log(`[favoritesUl] Fetching favorite: Chapter ${chapter}, Verse ${verse}`);
 
                  // Reset translation state when a favorite verse is loaded
                  isEnglishActive = false;
-                 languageToggleBtn.textContent = 'English';
                  languageToggleBtn.querySelector('i').className = 'ph ph-translate';
+                 const textNode = Array.from(languageToggleBtn.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+                 if (textNode) textNode.nodeValue = ' English';
 
                  fetchVerse(chapter, verse); // Fetch and display the selected favorite verse
                  closeSideMenu(); // Close the menu
@@ -1799,35 +1835,46 @@
 
         // --- Language Toggle Logic ---
         languageToggleBtn.addEventListener('click', async () => {
+            console.log(`[languageToggleBtn] Clicked. Current isEnglishActive: ${isEnglishActive}`);
             if (verseDisplay.classList.contains('hidden')) {
                 showMessage('దయచేసి ముందుగా ఒక శ్లోకాన్ని లోడ్ చేయండి.', 'info'); // Please load a verse first.
+                console.log(`[languageToggleBtn] Verse display is hidden, returning.`);
                 return;
             }
 
             isEnglishActive = !isEnglishActive;
+            console.log(`[languageToggleBtn] New isEnglishActive: ${isEnglishActive}`);
+
+            const iconElement = languageToggleBtn.querySelector('i');
+            const textNode = Array.from(languageToggleBtn.childNodes).find(node => node.nodeType === Node.TEXT_NODE); // Find the actual text node
+
             if (isEnglishActive) {
-                languageToggleBtn.textContent = 'తెలుగు'; // Change button text to Telugu
-                languageToggleBtn.querySelector('i').className = 'ph ph-translate-bold'; // Change icon to filled translate
+                if (iconElement) iconElement.className = 'ph ph-translate-bold';
+                if (textNode) textNode.nodeValue = ' తెలుగు'; // Update the text node's value
             } else {
-                languageToggleBtn.textContent = 'English'; // Change button text to English
-                languageToggleBtn.querySelector('i').className = 'ph ph-translate'; // Change icon to outline translate
+                if (iconElement) iconElement.className = 'ph ph-translate';
+                if (textNode) textNode.nodeValue = ' English'; // Update the text node's value
             }
 
             // Re-display the current verse with the new language setting
             const currentChapter = parseInt(verseDisplay.dataset.chapter);
             const currentVerse = parseInt(verseDisplay.dataset.verse);
+            console.log(`[languageToggleBtn] Current verse data from dataset: Chapter ${currentChapter}, Verse ${currentVerse}`);
+
             if (!isNaN(currentChapter) && !isNaN(currentVerse)) {
                 // Fetch the verse data again (it will come from cache) and then display it
                 // The displayVerse function now handles rendering based on isEnglishActive
                 const verseData = verseCache[`${currentChapter}-${currentVerse}`];
                 if (verseData) {
+                    console.log(`[languageToggleBtn] Verse data found in cache. Calling displayVerse.`);
                     await displayVerse(verseData); // Await displayVerse to ensure translation is fetched if needed
                 } else {
                     // This case should ideally not happen if a verse is currently displayed
-                    console.error("Current verse data not found in cache for re-display.");
+                    console.error("[languageToggleBtn] Current verse data not found in cache for re-display.");
                     showMessage('ప్రస్తుత శ్లోకం సమాచారం అందుబాటులో లేదు.', 'error');
                 }
             } else {
+                console.error("[languageToggleBtn] No valid verse available for translation (dataset missing).");
                 showMessage('అనువాదం కోసం శ్లోకం అందుబాటులో లేదు.', 'error'); // No verse available for translation.
             }
         });
@@ -1839,6 +1886,7 @@
 
         sideMenuHint.addEventListener('touchstart', (e) => {
             touchStartX = e.touches[0].clientX;
+            console.log(`[sideMenuHint] Touch start at X: ${touchStartX}`);
         });
 
         sideMenuHint.addEventListener('touchmove', (e) => {
@@ -1846,31 +1894,42 @@
 
             const touchMoveX = e.touches[0].clientX;
             const diffX = touchMoveX - touchStartX;
+            console.log(`[sideMenuHint] Touch move, diffX: ${diffX}`);
 
             if (diffX > swipeThreshold) {
                 openSideMenu();
                 touchStartX = 0;
                 e.preventDefault();
             } else if (Math.abs(e.touches[0].clientY - e.changedTouches[0].clientY) > Math.abs(diffX)) {
+                 // If vertical movement is greater than horizontal, reset to prevent accidental swipe
                  touchStartX = 0;
             }
         });
 
         sideMenuHint.addEventListener('touchend', (e) => {
             touchStartX = 0;
+            console.log(`[sideMenuHint] Touch end.`);
         });
 
         // Also add a click listener to the hint for desktop/non-swipe interaction
-        sideMenuHint.addEventListener('click', openSideMenu);
+        sideMenuHint.addEventListener('click', () => {
+            console.log(`[sideMenuHint] Clicked.`);
+            openSideMenu();
+        });
 
 
         // --- Handle orientation change for hint visibility ---
         function handleOrientationChange() {
+             console.log(`[handleOrientationChange] Checking orientation.`);
              if (window.matchMedia("(orientation: landscape) and (max-width: 768px)").matches) {
+                 console.log(`[handleOrientationChange] Landscape on small screen, hiding hint.`);
                  sideMenuHint.style.display = 'none';
              } else {
                  if (!sideMenu.classList.contains('open')) {
+                     console.log(`[handleOrientationChange] Not landscape on small screen and menu not open, showing hint.`);
                      sideMenuHint.style.display = 'block';
+                 } else {
+                     console.log(`[handleOrientationChange] Menu is open, keeping hint hidden.`);
                  }
              }
         }
@@ -1882,6 +1941,7 @@
 
         // --- Splash Screen Logic ---
         function hideSplashScreen() {
+             console.log(`[hideSplashScreen] Hiding splash screen.`);
              splashScreen.classList.add('hidden');
              mainContent.classList.add('visible');
              fetchRandomVerse(); // Fetch a random verse on load (will use cache if offline)
@@ -1889,6 +1949,7 @@
 
         // Hide splash screen after a delay, ensuring content is loaded
         window.addEventListener('load', () => {
+            console.log(`[window.load] DOM fully loaded.`);
             populateChapterDropdown();
             updateFavoritesListUI();
 
@@ -1901,6 +1962,7 @@
              if (event.target.closest('.share-button')) {
                  const button = event.target.closest('.share-button');
                  const platform = button.dataset.platform;
+                 console.log(`[share-button] Share button clicked for platform: ${platform}`);
 
                  // Get the text content directly from the dataset attributes
                  const chapter = verseDisplay.dataset.chapter;
@@ -2055,6 +2117,7 @@
 
         // Check Phosphor Icons loading on DOMContentLoaded
         window.addEventListener('DOMContentLoaded', () => {
+            console.log(`[DOMContentLoaded] DOM fully loaded.`);
             setTimeout(() => { // Give a small delay for the script to execute
                 // Check if Phosphor Icons are available by trying to create an element with a phosphor class
                 const testIcon = document.createElement('i');
@@ -2078,6 +2141,7 @@
 
         // Function to navigate to the previous verse
         function goToPreviousVerse() {
+            console.log(`[goToPreviousVerse] Called.`);
             let currentChapter = parseInt(verseDisplay.dataset.chapter);
             let currentVerse = parseInt(verseDisplay.dataset.verse);
 
@@ -2088,8 +2152,9 @@
 
             // Reset translation state when navigating
             isEnglishActive = false;
-            languageToggleBtn.textContent = 'English';
             languageToggleBtn.querySelector('i').className = 'ph ph-translate';
+            const textNode = Array.from(languageToggleBtn.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+            if (textNode) textNode.nodeValue = ' English';
 
             if (currentVerse > 1) {
                 fetchVerse(currentChapter, currentVerse - 1);
@@ -2104,6 +2169,7 @@
 
         // Function to navigate to the next verse
         function goToNextVerse() {
+            console.log(`[goToNextVerse] Called.`);
             let currentChapter = parseInt(verseDisplay.dataset.chapter);
             let currentVerse = parseInt(verseDisplay.dataset.verse);
 
@@ -2114,8 +2180,9 @@
 
             // Reset translation state when navigating
             isEnglishActive = false;
-            languageToggleBtn.textContent = 'English';
             languageToggleBtn.querySelector('i').className = 'ph ph-translate';
+            const textNode = Array.from(languageToggleBtn.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+            if (textNode) textNode.nodeValue = ' English';
 
             const maxVerseInCurrentChapter = CHAPTER_VERSE_COUNTS[currentChapter];
 
